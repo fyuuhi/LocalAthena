@@ -33,6 +33,8 @@ using namespace std;
 
 #include "/gpfs/home/yfukuhar/RootUtils/rootlogon.C"
 
+double Res(double param1, double param2);
+
 
 //==================================================================
 //main function
@@ -52,17 +54,38 @@ int main(int argc, char **argv){
 
   RPC t_349014(tree1); 
 
-  t_349014.Loop();
+  t_349014.Loop(200, 100);
   cout << "[INFO]: Loop SUCCESS" << endl;
 
-  t_349014.DrawHist();
+  t_349014.DrawHist("t_349014.pdf");
   cout << "[INFO]: DrawHist SUCCESS" << endl;
+
+  t_349014.End();
+  cout << "[INFO]: End SUCCESS" << endl;
+
+
+  TChain *tree2 = new TChain("t_tap", "t_tap");
+  tree2 -> Add("/gpfs/fs2001/yfukuhar/data/hadd_data18_v3_mu26ivm_ok/user.yfukuhar.00349533.physics_Main.YFTAP.f929_m1955_jpzYFV3GRL_EXT0/hadd_data18_v3_mu26ivm_ok_user.yfukuhar.00349533.physics_Main.YFTAP.f929_m1955_jpzYFV3GRL_EXT0.root");
+
+  RPC t_349533(tree2); 
+
+  t_349533.Loop(1000, 100);
+  cout << "[INFO]: Loop SUCCESS" << endl;
+
+  t_349533.DrawHist("t_349533.pdf");
+  cout << "[INFO]: DrawHist SUCCESS" << endl;
+
+  t_349014.End();
+  cout << "[INFO]: End SUCCESS" << endl;
+
+  delete tree1;
+  delete tree2;
 
   return 0;
 }
 
 
-void RPC::Loop()
+void RPC::Loop( int Nevents, int DisplayNumber )
 {
 //   In a ROOT session, you can do:
 //      root> .L RPC.C
@@ -89,15 +112,27 @@ void RPC::Loop()
 //by  b_branchname->GetEntry(ientry); //read only this branch
    if (fChain == 0) return;
 
-   Long64_t nentries = fChain->GetEntriesFast();
+   int nLoop;
+   if (Nevents == -1) {
+     nLoop = fChain -> GetEntries();
+   } else {
+     nLoop = Nevents;
+   }
+
+   //Long64_t nentries = fChain->GetEntriesFast();
    double entries = fChain->GetEntries();
    cout << "[INFO]: Nentries:" << entries << endl;
 
+   const int N50 = 14;
+
    Long64_t nbytes = 0, nb = 0;
-   for (Long64_t jentry=0; jentry<nentries;jentry++) {
+   for (Long64_t jentry=0; jentry<nLoop;jentry++) {
       int  ientry = LoadTree(jentry);
       nb = fChain->GetEntry(jentry);   nbytes += nb;
       if (ientry < 0) break;
+      if( ientry%DisplayNumber == 0){
+        cout << "now event number -->> " << ientry << "/" << nLoop << " : " << ((double) ientry)/nLoop * 100. << "%" << endl;
+      }
 
       //==================================================================
       //Analysis code for a entry
@@ -108,14 +143,90 @@ void RPC::Loop()
         case 2: //Jpsi from L2:
           break;
         case 3: //Z
-          if (probe_mesSA_superPointR_BI->at(0) != 0 && probe_mesSA_superPointR_BI -> at(0) / 1000. > -90) {
-            h_superPointRZ_BI -> Fill( probe_mesSA_superPointZ_BI->at(0)/1000, probe_mesSA_superPointR_BI->at(0)/1000); 
+
+          // Set suerpoint and segment for each station
+          double probe_segmentR_BIS = 0;
+          double probe_segmentZ_BIS = 0;
+          double probe_segmentR_BIL = 0;
+          double probe_segmentZ_BIL = 0;
+          double probe_segmentR_BMS = 0;
+          double probe_segmentZ_BMS = 0;
+          double probe_segmentR_BML = 0;
+          double probe_segmentZ_BML = 0;
+          double probe_segmentR_BOS = 0;
+          double probe_segmentZ_BOS = 0;
+          double probe_segmentR_BOL = 0;
+          double probe_segmentZ_BOL = 0;
+          for ( int i = 0; i < probe_segment_n; i++){
+            if (probe_segment_chamberIndex[i] == 0) {
+              probe_segmentR_BIS = TMath::Sqrt(probe_segment_x[i]*probe_segment_x[i] + probe_segment_y[i]*probe_segment_y[i])/1000.;
+              probe_segmentZ_BIS = probe_segment_z[i]/1000.;
+            } else if(probe_segment_chamberIndex[i] == 1) {
+              probe_segmentR_BIL = TMath::Sqrt(probe_segment_x[i]*probe_segment_x[i] + probe_segment_y[i]*probe_segment_y[i])/1000.;
+              probe_segmentZ_BIL = probe_segment_z[i]/1000.;
+            } else if(probe_segment_chamberIndex[i] == 2) {
+              probe_segmentR_BMS = TMath::Sqrt(probe_segment_x[i]*probe_segment_x[i] + probe_segment_y[i]*probe_segment_y[i])/1000.;
+              probe_segmentZ_BMS = probe_segment_z[i]/1000.;
+            } else if(probe_segment_chamberIndex[i] == 3) {
+              probe_segmentR_BML = TMath::Sqrt(probe_segment_x[i]*probe_segment_x[i] + probe_segment_y[i]*probe_segment_y[i])/1000.;
+              probe_segmentZ_BML = probe_segment_z[i]/1000.;
+            } else if(probe_segment_chamberIndex[i] == 4) {
+              probe_segmentR_BOS = TMath::Sqrt(probe_segment_x[i]*probe_segment_x[i] + probe_segment_y[i]*probe_segment_y[i])/1000.;
+              probe_segmentZ_BOS = probe_segment_z[i]/1000.;
+            } else if(probe_segment_chamberIndex[i] == 5) {
+              probe_segmentR_BOL = TMath::Sqrt(probe_segment_x[i]*probe_segment_x[i] + probe_segment_y[i]*probe_segment_y[i])/1000.;
+              probe_segmentZ_BOL = probe_segment_z[i]/1000.;
+            }
           }
-          if (probe_mesSA_superPointR_BM->at(0) != 0 && probe_mesSA_superPointR_BM -> at(0) / 1000. > -90) {
-            h_superPointRZ_BI -> Fill( probe_mesSA_superPointZ_BM->at(0)/1000, probe_mesSA_superPointR_BM->at(0)/1000); 
+
+
+          //BIS
+          if (probe_mesSA_superPointR_BI->at(N50) != 0 &&
+              probe_mesSA_superPointR_BI -> at(N50) / 1000. > -90 &&
+              probe_mesSA_sAddress -> at(N50) == 2 ) {
+            h_superPointRZ_BIS -> Fill( probe_mesSA_superPointZ_BI->at(N50)/1000, probe_mesSA_superPointR_BI->at(N50)/1000); 
+            h_segmentRZ_BIS -> Fill( probe_segmentZ_BIS, probe_segmentR_BIS); 
+            h_residualRZ_BIS -> Fill( Res(probe_mesSA_superPointZ_BI->at(N50)/1000,probe_segmentZ_BIS), Res(probe_mesSA_superPointR_BI->at(N50)/1000,probe_segmentR_BIS)); 
           }
-          if (probe_mesSA_superPointR_BO->at(0) != 0 && probe_mesSA_superPointR_BO -> at(0) / 1000. > -90) {
-            h_superPointRZ_BI -> Fill( probe_mesSA_superPointZ_BO->at(0)/1000, probe_mesSA_superPointR_BO->at(0)/1000); 
+          //BIL
+          if (probe_mesSA_superPointR_BI->at(N50) != 0 &&
+              probe_mesSA_superPointR_BI -> at(N50) / 1000. > -90 &&
+              probe_mesSA_sAddress -> at(N50) == 0 ) {
+            h_superPointRZ_BIL -> Fill( probe_mesSA_superPointZ_BI->at(N50)/1000, probe_mesSA_superPointR_BI->at(N50)/1000); 
+            h_segmentRZ_BIL -> Fill( probe_segmentZ_BIL, probe_segmentR_BIL); 
+            h_residualRZ_BIL -> Fill( Res(probe_mesSA_superPointZ_BI->at(N50)/1000,probe_segmentZ_BIL), Res(probe_mesSA_superPointR_BI->at(N50)/1000,probe_segmentR_BIL)); 
+          }
+          //BMS
+          if (probe_mesSA_superPointR_BM->at(N50) != 0 &&
+              probe_mesSA_superPointR_BM -> at(N50) / 1000. > -90 &&
+              probe_mesSA_sAddress -> at(N50) == 2 ) {
+            h_superPointRZ_BMS -> Fill( probe_mesSA_superPointZ_BM->at(N50)/1000, probe_mesSA_superPointR_BM->at(N50)/1000); 
+            h_segmentRZ_BMS -> Fill( probe_segmentZ_BMS, probe_segmentR_BMS); 
+            h_residualRZ_BMS -> Fill( Res(probe_mesSA_superPointZ_BM->at(N50)/1000,probe_segmentZ_BMS), Res(probe_mesSA_superPointR_BM->at(N50)/1000,probe_segmentR_BMS)); 
+          }
+          //BML
+          if (probe_mesSA_superPointR_BM->at(N50) != 0 &&
+              probe_mesSA_superPointR_BM -> at(N50) / 1000. > -90 &&
+              probe_mesSA_sAddress -> at(N50) == 0 ) {
+            h_superPointRZ_BML -> Fill( probe_mesSA_superPointZ_BM->at(N50)/1000, probe_mesSA_superPointR_BM->at(N50)/1000); 
+            h_segmentRZ_BML -> Fill( probe_segmentZ_BML, probe_segmentR_BML); 
+            h_residualRZ_BML -> Fill( Res(probe_mesSA_superPointZ_BM->at(N50)/1000,probe_segmentZ_BML), Res(probe_mesSA_superPointR_BM->at(N50)/1000,probe_segmentR_BML)); 
+          }
+          //BOS
+          if (probe_mesSA_superPointR_BO->at(N50) != 0 &&
+              probe_mesSA_superPointR_BO -> at(N50) / 1000. > -90 &&
+              probe_mesSA_sAddress -> at(N50) == 2 ) {
+            h_superPointRZ_BOS -> Fill( probe_mesSA_superPointZ_BO->at(N50)/1000, probe_mesSA_superPointR_BO->at(N50)/1000); 
+            h_segmentRZ_BOS -> Fill( probe_segmentZ_BOS, probe_segmentR_BOS); 
+            h_residualRZ_BOS -> Fill( Res(probe_mesSA_superPointZ_BO->at(N50)/1000,probe_segmentZ_BOS), Res(probe_mesSA_superPointR_BO->at(N50)/1000,probe_segmentR_BOS)); 
+          }
+          //BOL
+          if (probe_mesSA_superPointR_BO->at(N50) != 0 &&
+              probe_mesSA_superPointR_BO -> at(N50) / 1000. > -90 &&
+              probe_mesSA_sAddress -> at(N50) == 0 ) {
+            h_superPointRZ_BOL -> Fill( probe_mesSA_superPointZ_BO->at(N50)/1000, probe_mesSA_superPointR_BO->at(N50)/1000); 
+            h_segmentRZ_BOL -> Fill( probe_segmentZ_BOL, probe_segmentR_BOL); 
+            h_residualRZ_BOL -> Fill( Res(probe_mesSA_superPointZ_BO->at(N50)/1000,probe_segmentZ_BOL), Res(probe_mesSA_superPointR_BO->at(N50)/1000,probe_segmentR_BOL)); 
           }
           break;
       }
@@ -126,10 +237,7 @@ void RPC::Loop()
 
 
 
-
-
-
-void RPC::DrawHist(){
+void RPC::DrawHist(TString pdf){
   //==================================================================
   //Set Canvas
   //==================================================================
@@ -138,16 +246,84 @@ void RPC::DrawHist(){
   c1->SetLeftMargin(0.23);
   c1->SetBottomMargin(0.20);
 
-  TString pdf = "test.pdf";
   c1 -> Print( pdf + "[", "pdf" );
 
-  h_superPointRZ_BI -> Draw("colz");
+  h_superPointRZ_BIL -> Draw("colz");
+  c1 -> Print(pdf, "pdf" );
+  h_segmentRZ_BIL -> Draw("colz");
+  c1 -> Print(pdf, "pdf" );
+  h_residualRZ_BIL  -> SetTitle("R;Z;BIL Residual");
+  h_residualRZ_BIL -> Draw("colz");
+  c1 -> Print(pdf, "pdf" );
+  h_residualRZ_BIL->Draw("colz");
+  //h_residualRZ_BIL->ProjectionX("name",h_residualRZ_BIL->GetYaxis()->FindBin(-0.1),h_residualRZ_BIL->GetYaxis()->FindBin(0.1)) -> Draw();
+  //h_residualRZ_BIL->ProjectionX("name",h_residualRZ_BIL->GetYaxis()->FindBin(-0.1),h_residualRZ_BIL->GetYaxis()->FindBin(0.1)) -> DrawNormalized("",1./(h_residualRZ_BIL->ProjectionX("name",h_residualRZ_BIL->GetYaxis()->FindBin(-0.1),h_residualRZ_BIL->GetYaxis()->FindBin(0.1))->GetBinWidth(1)));
+  c1 -> Print(pdf, "pdf" );
 
-  h_superPointRZ_BM -> Draw("colz same");
+  h_superPointRZ_BIS -> Draw("colz");
+  c1 -> Print(pdf, "pdf" );
+  h_segmentRZ_BIS -> Draw("colz");
+  c1 -> Print(pdf, "pdf" );
+  h_residualRZ_BIS  -> SetTitle("R;Z;BIS Residual");
+  h_residualRZ_BIS -> Draw("colz");
+  c1 -> Print(pdf, "pdf" );
+  h_residualRZ_BIS->Draw("colz");
+  //h_residualRZ_BIS->ProjectionX("name",h_residualRZ_BIS->GetYaxis()->FindBin(-0.1),h_residualRZ_BIS->GetYaxis()->FindBin(0.1)) -> DrawNormalized("",1./(h_residualRZ_BIS->ProjectionX("name",h_residualRZ_BIS->GetYaxis()->FindBin(-0.1),h_residualRZ_BIS->GetYaxis()->FindBin(0.1))->GetBinWidth(1)));
+  c1 -> Print(pdf, "pdf" );
 
-  h_superPointRZ_BO -> Draw("colz same");
+  h_superPointRZ_BML -> Draw("colz");
+  c1 -> Print(pdf, "pdf" );
+  h_segmentRZ_BML -> Draw("colz");
+  c1 -> Print(pdf, "pdf" );
+  h_residualRZ_BML  -> SetTitle("R;Z;BML Residual");
+  h_residualRZ_BML -> Draw("colz");
+  c1 -> Print(pdf, "pdf" );
+  h_residualRZ_BML->Draw("colz");
+  //h_residualRZ_BML->ProjectionX("name",h_residualRZ_BML->GetYaxis()->FindBin(-0.1),h_residualRZ_BML->GetYaxis()->FindBin(0.1)) -> DrawNormalized("",1./(h_residualRZ_BML->ProjectionX("name",h_residualRZ_BML->GetYaxis()->FindBin(-0.1),h_residualRZ_BML->GetYaxis()->FindBin(0.1))->GetBinWidth(1)));
+  c1 -> Print(pdf, "pdf" );
+
+  h_superPointRZ_BMS -> Draw("colz");
+  c1 -> Print(pdf, "pdf" );
+  h_segmentRZ_BMS -> Draw("colz");
+  c1 -> Print(pdf, "pdf" );
+  h_residualRZ_BMS  -> SetTitle("R;Z;BML Residual");
+  h_residualRZ_BMS -> Draw("colz");
+  c1 -> Print(pdf, "pdf" );
+  h_residualRZ_BMS->Draw("colz");
+  //h_residualRZ_BMS->ProjectionX("name",h_residualRZ_BMS->GetYaxis()->FindBin(-0.1),h_residualRZ_BMS->GetYaxis()->FindBin(0.1)) -> DrawNormalized("",1./(h_residualRZ_BMS->ProjectionX("name",h_residualRZ_BMS->GetYaxis()->FindBin(-0.1),h_residualRZ_BMS->GetYaxis()->FindBin(0.1))->GetBinWidth(1)));
+  c1 -> Print(pdf, "pdf" );
+
+  h_superPointRZ_BOL -> Draw("colz");
+  c1 -> Print(pdf, "pdf" );
+  h_segmentRZ_BOL -> Draw("colz");
+  c1 -> Print(pdf, "pdf" );
+  h_residualRZ_BOL  -> SetTitle("R;Z;BOL Residual");
+  h_residualRZ_BOL -> Draw("colz");
+  c1 -> Print(pdf, "pdf" );
+  h_residualRZ_BOL->Draw("colz");
+  //h_residualRZ_BOL->ProjectionX("name",h_residualRZ_BOL->GetYaxis()->FindBin(-0.1),h_residualRZ_BOL->GetYaxis()->FindBin(0.1)) -> DrawNormalized("",1./(h_residualRZ_BOL->ProjectionX("name",h_residualRZ_BOL->GetYaxis()->FindBin(-0.1),h_residualRZ_BOL->GetYaxis()->FindBin(0.1))->GetBinWidth(1)));
+  c1 -> Print(pdf, "pdf" );
+
+  h_superPointRZ_BOS -> Draw("colz");
+  c1 -> Print(pdf, "pdf" );
+  h_segmentRZ_BOS -> Draw("colz");
+  c1 -> Print(pdf, "pdf" );
+  h_residualRZ_BOS  -> SetTitle("R;Z;BOS Residual");
+  h_residualRZ_BOS -> Draw("colz");
+  c1 -> Print(pdf, "pdf" );
+  h_residualRZ_BOS->Draw("colz");
+  //h_residualRZ_BOS->ProjectionX("name",h_residualRZ_BOS->GetYaxis()->FindBin(-0.1),h_residualRZ_BOS->GetYaxis()->FindBin(0.1)) -> DrawNormalized("",1./(h_residualRZ_BOS->ProjectionX("name",h_residualRZ_BOS->GetYaxis()->FindBin(-0.1),h_residualRZ_BOS->GetYaxis()->FindBin(0.1))->GetBinWidth(1)));
   c1 -> Print(pdf, "pdf" );
 
   c1 -> Print( pdf + "]", "pdf" );
 }
 
+
+double Res(double param1, double param2){
+  if (param2 == 0.) {
+    return -99999.;
+  } else if (param2 != 0.){
+    return (param1-param2)/param2;
+  }
+  return -99999.;
+}

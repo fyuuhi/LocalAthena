@@ -412,7 +412,12 @@ public :
    TH2F *h_segmentRZ_BOS; //!
    TH2F *h_segmentRZ_BOL; //!
 
-   TH2F *h_residual_BI; //!
+   TH2F *h_residualRZ_BIS; //!
+   TH2F *h_residualRZ_BIL; //!
+   TH2F *h_residualRZ_BMS; //!
+   TH2F *h_residualRZ_BML; //!
+   TH2F *h_residualRZ_BOS; //!
+   TH2F *h_residualRZ_BOL; //!
 
    RPC(TChain *tree);
    virtual ~RPC();
@@ -420,8 +425,9 @@ public :
    virtual Int_t    GetEntry(Long64_t entry);
    virtual Long64_t LoadTree(Long64_t entry);
    virtual void     Init(TTree *tree);
-   virtual void     Loop();
-   virtual void     DrawHist();
+   virtual void     End();
+   virtual void     Loop( int Nevents, int DisplayNumber );
+   virtual void     DrawHist(TString pdf);
    virtual Bool_t   Notify();
    virtual void     Show(Long64_t entry = -1);
 };
@@ -768,11 +774,87 @@ void RPC::Init(TTree *tree)
    fChain->SetBranchAddress("probe_mesEF_phi", &probe_mesEF_phi, &b_probe_mesEF_phi);
 
    // Histgrams
-   h_superPointRZ_BI = new TH2F("h_superPointRZ_BI", "h_superPointRZ_BI:Z:R", 100, -15, 15, 100, 0, 20);
-   h_superPointRZ_BM = new TH2F("h_superPointRZ_BM", "h_superPointRZ_BM:Z:R", 100, -15, 15, 100, 0, 20);
-   h_superPointRZ_BO = new TH2F("h_superPointRZ_BO", "h_superPointRZ_BO:Z:R", 100, -15, 15, 100, 0, 20);
+   h_superPointRZ_BIS = new TH2F("h_superPointRZ_BIS", "h_superPointRZ_BIS;Z;R;Counts", 100, -15, 15, 100, 0, 20);
+   h_superPointRZ_BIL = new TH2F("h_superPointRZ_BIL", "h_superPointRZ_BIL;Z;R;Counts", 100, -15, 15, 100, 0, 20);
+   h_superPointRZ_BMS = new TH2F("h_superPointRZ_BMS", "h_superPointRZ_BMS;Z;R;Counts", 100, -15, 15, 100, 0, 20);
+   h_superPointRZ_BML = new TH2F("h_superPointRZ_BML", "h_superPointRZ_BML;Z;R;Counts", 100, -15, 15, 100, 0, 20);
+   h_superPointRZ_BOS = new TH2F("h_superPointRZ_BOS", "h_superPointRZ_BOS;Z;R;Counts", 100, -15, 15, 100, 0, 20);
+   h_superPointRZ_BOL = new TH2F("h_superPointRZ_BOL", "h_superPointRZ_BOL;Z;R;Counts", 100, -15, 15, 100, 0, 20);
+
+   h_segmentRZ_BIS = new TH2F("h_segmentRZ_BIS", "h_segmentRZ_BIS;Z;R;Counts", 100, -15, 15, 100, 0, 20);
+   h_segmentRZ_BIL = new TH2F("h_segmentRZ_BIL", "h_segmentRZ_BIL;Z;R;Counts", 100, -15, 15, 100, 0, 20);
+   h_segmentRZ_BMS = new TH2F("h_segmentRZ_BMS", "h_segmentRZ_BMS;Z;R;Counts", 100, -15, 15, 100, 0, 20);
+   h_segmentRZ_BML = new TH2F("h_segmentRZ_BML", "h_segmentRZ_BML;Z;R;Counts", 100, -15, 15, 100, 0, 20);
+   h_segmentRZ_BOS = new TH2F("h_segmentRZ_BOS", "h_segmentRZ_BOS;Z;R;Counts", 100, -15, 15, 100, 0, 20);
+   h_segmentRZ_BOL = new TH2F("h_segmentRZ_BOL", "h_segmentRZ_BOL;Z;R;Counts", 100, -15, 15, 100, 0, 20);
+
+   h_residualRZ_BIS = new TH2F("h_residualRZ_BIS", "h_residualRZ_BIS;Z;R;Counts", 100, -0.5, 0.5, 100, -0.5, 0.5);
+   h_residualRZ_BIL = new TH2F("h_residualRZ_BIL", "h_residualRZ_BIL;Z;R;Counts", 100, -0.5, 0.5, 100, -0.5, 0.5);
+   h_residualRZ_BMS = new TH2F("h_residualRZ_BMS", "h_residualRZ_BMS;Z;R;Counts", 100, -0.5, 0.5, 100, -0.5, 0.5);
+   h_residualRZ_BML = new TH2F("h_residualRZ_BML", "h_residualRZ_BML;Z;R;Counts", 100, -0.5, 0.5, 100, -0.5, 0.5);
+   h_residualRZ_BOS = new TH2F("h_residualRZ_BOS", "h_residualRZ_BOS;Z;R;Counts", 100, -0.5, 0.5, 100, -0.5, 0.5);
+   h_residualRZ_BOL = new TH2F("h_residualRZ_BOL", "h_residualRZ_BOL;Z;R;Counts", 100, -0.5, 0.5, 100, -0.5, 0.5);
 
    Notify();
+}
+
+void RPC::End(){
+  if(h_superPointRZ_BIL != 0) {
+    delete h_superPointRZ_BIL; h_superPointRZ_BIL = 0;
+  }
+  if(h_superPointRZ_BIS != 0) {
+    delete h_superPointRZ_BIS; h_superPointRZ_BIS = 0;
+  }
+  if(h_superPointRZ_BML != 0) {
+    delete h_superPointRZ_BML; h_superPointRZ_BML = 0;
+  }
+  if(h_superPointRZ_BMS != 0) {
+    delete h_superPointRZ_BMS; h_superPointRZ_BMS = 0;
+  }
+  if(h_superPointRZ_BOL != 0) {
+    delete h_superPointRZ_BOL; h_superPointRZ_BOL = 0;
+  }
+  if(h_superPointRZ_BOS != 0) {
+    delete h_superPointRZ_BOS; h_superPointRZ_BOS = 0;
+  }
+
+  if(h_segmentRZ_BIL != 0) {
+    delete h_segmentRZ_BIL; h_segmentRZ_BIL = 0;
+  }
+  if(h_segmentRZ_BIS != 0) {
+    delete h_segmentRZ_BIS; h_segmentRZ_BIS = 0;
+  }
+  if(h_segmentRZ_BML != 0) {
+    delete h_segmentRZ_BML; h_segmentRZ_BML = 0;
+  }
+  if(h_segmentRZ_BMS != 0) {
+    delete h_segmentRZ_BMS; h_segmentRZ_BMS = 0;
+  }
+  if(h_segmentRZ_BOL != 0) {
+    delete h_segmentRZ_BOL; h_segmentRZ_BOL = 0;
+  }
+  if(h_segmentRZ_BOS != 0) {
+    delete h_segmentRZ_BOS; h_segmentRZ_BOS = 0;
+  }
+
+  if(h_residualRZ_BIL != 0) {
+    delete h_residualRZ_BIL; h_residualRZ_BIL = 0;
+  }
+  if(h_residualRZ_BIS != 0) {
+    delete h_residualRZ_BIS; h_residualRZ_BIS = 0;
+  }
+  if(h_residualRZ_BML != 0) {
+    delete h_residualRZ_BML; h_residualRZ_BML = 0;
+  }
+  if(h_residualRZ_BMS != 0) {
+    delete h_residualRZ_BMS; h_residualRZ_BMS = 0;
+  }
+  if(h_residualRZ_BOL != 0) {
+    delete h_residualRZ_BOL; h_residualRZ_BOL = 0;
+  }
+  if(h_residualRZ_BOS != 0) {
+    delete h_residualRZ_BOS; h_residualRZ_BOS = 0;
+  }
 }
 
 Bool_t RPC::Notify()
@@ -800,4 +882,7 @@ Int_t RPC::Cut(Long64_t entry)
 // returns -1 otherwise.
    return 1;
 }
+
+
+
 #endif // #ifdef RPC_cxx
