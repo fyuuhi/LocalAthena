@@ -45,6 +45,8 @@ public :
 
 // Fixed size dimensions of array or collections stored in the TTree if any.
 
+   const int N50 = 14;
+   const int NTagProc = 3;
    // Declaration of leaf types
    Int_t           mes_n;
    vector<string>  *mes_name;
@@ -419,13 +421,19 @@ public :
    TH2F *h_residualRZ_BOS; //!
    TH2F *h_residualRZ_BOL; //!
 
+   TH2F *h_NumberOfSP_eta; //!
+   TH2F *h_NumberOfSP_pt_barrel; //!
+   TH2F *h_NumberOfSP_pass_barrel; //!
+
    RPC(TChain *tree);
    virtual ~RPC();
    virtual Int_t    Cut(Long64_t entry);
    virtual Int_t    GetEntry(Long64_t entry);
    virtual Long64_t LoadTree(Long64_t entry);
    virtual void     Init(TTree *tree);
+   virtual void     InitHist();
    virtual void     End();
+   virtual int     NumberOfSP();
    virtual void     Loop( int Nevents, int DisplayNumber );
    virtual void     DrawHist(TString pdf);
    virtual Bool_t   Notify();
@@ -773,6 +781,11 @@ void RPC::Init(TTree *tree)
    fChain->SetBranchAddress("probe_mesEF_eta", &probe_mesEF_eta, &b_probe_mesEF_eta);
    fChain->SetBranchAddress("probe_mesEF_phi", &probe_mesEF_phi, &b_probe_mesEF_phi);
 
+   InitHist();
+   Notify();
+}
+
+void RPC::InitHist(){
    // Histgrams
    h_superPointRZ_BIS = new TH2F("h_superPointRZ_BIS", "h_superPointRZ_BIS;Z;R;Counts", 100, -15, 15, 100, 0, 20);
    h_superPointRZ_BIL = new TH2F("h_superPointRZ_BIL", "h_superPointRZ_BIL;Z;R;Counts", 100, -15, 15, 100, 0, 20);
@@ -788,14 +801,17 @@ void RPC::Init(TTree *tree)
    h_segmentRZ_BOS = new TH2F("h_segmentRZ_BOS", "h_segmentRZ_BOS;Z;R;Counts", 100, -15, 15, 100, 0, 20);
    h_segmentRZ_BOL = new TH2F("h_segmentRZ_BOL", "h_segmentRZ_BOL;Z;R;Counts", 100, -15, 15, 100, 0, 20);
 
-   h_residualRZ_BIS = new TH2F("h_residualRZ_BIS", "h_residualRZ_BIS;Z;R;Counts", 100, -0.5, 0.5, 100, -0.5, 0.5);
-   h_residualRZ_BIL = new TH2F("h_residualRZ_BIL", "h_residualRZ_BIL;Z;R;Counts", 100, -0.5, 0.5, 100, -0.5, 0.5);
-   h_residualRZ_BMS = new TH2F("h_residualRZ_BMS", "h_residualRZ_BMS;Z;R;Counts", 100, -0.5, 0.5, 100, -0.5, 0.5);
-   h_residualRZ_BML = new TH2F("h_residualRZ_BML", "h_residualRZ_BML;Z;R;Counts", 100, -0.5, 0.5, 100, -0.5, 0.5);
-   h_residualRZ_BOS = new TH2F("h_residualRZ_BOS", "h_residualRZ_BOS;Z;R;Counts", 100, -0.5, 0.5, 100, -0.5, 0.5);
-   h_residualRZ_BOL = new TH2F("h_residualRZ_BOL", "h_residualRZ_BOL;Z;R;Counts", 100, -0.5, 0.5, 100, -0.5, 0.5);
+   h_residualRZ_BIS = new TH2F("h_residualRZ_BIS", "h_residualRZ_BIS;Z;R;Counts", 100, -0.1, 0.1, 100, -0.1, 0.1);
+   h_residualRZ_BIL = new TH2F("h_residualRZ_BIL", "h_residualRZ_BIL;Z;R;Counts", 100, -0.1, 0.1, 100, -0.1, 0.1);
+   h_residualRZ_BMS = new TH2F("h_residualRZ_BMS", "h_residualRZ_BMS;Z;R;Counts", 100, -0.1, 0.1, 100, -0.1, 0.1);
+   h_residualRZ_BML = new TH2F("h_residualRZ_BML", "h_residualRZ_BML;Z;R;Counts", 100, -0.1, 0.1, 100, -0.1, 0.1);
+   h_residualRZ_BOS = new TH2F("h_residualRZ_BOS", "h_residualRZ_BOS;Z;R;Counts", 100, -0.1, 0.1, 100, -0.1, 0.1);
+   h_residualRZ_BOL = new TH2F("h_residualRZ_BOL", "h_residualRZ_BOL;Z;R;Counts", 100, -0.1, 0.1, 100, -0.1, 0.1);
 
-   Notify();
+   h_NumberOfSP_eta = new TH2F("h_NumberOfSP_eta", "h_NumberOfSP_eta;eta;Number;Counts", 100, -2.5, 2.5, 100, 0, 5);
+   h_NumberOfSP_pt_barrel = new TH2F("h_NumberOfSP_pt_barrel", "h_NumberOfSP_pt_barrel;pT[GeV];Number;Counts", 100, 0, 100, 100, 0, 5);
+   h_NumberOfSP_pass_barrel = new TH2F("h_NumberOfSP_pass_barrel", "h_NumberOfSP_pass_barrel;pass;Number;Counts", 100, -3, 2, 100, 0, 5);
+
 }
 
 void RPC::End(){
@@ -855,6 +871,17 @@ void RPC::End(){
   if(h_residualRZ_BOS != 0) {
     delete h_residualRZ_BOS; h_residualRZ_BOS = 0;
   }
+
+  if(h_NumberOfSP_eta != 0) {
+    delete h_NumberOfSP_eta; h_NumberOfSP_eta = 0;
+  }
+  if(h_NumberOfSP_pt_barrel != 0) {
+    delete h_NumberOfSP_pt_barrel; h_NumberOfSP_pt_barrel = 0;
+  }
+  if(h_NumberOfSP_pass_barrel != 0) {
+    delete h_NumberOfSP_pass_barrel; h_NumberOfSP_pass_barrel = 0;
+  }
+
 }
 
 Bool_t RPC::Notify()
