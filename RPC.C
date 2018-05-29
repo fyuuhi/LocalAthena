@@ -51,6 +51,7 @@ int main(int argc, char **argv){
   // tree1
   TChain *tree1 = new TChain("t_tap", "t_tap");
   tree1 -> Add("/gpfs/fs2001/yfukuhar/data/hadd_data18_v3_mu26ivm_ok/user.yfukuhar.00349014.physics_Main.YFTAP.f926_m1955_jpzYFV3GRL_EXT0/hadd_data18_v3_mu26ivm_ok_user.yfukuhar.00349014.physics_Main.YFTAP.f926_m1955_jpzYFV3GRL_EXT0.root");
+  //tree1 -> Add("/gpfs/fs2001/yfukuhar/CalcEffPlotMakerOrigin/data/mc16c_Jpsimu6_default/mc16c_Jpsimu6_default.root");
 
   RPC t_349014(tree1); 
 
@@ -153,7 +154,7 @@ void RPC::Loop( int Nevents, int DisplayNumber )
           if (!(probe_mesEFTAG_pass -> at(N50) > -1 && probe_mesL1_pass -> at(N50) > 0 && ( sumReqdRL1<tp_extdR && 0.2<tp_extdR ) && ( sumReqdREF<tp_dR ))){
             continue;
           }
-          // Set suerpoint and segment for each station
+          // Set superpoint and segment for each station
           double probe_segmentR_BIS = 0;
           double probe_segmentZ_BIS = 0;
           double probe_segmentR_BIL = 0;
@@ -271,11 +272,15 @@ void RPC::DrawHist(TString pdf){
   c1 -> Print(pdf, "pdf" );
 
   TH1D* h_eta_all = h_NumberOfSP_eta->ProjectionX("_all");
-  TH1D* h_eta_3 = h_NumberOfSP_eta->ProjectionX("eta_3",h_NumberOfSP_eta->GetYaxis()->FindBin(2.9),h_NumberOfSP_eta->GetYaxis()->FindBin(3.1));
-  TH1D* h_eta_2 = h_NumberOfSP_eta->ProjectionX("eta_2",h_NumberOfSP_eta->GetYaxis()->FindBin(1.9),h_NumberOfSP_eta->GetYaxis()->FindBin(2.1));
-  TH1D* h_eta_1 = h_NumberOfSP_eta->ProjectionX("eta_1",h_NumberOfSP_eta->GetYaxis()->FindBin(0.9),h_NumberOfSP_eta->GetYaxis()->FindBin(1.1));
-  TH1D* h_eta_0 = h_NumberOfSP_eta->ProjectionX("eta_0",h_NumberOfSP_eta->GetYaxis()->FindBin(-0.9),h_NumberOfSP_eta->GetYaxis()->FindBin(0.1));
+  TH1D* h_eta_5 = h_NumberOfSP_eta->ProjectionX("5",h_NumberOfSP_eta->GetYaxis()->FindBin(4.9),h_NumberOfSP_eta->GetYaxis()->FindBin(5.1));
+  TH1D* h_eta_4 = h_NumberOfSP_eta->ProjectionX("4",h_NumberOfSP_eta->GetYaxis()->FindBin(3.9),h_NumberOfSP_eta->GetYaxis()->FindBin(4.1));
+  TH1D* h_eta_3 = h_NumberOfSP_eta->ProjectionX("3",h_NumberOfSP_eta->GetYaxis()->FindBin(2.9),h_NumberOfSP_eta->GetYaxis()->FindBin(3.1));
+  TH1D* h_eta_2 = h_NumberOfSP_eta->ProjectionX("2",h_NumberOfSP_eta->GetYaxis()->FindBin(1.9),h_NumberOfSP_eta->GetYaxis()->FindBin(2.1));
+  TH1D* h_eta_1 = h_NumberOfSP_eta->ProjectionX("1",h_NumberOfSP_eta->GetYaxis()->FindBin(0.9),h_NumberOfSP_eta->GetYaxis()->FindBin(1.1));
+  TH1D* h_eta_0 = h_NumberOfSP_eta->ProjectionX("0",h_NumberOfSP_eta->GetYaxis()->FindBin(-0.9),h_NumberOfSP_eta->GetYaxis()->FindBin(0.1));
 
+  h_eta_5->Divide(h_eta_all);
+  h_eta_4->Divide(h_eta_all);
   h_eta_3->Divide(h_eta_all);
   h_eta_2->Divide(h_eta_all);
   h_eta_1->Divide(h_eta_all);
@@ -283,17 +288,31 @@ void RPC::DrawHist(TString pdf){
 
 
   THStack *hs_eta = new THStack("hs_eta",";eta;Fraction of number of SP");
+  h_eta_5->SetFillColor(kCyan);//あらかじめFillColorをSetしておく
+  h_eta_4->SetFillColor(kMagenta);//あらかじめFillColorをSetしておく
   h_eta_3->SetFillColor(kRed);//あらかじめFillColorをSetしておく
   h_eta_2->SetFillColor(kBlue);
   h_eta_1->SetFillColor(kGreen);
   h_eta_0->SetFillColor(kYellow);
+  hs_eta->Add(h_eta_5);
+  hs_eta->Add(h_eta_4);
   hs_eta->Add(h_eta_3);
   hs_eta->Add(h_eta_2);
   hs_eta->Add(h_eta_1);
   hs_eta->Add(h_eta_0);
 
   hs_eta->Draw();
+
+  TLegend *leg_eta = new TLegend(0.82,0.62,0.9,0.92);
+  leg_eta->AddEntry(h_eta_0," n=0","f");
+  leg_eta->AddEntry(h_eta_1," n=1","f");
+  leg_eta->AddEntry(h_eta_2," n=2","f");
+  leg_eta->AddEntry(h_eta_3," n=3","f");
+  leg_eta->AddEntry(h_eta_4," n=4","f");
+  leg_eta->AddEntry(h_eta_5," n=5","f");
+  leg_eta->Draw();
   c1 -> Print(pdf, "pdf" );
+  delete leg_eta;
 
 
   h_NumberOfSP_pt_barrel->Draw("colz");
@@ -304,11 +323,15 @@ void RPC::DrawHist(TString pdf){
   c1 -> Print(pdf, "pdf" );
 
   TH1D* h_pt_all = h_NumberOfSP_pt_barrel->ProjectionX("_all");
-  TH1D* h_pt_3 = h_NumberOfSP_pt_barrel->ProjectionX("pt_3",h_NumberOfSP_pt_barrel->GetYaxis()->FindBin(2.9),h_NumberOfSP_pt_barrel->GetYaxis()->FindBin(3.1));
-  TH1D* h_pt_2 = h_NumberOfSP_pt_barrel->ProjectionX("pt_2",h_NumberOfSP_pt_barrel->GetYaxis()->FindBin(1.9),h_NumberOfSP_pt_barrel->GetYaxis()->FindBin(2.1));
-  TH1D* h_pt_1 = h_NumberOfSP_pt_barrel->ProjectionX("pt_1",h_NumberOfSP_pt_barrel->GetYaxis()->FindBin(0.9),h_NumberOfSP_pt_barrel->GetYaxis()->FindBin(1.1));
-  TH1D* h_pt_0 = h_NumberOfSP_pt_barrel->ProjectionX("pt_0",h_NumberOfSP_pt_barrel->GetYaxis()->FindBin(-0.9),h_NumberOfSP_pt_barrel->GetYaxis()->FindBin(0.1));
+  TH1D* h_pt_5 = h_NumberOfSP_pt_barrel->ProjectionX("5",h_NumberOfSP_pt_barrel->GetYaxis()->FindBin(4.9),h_NumberOfSP_pt_barrel->GetYaxis()->FindBin(5.1));
+  TH1D* h_pt_4 = h_NumberOfSP_pt_barrel->ProjectionX("4",h_NumberOfSP_pt_barrel->GetYaxis()->FindBin(3.9),h_NumberOfSP_pt_barrel->GetYaxis()->FindBin(4.1));
+  TH1D* h_pt_3 = h_NumberOfSP_pt_barrel->ProjectionX("3",h_NumberOfSP_pt_barrel->GetYaxis()->FindBin(2.9),h_NumberOfSP_pt_barrel->GetYaxis()->FindBin(3.1));
+  TH1D* h_pt_2 = h_NumberOfSP_pt_barrel->ProjectionX("2",h_NumberOfSP_pt_barrel->GetYaxis()->FindBin(1.9),h_NumberOfSP_pt_barrel->GetYaxis()->FindBin(2.1));
+  TH1D* h_pt_1 = h_NumberOfSP_pt_barrel->ProjectionX("1",h_NumberOfSP_pt_barrel->GetYaxis()->FindBin(0.9),h_NumberOfSP_pt_barrel->GetYaxis()->FindBin(1.1));
+  TH1D* h_pt_0 = h_NumberOfSP_pt_barrel->ProjectionX("0",h_NumberOfSP_pt_barrel->GetYaxis()->FindBin(-0.9),h_NumberOfSP_pt_barrel->GetYaxis()->FindBin(0.1));
 
+  h_pt_5->Divide(h_pt_all);
+  h_pt_4->Divide(h_pt_all);
   h_pt_3->Divide(h_pt_all);
   h_pt_2->Divide(h_pt_all);
   h_pt_1->Divide(h_pt_all);
@@ -316,17 +339,31 @@ void RPC::DrawHist(TString pdf){
 
 
   THStack *hs_pt = new THStack("hs_pt",";pT [GeV];Fraction of number of SP");
+  h_pt_5->SetFillColor(kCyan);//あらかじめFillColorをSetしておく
+  h_pt_4->SetFillColor(kMagenta);//あらかじめFillColorをSetしておく
   h_pt_3->SetFillColor(kRed);//あらかじめFillColorをSetしておく
   h_pt_2->SetFillColor(kBlue);
   h_pt_1->SetFillColor(kGreen);
   h_pt_0->SetFillColor(kYellow);
+  hs_pt->Add(h_pt_5);
+  hs_pt->Add(h_pt_4);
   hs_pt->Add(h_pt_3);
   hs_pt->Add(h_pt_2);
   hs_pt->Add(h_pt_1);
   hs_pt->Add(h_pt_0);
 
   hs_pt->Draw();
+
+  TLegend *leg_pt = new TLegend(0.82,0.62,0.9,0.92);
+  leg_pt->AddEntry(h_pt_0," n=0","f");
+  leg_pt->AddEntry(h_pt_1," n=1","f");
+  leg_pt->AddEntry(h_pt_2," n=2","f");
+  leg_pt->AddEntry(h_pt_3," n=3","f");
+  leg_pt->AddEntry(h_pt_4," n=4","f");
+  leg_pt->AddEntry(h_pt_5," n=5","f");
+  leg_pt->Draw();
   c1 -> Print(pdf, "pdf" );
+  delete leg_pt;
 
   h_NumberOfSP_pass_barrel->Draw("colz");
   c1 -> Print(pdf, "pdf" );
@@ -458,6 +495,27 @@ int RPC::NumberOfSP(){
     number += 1;
   }
   if (abs(probe_mesSA_superPointZ_BO -> at(N50)) > 0. && probe_mesSA_superPointZ_BO -> at(N50) > -99990.) {
+    number += 1;
+  }
+  if (abs(probe_mesSA_superPointZ_EI -> at(N50)) > 0. && probe_mesSA_superPointZ_EI -> at(N50) > -99990.) {
+    number += 1;
+  }
+  if (abs(probe_mesSA_superPointZ_EM -> at(N50)) > 0. && probe_mesSA_superPointZ_EM -> at(N50) > -99990.) {
+    number += 1;
+  }
+  if (abs(probe_mesSA_superPointZ_EO -> at(N50)) > 0. && probe_mesSA_superPointZ_EO -> at(N50) > -99990.) {
+    number += 1;
+  }
+  if (abs(probe_mesSA_superPointZ_EE -> at(N50)) > 0. && probe_mesSA_superPointZ_EE -> at(N50) > -99990.) {
+    number += 1;
+  }
+  if (abs(probe_mesSA_superPointZ_CSC -> at(N50)) > 0. && probe_mesSA_superPointZ_CSC -> at(N50) > -99990.) {
+    number += 1;
+  }
+  if (abs(probe_mesSA_superPointZ_BEE -> at(N50)) > 0. && probe_mesSA_superPointZ_BEE -> at(N50) > -99990.) {
+    number += 1;
+  }
+  if (abs(probe_mesSA_superPointZ_BME -> at(N50)) > 0. && probe_mesSA_superPointZ_BME -> at(N50) > -99990.) {
     number += 1;
   }
   return number;
