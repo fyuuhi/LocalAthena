@@ -10,7 +10,6 @@
 #include "TFile.h"
 #include "THStack.h"
 #include "TStyle.h"
-#include "TCanvas.h"
 #include "TLatex.h"
 #include "TTree.h"
 #include "TChain.h"
@@ -55,26 +54,33 @@ int main(int argc, char **argv){
 
   RPC t_349014(tree1); 
 
-  t_349014.Loop(-1, 10000);
-  cout << "[INFO]: Loop SUCCESS" << endl;
+  //t_349014.Loop(-1, 10000);
+  //cout << "[INFO]: Loop SUCCESS" << endl;
 
-  t_349014.DrawHist("t_349014.pdf");
-  cout << "[INFO]: DrawHist SUCCESS" << endl;
+  //t_349014.DrawHist("t_349014.pdf");
+  //cout << "[INFO]: DrawHist SUCCESS" << endl;
 
   t_349014.End();
   cout << "[INFO]: End SUCCESS" << endl;
 
+  //for ( int i=0; i < 60;i++){
+  //  t_349014.Display(i);
+  //}
+  t_349014.Display(5);
 
   // tree2
   TChain *tree2 = new TChain("t_tap", "t_tap");
-  tree2 -> Add("/gpfs/fs2001/yfukuhar/data/hadd_data18_v3_mu26ivm_ok/user.yfukuhar.00349533.physics_Main.YFTAP.f929_m1955_jpzYFV3GRL_EXT0/hadd_data18_v3_mu26ivm_ok_user.yfukuhar.00349533.physics_Main.YFTAP.f929_m1955_jpzYFV3GRL_EXT0.root");
+  //tree2 -> Add("/gpfs/fs2001/yfukuhar/data/hadd_data18_v3_mu26ivm_ok/user.yfukuhar.00349533.physics_Main.YFTAP.f929_m1955_jpzYFV3GRL_EXT0/hadd_data18_v3_mu26ivm_ok_user.yfukuhar.00349533.physics_Main.YFTAP.f929_m1955_jpzYFV3GRL_EXT0.root");
+  //tree2 -> Add("/gpfs/home/yfukuhar/work/CalcEffTool/run/Output/_gpfs_home_yfukuhar_public_dataset_aod_mc16_13TeV.424108.Pythia8B_A14_CTEQ6L1_Jpsimu6.recon.AOD.e5441_s3126.21.0.32.noRpcHitWide.pool.root/mc16c_Jpsimu6_NoTag.root");
+  //tree2 -> Add("/gpfs/home/yfukuhar/work/CalcEffTool/run/Output/_gpfs_home_yfukuhar_public_dataset_aod_mc16_13TeV.424108.Pythia8B_A14_CTEQ6L1_Jpsimu6.recon.AOD.e5441_s3126.21.0.32.noRpcHit.pool.root/mc16c_Jpsimu6_NoTag.root");
+  tree2 -> Add("/gpfs/home/yfukuhar/work/CalcEffTool/run/Output/_gpfs_home_yfukuhar_public_dataset_aod_mc16_13TeV.424108.Pythia8B_A14_CTEQ6L1_Jpsimu6.recon.AOD.e5441_s3126.21.0.32.noRpcHitWide.pool.root/mc16c_Jpsimu6_NoTag.root");
 
   RPC t_349533(tree2); 
 
   t_349533.Loop(-1, 10000);
   cout << "[INFO]: Loop SUCCESS" << endl;
 
-  t_349533.DrawHist("t_349533.pdf");
+  t_349533.DrawHist("t_mc16c_noRpcHitWide.pdf");
   cout << "[INFO]: DrawHist SUCCESS" << endl;
 
   t_349014.End();
@@ -519,4 +525,41 @@ int RPC::NumberOfSP(){
     number += 1;
   }
   return number;
+}
+
+void RPC::Display(Long64_t entry)
+{
+  Long64_t tmp_nb;
+  Long64_t ientry = LoadTree(entry);
+  tmp_nb = fChain->GetEntry(entry);
+  
+  //cout << ientry << endl;
+  //cout << tmp_nb << endl;
+
+  TCanvas *c2 = new TCanvas("c2", "c2", 10, 10, 1020, 700);
+  c2->SetRightMargin(0.20);
+  c2->SetLeftMargin(0.23);
+  c2->SetBottomMargin(0.20);
+
+  cout << "size: " << (probe_mesSA_rpcHitEta -> at(N50)).size() << endl;
+  cout << "eta: " << (probe_mesSA_eta -> at(N50)) << endl;
+  //cout << probe_mesSA_pt -> at(N50) << endl;
+
+  //fChain->Show(entry);
+
+  const Int_t n = (probe_mesSA_rpcHitEta -> at(N50)).size();
+  TGraph *gr = new TGraph(n); //各点が(0,0)で初期化される
+
+  for (Int_t i=0;i<n;++i) {
+    gr->SetPoint(i , (probe_mesSA_rpcHitZ -> at(N50))[i] / 1000. , (probe_mesSA_rpcHitR -> at(N50))[i] / 1000.); //SetPoint(点番号,x座標,y座標)
+  }
+
+  gr -> GetXaxis()->SetLimits(0,20);
+  gr -> GetYaxis()->SetRangeUser(0,20);
+  gr->Draw("AP");
+  
+  c2->Print("test0531.pdf");
+
+  delete gr;
+  delete c2;
 }

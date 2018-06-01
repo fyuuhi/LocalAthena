@@ -32,9 +32,6 @@
 
 // Header file for the classes stored in the TTree if any.
 #include "vector"
-#include "vector"
-#include "vector"
-#include "vector"
 
 using namespace std;
 
@@ -438,6 +435,7 @@ public :
    virtual void     DrawHist(TString pdf);
    virtual Bool_t   Notify();
    virtual void     Show(Long64_t entry = -1);
+   virtual void     Display(Long64_t entry);
 };
 
 #endif
@@ -902,6 +900,8 @@ void RPC::Show(Long64_t entry)
    if (!fChain) return;
    fChain->Show(entry);
 }
+
+
 Int_t RPC::Cut(Long64_t entry)
 {
 // This function may be called from Loop.
