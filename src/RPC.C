@@ -58,7 +58,7 @@ int main(int argc, char **argv){
   t_349014.Loop(-1, 10000);
   cout << "[INFO]: Loop SUCCESS" << endl;
 
-  t_349014.DrawHist("t_349533_LumiBlock_GRL_BAD.pdf");
+  t_349014.DrawHist("../plot/t_349533_LumiBlock_GRL_GOOD.pdf");
   cout << "[INFO]: DrawHist SUCCESS" << endl;
 
   t_349014.End();
@@ -81,7 +81,7 @@ int main(int argc, char **argv){
   //t_349533.Loop(-1, 10000);
   //cout << "[INFO]: Loop SUCCESS" << endl;
 
-  //t_349533.DrawHist("t_mc16c_noRpcHitWide.pdf");
+  //t_349533.DrawHist("../plot/t_mc16c_noRpcHitWide.pdf");
   //cout << "[INFO]: DrawHist SUCCESS" << endl;
 
   //t_349014.End();
@@ -197,7 +197,7 @@ void RPC::Loop( int Nevents, int DisplayNumber )
           }
 
           // Check GRL
-          if (GRLlist(LumiBlock)){
+          if (!GRLlist(LumiBlock)){
             continue;
           }
 
@@ -300,7 +300,7 @@ void RPC::DrawHist(TString pdf){
   h_LumiBlock_0->Divide(h_LumiBlock_all);
 
 
-  THStack *hs_LumiBlock = new THStack("hs_LumiBlock",";LumiBlock;Fraction of number of SP");
+  THStack *hs_LumiBlock = new THStack("hs_LumiBlock",";LumiBlock;Fraction of number of SPs");
   h_LumiBlock_5->SetFillColor(kCyan);//あらかじめFillColorをSetしておく
   h_LumiBlock_4->SetFillColor(kMagenta);//あらかじめFillColorをSetしておく
   h_LumiBlock_3->SetFillColor(kRed);//あらかじめFillColorをSetしておく
@@ -351,7 +351,7 @@ void RPC::DrawHist(TString pdf){
   h_eta_0->Divide(h_eta_all);
 
 
-  THStack *hs_eta = new THStack("hs_eta",";eta;Fraction of number of SP");
+  THStack *hs_eta = new THStack("hs_eta",";eta;Fraction of number of SPs");
   h_eta_5->SetFillColor(kCyan);//あらかじめFillColorをSetしておく
   h_eta_4->SetFillColor(kMagenta);//あらかじめFillColorをSetしておく
   h_eta_3->SetFillColor(kRed);//あらかじめFillColorをSetしておく
@@ -402,7 +402,7 @@ void RPC::DrawHist(TString pdf){
   h_pt_0->Divide(h_pt_all);
 
 
-  THStack *hs_pt = new THStack("hs_pt",";pT [GeV];Fraction of number of SP");
+  THStack *hs_pt = new THStack("hs_pt",";pT [GeV];Fraction of number of SPs");
   h_pt_5->SetFillColor(kCyan);//あらかじめFillColorをSetしておく
   h_pt_4->SetFillColor(kMagenta);//あらかじめFillColorをSetしておく
   h_pt_3->SetFillColor(kRed);//あらかじめFillColorをSetしておく
@@ -448,7 +448,7 @@ void RPC::DrawHist(TString pdf){
   h_pass_1->Divide(h_pass_all);
   h_pass_0->Divide(h_pass_all);
 
-  THStack *hs_pass = new THStack("hs_pass",";pass;Fraction of number of SP");
+  THStack *hs_pass = new THStack("hs_pass",";pass;Fraction of number of SPs");
   h_pass_3->SetFillColor(kRed);//あらかじめFillColorをSetしておく
   h_pass_2->SetFillColor(kBlue);
   h_pass_1->SetFillColor(kGreen);
@@ -616,7 +616,7 @@ void RPC::Display(Long64_t entry)
   gr -> GetYaxis()->SetRangeUser(0,20);
   gr->Draw("AP");
   
-  c2->Print("test0531.pdf");
+  c2->Print("../plot/test0531.pdf");
 
   delete gr;
   delete c2;
