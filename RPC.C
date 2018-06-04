@@ -58,7 +58,7 @@ int main(int argc, char **argv){
   t_349014.Loop(-1, 10000);
   cout << "[INFO]: Loop SUCCESS" << endl;
 
-  t_349014.DrawHist("t_349533_LumiBlock.pdf");
+  t_349014.DrawHist("t_349533_LumiBlock_GRL_BAD.pdf");
   cout << "[INFO]: DrawHist SUCCESS" << endl;
 
   t_349014.End();
@@ -197,11 +197,11 @@ void RPC::Loop( int Nevents, int DisplayNumber )
           }
 
           // Check GRL
-          //if (GRLlist(LumiBlock)){
-          //  continue;
-          //}
+          if (GRLlist(LumiBlock)){
+            continue;
+          }
 
-          h_NumberOfSP_eta->Fill(probe_eta, NumberOfSP());
+          h_NumberOfSP_eta->Fill(probe_charge*probe_eta, NumberOfSP());
           if (abs(probe_eta) < 1.05){
             //cout << NumberOfSP() << endl;
             h_NumberOfSP_LumiBlock->Fill(LumiBlock, NumberOfSP());
