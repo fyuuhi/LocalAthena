@@ -32,6 +32,7 @@ using namespace std;
 #include "/gpfs/home/yfukuhar/RootUtils/rootlogon.C"
 
 double Res(double param1, double param2);
+bool GRLlist(int LumiBlock);
 
 
 //==================================================================
@@ -49,16 +50,16 @@ int main(int argc, char **argv){
 
   // tree1
   TChain *tree1 = new TChain("t_tap", "t_tap");
-  tree1 -> Add("/gpfs/fs2001/yfukuhar/data/hadd_data18_v3_mu26ivm_ok/user.yfukuhar.00349014.physics_Main.YFTAP.f926_m1955_jpzYFV3GRL_EXT0/hadd_data18_v3_mu26ivm_ok_user.yfukuhar.00349014.physics_Main.YFTAP.f926_m1955_jpzYFV3GRL_EXT0.root");
+  tree1 -> Add("/gpfs/fs2001/yfukuhar/data/user.yfukuhar.00349533.physics_Main.YFTAP.f929_m1955_jpzYFV4_GRL_F_tree_v1_349533_EXT0/hadd/user.yfukuhar.00349533.physics_Main.YFTAP.f929_m1955_jpzYFV4_GRL_F_tree_v1_349533_EXT0.root");
   //tree1 -> Add("/gpfs/fs2001/yfukuhar/CalcEffPlotMakerOrigin/data/mc16c_Jpsimu6_default/mc16c_Jpsimu6_default.root");
 
   RPC t_349014(tree1); 
 
-  //t_349014.Loop(-1, 10000);
-  //cout << "[INFO]: Loop SUCCESS" << endl;
+  t_349014.Loop(-1, 10000);
+  cout << "[INFO]: Loop SUCCESS" << endl;
 
-  //t_349014.DrawHist("t_349014.pdf");
-  //cout << "[INFO]: DrawHist SUCCESS" << endl;
+  t_349014.DrawHist("t_349533_LumiBlock.pdf");
+  cout << "[INFO]: DrawHist SUCCESS" << endl;
 
   t_349014.End();
   cout << "[INFO]: End SUCCESS" << endl;
@@ -66,29 +67,29 @@ int main(int argc, char **argv){
   //for ( int i=0; i < 60;i++){
   //  t_349014.Display(i);
   //}
-  t_349014.Display(5);
+  //t_349014.Display(5);
 
   // tree2
-  TChain *tree2 = new TChain("t_tap", "t_tap");
-  //tree2 -> Add("/gpfs/fs2001/yfukuhar/data/hadd_data18_v3_mu26ivm_ok/user.yfukuhar.00349533.physics_Main.YFTAP.f929_m1955_jpzYFV3GRL_EXT0/hadd_data18_v3_mu26ivm_ok_user.yfukuhar.00349533.physics_Main.YFTAP.f929_m1955_jpzYFV3GRL_EXT0.root");
+  //TChain *tree2 = new TChain("t_tap", "t_tap");
+  ////tree2 -> Add("/gpfs/fs2001/yfukuhar/data/hadd_data18_v3_mu26ivm_ok/user.yfukuhar.00349533.physics_Main.YFTAP.f929_m1955_jpzYFV3GRL_EXT0/hadd_data18_v3_mu26ivm_ok_user.yfukuhar.00349533.physics_Main.YFTAP.f929_m1955_jpzYFV3GRL_EXT0.root");
+  ////tree2 -> Add("/gpfs/home/yfukuhar/work/CalcEffTool/run/Output/_gpfs_home_yfukuhar_public_dataset_aod_mc16_13TeV.424108.Pythia8B_A14_CTEQ6L1_Jpsimu6.recon.AOD.e5441_s3126.21.0.32.noRpcHitWide.pool.root/mc16c_Jpsimu6_NoTag.root");
+  ////tree2 -> Add("/gpfs/home/yfukuhar/work/CalcEffTool/run/Output/_gpfs_home_yfukuhar_public_dataset_aod_mc16_13TeV.424108.Pythia8B_A14_CTEQ6L1_Jpsimu6.recon.AOD.e5441_s3126.21.0.32.noRpcHit.pool.root/mc16c_Jpsimu6_NoTag.root");
   //tree2 -> Add("/gpfs/home/yfukuhar/work/CalcEffTool/run/Output/_gpfs_home_yfukuhar_public_dataset_aod_mc16_13TeV.424108.Pythia8B_A14_CTEQ6L1_Jpsimu6.recon.AOD.e5441_s3126.21.0.32.noRpcHitWide.pool.root/mc16c_Jpsimu6_NoTag.root");
-  //tree2 -> Add("/gpfs/home/yfukuhar/work/CalcEffTool/run/Output/_gpfs_home_yfukuhar_public_dataset_aod_mc16_13TeV.424108.Pythia8B_A14_CTEQ6L1_Jpsimu6.recon.AOD.e5441_s3126.21.0.32.noRpcHit.pool.root/mc16c_Jpsimu6_NoTag.root");
-  tree2 -> Add("/gpfs/home/yfukuhar/work/CalcEffTool/run/Output/_gpfs_home_yfukuhar_public_dataset_aod_mc16_13TeV.424108.Pythia8B_A14_CTEQ6L1_Jpsimu6.recon.AOD.e5441_s3126.21.0.32.noRpcHitWide.pool.root/mc16c_Jpsimu6_NoTag.root");
 
-  RPC t_349533(tree2); 
+  //RPC t_349533(tree2); 
 
-  t_349533.Loop(-1, 10000);
-  cout << "[INFO]: Loop SUCCESS" << endl;
+  //t_349533.Loop(-1, 10000);
+  //cout << "[INFO]: Loop SUCCESS" << endl;
 
-  t_349533.DrawHist("t_mc16c_noRpcHitWide.pdf");
-  cout << "[INFO]: DrawHist SUCCESS" << endl;
+  //t_349533.DrawHist("t_mc16c_noRpcHitWide.pdf");
+  //cout << "[INFO]: DrawHist SUCCESS" << endl;
 
-  t_349014.End();
-  cout << "[INFO]: End SUCCESS" << endl;
+  //t_349014.End();
+  //cout << "[INFO]: End SUCCESS" << endl;
 
 
-  delete tree1;
-  delete tree2;
+  //delete tree1;
+  //delete tree2;
 
   return 0;
 }
@@ -195,9 +196,15 @@ void RPC::Loop( int Nevents, int DisplayNumber )
             }
           }
 
+          // Check GRL
+          //if (GRLlist(LumiBlock)){
+          //  continue;
+          //}
+
           h_NumberOfSP_eta->Fill(probe_eta, NumberOfSP());
           if (abs(probe_eta) < 1.05){
             //cout << NumberOfSP() << endl;
+            h_NumberOfSP_LumiBlock->Fill(LumiBlock, NumberOfSP());
             h_NumberOfSP_pt_barrel->Fill(probe_pt/1000., NumberOfSP());
             h_NumberOfSP_pass_barrel->Fill(probe_mesSA_pass->at(N50), NumberOfSP());
           }
@@ -269,6 +276,57 @@ void RPC::DrawHist(TString pdf){
   c1->SetBottomMargin(0.20);
 
   c1 -> Print( pdf + "[", "pdf" );
+
+  h_NumberOfSP_LumiBlock->Draw("colz");
+  c1 -> Print(pdf, "pdf" );
+  TProfile *pf_LumiBlock = h_NumberOfSP_LumiBlock->ProfileX();
+  pf_LumiBlock->Draw();
+  pf_LumiBlock->GetYaxis()->SetTitle("Average number of SP");
+  c1 -> Print(pdf, "pdf" );
+
+  TH1D* h_LumiBlock_all = h_NumberOfSP_LumiBlock->ProjectionX("_all");
+  TH1D* h_LumiBlock_5 = h_NumberOfSP_LumiBlock->ProjectionX("5",h_NumberOfSP_LumiBlock->GetYaxis()->FindBin(4.9),h_NumberOfSP_LumiBlock->GetYaxis()->FindBin(5.1));
+  TH1D* h_LumiBlock_4 = h_NumberOfSP_LumiBlock->ProjectionX("4",h_NumberOfSP_LumiBlock->GetYaxis()->FindBin(3.9),h_NumberOfSP_LumiBlock->GetYaxis()->FindBin(4.1));
+  TH1D* h_LumiBlock_3 = h_NumberOfSP_LumiBlock->ProjectionX("3",h_NumberOfSP_LumiBlock->GetYaxis()->FindBin(2.9),h_NumberOfSP_LumiBlock->GetYaxis()->FindBin(3.1));
+  TH1D* h_LumiBlock_2 = h_NumberOfSP_LumiBlock->ProjectionX("2",h_NumberOfSP_LumiBlock->GetYaxis()->FindBin(1.9),h_NumberOfSP_LumiBlock->GetYaxis()->FindBin(2.1));
+  TH1D* h_LumiBlock_1 = h_NumberOfSP_LumiBlock->ProjectionX("1",h_NumberOfSP_LumiBlock->GetYaxis()->FindBin(0.9),h_NumberOfSP_LumiBlock->GetYaxis()->FindBin(1.1));
+  TH1D* h_LumiBlock_0 = h_NumberOfSP_LumiBlock->ProjectionX("0",h_NumberOfSP_LumiBlock->GetYaxis()->FindBin(-0.9),h_NumberOfSP_LumiBlock->GetYaxis()->FindBin(0.1));
+
+  h_LumiBlock_5->Divide(h_LumiBlock_all);
+  h_LumiBlock_4->Divide(h_LumiBlock_all);
+  h_LumiBlock_3->Divide(h_LumiBlock_all);
+  h_LumiBlock_2->Divide(h_LumiBlock_all);
+  h_LumiBlock_1->Divide(h_LumiBlock_all);
+  h_LumiBlock_0->Divide(h_LumiBlock_all);
+
+
+  THStack *hs_LumiBlock = new THStack("hs_LumiBlock",";LumiBlock;Fraction of number of SP");
+  h_LumiBlock_5->SetFillColor(kCyan);//あらかじめFillColorをSetしておく
+  h_LumiBlock_4->SetFillColor(kMagenta);//あらかじめFillColorをSetしておく
+  h_LumiBlock_3->SetFillColor(kRed);//あらかじめFillColorをSetしておく
+  h_LumiBlock_2->SetFillColor(kBlue);
+  h_LumiBlock_1->SetFillColor(kGreen);
+  h_LumiBlock_0->SetFillColor(kYellow);
+  hs_LumiBlock->Add(h_LumiBlock_5);
+  hs_LumiBlock->Add(h_LumiBlock_4);
+  hs_LumiBlock->Add(h_LumiBlock_3);
+  hs_LumiBlock->Add(h_LumiBlock_2);
+  hs_LumiBlock->Add(h_LumiBlock_1);
+  hs_LumiBlock->Add(h_LumiBlock_0);
+
+  hs_LumiBlock->Draw();
+
+  TLegend *leg_LumiBlock = new TLegend(0.82,0.62,0.9,0.92);
+  leg_LumiBlock->AddEntry(h_LumiBlock_0," n=0","f");
+  leg_LumiBlock->AddEntry(h_LumiBlock_1," n=1","f");
+  leg_LumiBlock->AddEntry(h_LumiBlock_2," n=2","f");
+  leg_LumiBlock->AddEntry(h_LumiBlock_3," n=3","f");
+  leg_LumiBlock->AddEntry(h_LumiBlock_4," n=4","f");
+  leg_LumiBlock->AddEntry(h_LumiBlock_5," n=5","f");
+  leg_LumiBlock->Draw();
+  c1 -> Print(pdf, "pdf" );
+  delete leg_LumiBlock;
+
 
   h_NumberOfSP_eta->Draw("colz");
   c1 -> Print(pdf, "pdf" );
@@ -562,4 +620,12 @@ void RPC::Display(Long64_t entry)
 
   delete gr;
   delete c2;
+}
+
+bool GRLlist(int LumiBlock){
+ bool lb_1 = (LumiBlock > 110 && LumiBlock < 124);
+ bool lb_2= (LumiBlock > 126 && LumiBlock < 130);
+ bool lb_3= (LumiBlock > 169 && LumiBlock < 239);
+
+ return (lb_1 || lb_2 || lb_3);
 }

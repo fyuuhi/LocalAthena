@@ -45,6 +45,9 @@ public :
    const int N50 = 14;
    const int NTagProc = 3;
    // Declaration of leaf types
+   Int_t EventNumber;
+   Int_t RunNumber;
+   Int_t LumiBlock;
    Int_t           mes_n;
    vector<string>  *mes_name;
    Double_t        sumReqdRL1;
@@ -221,6 +224,9 @@ public :
    vector<double>  *probe_mesEF_phi;
 
    // List of branches
+   TBranch        *b_EventNumber;   //!
+   TBranch        *b_RunNumber;   //!
+   TBranch        *b_LumiBlock;   //!
    TBranch        *b_mes_n;   //!
    TBranch        *b_mes_name;   //!
    TBranch        *b_sumReqdRL1;   //!
@@ -418,6 +424,7 @@ public :
    TH2F *h_residualRZ_BOS; //!
    TH2F *h_residualRZ_BOL; //!
 
+   TH2F *h_NumberOfSP_LumiBlock; //!
    TH2F *h_NumberOfSP_eta; //!
    TH2F *h_NumberOfSP_pt_barrel; //!
    TH2F *h_NumberOfSP_pass_barrel; //!
@@ -604,6 +611,9 @@ void RPC::Init(TTree *tree)
    fCurrent = -1;
    fChain->SetMakeClass(1);
 
+   fChain->SetBranchAddress("EventNumber", &EventNumber, &b_EventNumber);
+   fChain->SetBranchAddress("RunNumber", &RunNumber, &b_RunNumber);
+   fChain->SetBranchAddress("LumiBlock", &LumiBlock, &b_LumiBlock);
    fChain->SetBranchAddress("mes_n", &mes_n, &b_mes_n);
    fChain->SetBranchAddress("mes_name", &mes_name, &b_mes_name);
    fChain->SetBranchAddress("sumReqdRL1", &sumReqdRL1, &b_sumReqdRL1);
@@ -806,6 +816,7 @@ void RPC::InitHist(){
    h_residualRZ_BOS = new TH2F("h_residualRZ_BOS", "h_residualRZ_BOS;Z;R;Counts", 100, -0.1, 0.1, 100, -0.1, 0.1);
    h_residualRZ_BOL = new TH2F("h_residualRZ_BOL", "h_residualRZ_BOL;Z;R;Counts", 100, -0.1, 0.1, 100, -0.1, 0.1);
 
+   h_NumberOfSP_LumiBlock = new TH2F("h_NumberOfSP_LumiBlock", "h_NumberOfSP_LumiBlock;LumiBlock;Number;Counts", 100, 0, 500, 100, 0, 5);
    h_NumberOfSP_eta = new TH2F("h_NumberOfSP_eta", "h_NumberOfSP_eta;eta;Number;Counts", 100, -2.5, 2.5, 100, 0, 5);
    h_NumberOfSP_pt_barrel = new TH2F("h_NumberOfSP_pt_barrel", "h_NumberOfSP_pt_barrel;pT[GeV];Number;Counts", 100, 0, 100, 100, 0, 5);
    h_NumberOfSP_pass_barrel = new TH2F("h_NumberOfSP_pass_barrel", "h_NumberOfSP_pass_barrel;pass;Number;Counts", 100, -3, 2, 100, 0, 5);
