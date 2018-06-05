@@ -426,6 +426,7 @@ public :
 
    TH2F *h_NumberOfSP_LumiBlock; //!
    TH2F *h_NumberOfSP_eta; //!
+   TH2F *h_NumberOfSP_qeta; //!
    TH2F *h_NumberOfSP_pt_barrel; //!
    TH2F *h_NumberOfSP_pass_barrel; //!
 
@@ -818,6 +819,7 @@ void RPC::InitHist(){
 
    h_NumberOfSP_LumiBlock = new TH2F("h_NumberOfSP_LumiBlock", "h_NumberOfSP_LumiBlock;LumiBlock;Number;Counts", 100, 0, 500, 100, 0, 5);
    h_NumberOfSP_eta = new TH2F("h_NumberOfSP_eta", "h_NumberOfSP_eta;eta;Number;Counts", 100, -2.5, 2.5, 100, 0, 5);
+   h_NumberOfSP_qeta = new TH2F("h_NumberOfSP_qeta", "h_NumberOfSP_qeta;qeta;Number;Counts", 100, -2.5, 2.5, 100, 0, 5);
    h_NumberOfSP_pt_barrel = new TH2F("h_NumberOfSP_pt_barrel", "h_NumberOfSP_pt_barrel;pT[GeV];Number;Counts", 100, 0, 100, 100, 0, 5);
    h_NumberOfSP_pass_barrel = new TH2F("h_NumberOfSP_pass_barrel", "h_NumberOfSP_pass_barrel;pass;Number;Counts", 100, -3, 2, 100, 0, 5);
 
@@ -883,6 +885,9 @@ void RPC::End(){
 
   if(h_NumberOfSP_eta != 0) {
     delete h_NumberOfSP_eta; h_NumberOfSP_eta = 0;
+  }
+  if(h_NumberOfSP_qeta != 0) {
+    delete h_NumberOfSP_qeta; h_NumberOfSP_qeta = 0;
   }
   if(h_NumberOfSP_pt_barrel != 0) {
     delete h_NumberOfSP_pt_barrel; h_NumberOfSP_pt_barrel = 0;

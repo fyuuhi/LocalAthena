@@ -201,7 +201,8 @@ void RPC::Loop( int Nevents, int DisplayNumber )
             continue;
           }
 
-          h_NumberOfSP_eta->Fill(probe_charge*probe_eta, NumberOfSP());
+          h_NumberOfSP_eta->Fill(probe_eta, NumberOfSP());
+          h_NumberOfSP_qeta->Fill(probe_charge*probe_eta, NumberOfSP());
           if (abs(probe_eta) < 1.05){
             //cout << NumberOfSP() << endl;
             h_NumberOfSP_LumiBlock->Fill(LumiBlock, NumberOfSP());
@@ -378,6 +379,55 @@ void RPC::DrawHist(TString pdf){
   c1 -> Print(pdf, "pdf" );
   delete leg_eta;
 
+  h_NumberOfSP_qeta->Draw("colz");
+  c1 -> Print(pdf, "pdf" );
+  TProfile *pf_qeta = h_NumberOfSP_qeta->ProfileX();
+  pf_qeta->Draw();
+  pf_qeta->GetYaxis()->SetTitle("Average number of SP");
+  c1 -> Print(pdf, "pdf" );
+
+  TH1D* h_qeta_all = h_NumberOfSP_qeta->ProjectionX("_all");
+  TH1D* h_qeta_5 = h_NumberOfSP_qeta->ProjectionX("5",h_NumberOfSP_qeta->GetYaxis()->FindBin(4.9),h_NumberOfSP_qeta->GetYaxis()->FindBin(5.1));
+  TH1D* h_qeta_4 = h_NumberOfSP_qeta->ProjectionX("4",h_NumberOfSP_qeta->GetYaxis()->FindBin(3.9),h_NumberOfSP_qeta->GetYaxis()->FindBin(4.1));
+  TH1D* h_qeta_3 = h_NumberOfSP_qeta->ProjectionX("3",h_NumberOfSP_qeta->GetYaxis()->FindBin(2.9),h_NumberOfSP_qeta->GetYaxis()->FindBin(3.1));
+  TH1D* h_qeta_2 = h_NumberOfSP_qeta->ProjectionX("2",h_NumberOfSP_qeta->GetYaxis()->FindBin(1.9),h_NumberOfSP_qeta->GetYaxis()->FindBin(2.1));
+  TH1D* h_qeta_1 = h_NumberOfSP_qeta->ProjectionX("1",h_NumberOfSP_qeta->GetYaxis()->FindBin(0.9),h_NumberOfSP_qeta->GetYaxis()->FindBin(1.1));
+  TH1D* h_qeta_0 = h_NumberOfSP_qeta->ProjectionX("0",h_NumberOfSP_qeta->GetYaxis()->FindBin(-0.9),h_NumberOfSP_qeta->GetYaxis()->FindBin(0.1));
+
+  h_qeta_5->Divide(h_qeta_all);
+  h_qeta_4->Divide(h_qeta_all);
+  h_qeta_3->Divide(h_qeta_all);
+  h_qeta_2->Divide(h_qeta_all);
+  h_qeta_1->Divide(h_qeta_all);
+  h_qeta_0->Divide(h_qeta_all);
+
+
+  THStack *hs_qeta = new THStack("hs_qeta",";qeta;Fraction of number of SPs");
+  h_qeta_5->SetFillColor(kCyan);//あらかじめFillColorをSetしておく
+  h_qeta_4->SetFillColor(kMagenta);//あらかじめFillColorをSetしておく
+  h_qeta_3->SetFillColor(kRed);//あらかじめFillColorをSetしておく
+  h_qeta_2->SetFillColor(kBlue);
+  h_qeta_1->SetFillColor(kGreen);
+  h_qeta_0->SetFillColor(kYellow);
+  hs_qeta->Add(h_qeta_5);
+  hs_qeta->Add(h_qeta_4);
+  hs_qeta->Add(h_qeta_3);
+  hs_qeta->Add(h_qeta_2);
+  hs_qeta->Add(h_qeta_1);
+  hs_qeta->Add(h_qeta_0);
+
+  hs_qeta->Draw();
+
+  TLegend *leg_qeta = new TLegend(0.82,0.62,0.9,0.92);
+  leg_qeta->AddEntry(h_qeta_0," n=0","f");
+  leg_qeta->AddEntry(h_qeta_1," n=1","f");
+  leg_qeta->AddEntry(h_qeta_2," n=2","f");
+  leg_qeta->AddEntry(h_qeta_3," n=3","f");
+  leg_qeta->AddEntry(h_qeta_4," n=4","f");
+  leg_qeta->AddEntry(h_qeta_5," n=5","f");
+  leg_qeta->Draw();
+  c1 -> Print(pdf, "pdf" );
+  delete leg_qeta;
 
   h_NumberOfSP_pt_barrel->Draw("colz");
   c1 -> Print(pdf, "pdf" );
