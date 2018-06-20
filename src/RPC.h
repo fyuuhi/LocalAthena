@@ -197,6 +197,8 @@ public :
    vector<double>  *probe_mesSA_superPointChi2_CSC;
    vector<double>  *probe_mesSA_superPointChi2_BEE;
    vector<double>  *probe_mesSA_superPointChi2_BME;
+   vector<int>  *probe_mesSA_isRpcFailure;
+   vector<int>  *probe_mesSA_isTgcFailure;
    vector<vector<float> > *probe_mesSA_rpcHitX;
    vector<vector<float> > *probe_mesSA_rpcHitY;
    vector<vector<float> > *probe_mesSA_rpcHitZ;
@@ -205,6 +207,12 @@ public :
    vector<vector<double> > *probe_mesSA_rpcHitPhi;
    vector<vector<double> > *probe_mesSA_rpcHitStationNumber;
    vector<vector<string> > *probe_mesSA_rpcHitStationName;
+   vector<vector<int> > *probe_mesSA_mdtHitIsOutlier;
+   vector<vector<int> > *probe_mesSA_mdtHitChamber;
+   vector<vector<float> > *probe_mesSA_mdtHitR;
+   vector<vector<float> > *probe_mesSA_mdtHitZ;
+   vector<vector<float> > *probe_mesSA_mdtHitPhi;
+   vector<vector<float> > *probe_mesSA_mdtHitResidual;
    vector<int>     *probe_mesCB_pass;
    vector<double>  *probe_mesCB_dR;
    vector<double>  *probe_mesCB_tpdR;
@@ -376,6 +384,8 @@ public :
    TBranch        *b_probe_mesSA_superPointChi2_CSC;   //!
    TBranch        *b_probe_mesSA_superPointChi2_BEE;   //!
    TBranch        *b_probe_mesSA_superPointChi2_BME;   //!
+   TBranch        *b_probe_mesSA_isRpcFailure;   //!
+   TBranch        *b_probe_mesSA_isTgcFailure;   //!
    TBranch        *b_probe_mesSA_rpcHitX;   //!
    TBranch        *b_probe_mesSA_rpcHitY;   //!
    TBranch        *b_probe_mesSA_rpcHitZ;   //!
@@ -384,6 +394,12 @@ public :
    TBranch        *b_probe_mesSA_rpcHitPhi;   //!
    TBranch        *b_probe_mesSA_rpcHitStationNumber;   //!
    TBranch        *b_probe_mesSA_rpcHitStationName;   //!
+   TBranch *b_probe_mesSA_mdtHitIsOutlier; //!
+   TBranch *b_probe_mesSA_mdtHitChamber; //!
+   TBranch *b_probe_mesSA_mdtHitR; //!
+   TBranch *b_probe_mesSA_mdtHitZ; //!
+   TBranch *b_probe_mesSA_mdtHitPhi; //!
+   TBranch *b_probe_mesSA_mdtHitResidual; //!
    TBranch        *b_probe_mesCB_pass;   //!
    TBranch        *b_probe_mesCB_dR;   //!
    TBranch        *b_probe_mesCB_tpdR;   //!
@@ -403,6 +419,7 @@ public :
    TBranch        *b_probe_mesEF_phi;   //!
 
    // Histgrams
+
    TH2F *h_superPointRZ_BIS; //!
    TH2F *h_superPointRZ_BIL; //!
    TH2F *h_superPointRZ_BMS; //!
@@ -429,6 +446,31 @@ public :
    TH2F *h_NumberOfSP_qeta; //!
    TH2F *h_NumberOfSP_pt_barrel; //!
    TH2F *h_NumberOfSP_pass_barrel; //!
+
+   TH2F *h_NumberOfMdt_LumiBlock; //!
+   TH2F *h_NumberOfMdt_LumiBlock_BI; //!
+   TH2F *h_NumberOfMdt_LumiBlock_BM; //!
+   TH2F *h_NumberOfMdt_LumiBlock_BO; //!
+
+   TH2F *h_NumberOfMdt_eta; //!
+   TH2F *h_NumberOfMdt_eta_BI; //!
+   TH2F *h_NumberOfMdt_eta_BM; //!
+   TH2F *h_NumberOfMdt_eta_BO; //!
+
+   TH2F *h_NumberOfMdt_qeta; //!
+   TH2F *h_NumberOfMdt_qeta_BI; //!
+   TH2F *h_NumberOfMdt_qeta_BM; //!
+   TH2F *h_NumberOfMdt_qeta_BO; //!
+
+   TH2F *h_NumberOfMdt_pt_barrel; //!
+   TH2F *h_NumberOfMdt_pt_barrel_BI; //!
+   TH2F *h_NumberOfMdt_pt_barrel_BM; //!
+   TH2F *h_NumberOfMdt_pt_barrel_BO; //!
+
+   TH2F *h_ResidualMdt_eta; //!
+   TH2F *h_ResidualMdt_eta_BI; //!
+   TH2F *h_ResidualMdt_eta_BM; //!
+   TH2F *h_ResidualMdt_eta_BO; //!
 
    RPC(TChain *tree);
    virtual ~RPC();
@@ -581,6 +623,8 @@ void RPC::Init(TTree *tree)
    probe_mesSA_superPointChi2_CSC = 0;
    probe_mesSA_superPointChi2_BEE = 0;
    probe_mesSA_superPointChi2_BME = 0;
+   probe_mesSA_isRpcFailure = 0;
+   probe_mesSA_isTgcFailure = 0;
    probe_mesSA_rpcHitX = 0;
    probe_mesSA_rpcHitY = 0;
    probe_mesSA_rpcHitZ = 0;
@@ -589,6 +633,12 @@ void RPC::Init(TTree *tree)
    probe_mesSA_rpcHitPhi = 0;
    probe_mesSA_rpcHitStationNumber = 0;
    probe_mesSA_rpcHitStationName = 0;
+   probe_mesSA_mdtHitIsOutlier = 0;
+   probe_mesSA_mdtHitChamber = 0;
+   probe_mesSA_mdtHitR = 0;
+   probe_mesSA_mdtHitZ = 0;
+   probe_mesSA_mdtHitPhi = 0;
+   probe_mesSA_mdtHitResidual = 0;
    probe_mesCB_pass = 0;
    probe_mesCB_dR = 0;
    probe_mesCB_tpdR = 0;
@@ -764,6 +814,8 @@ void RPC::Init(TTree *tree)
    fChain->SetBranchAddress("probe_mesSA_superPointChi2_CSC", &probe_mesSA_superPointChi2_CSC, &b_probe_mesSA_superPointChi2_CSC);
    fChain->SetBranchAddress("probe_mesSA_superPointChi2_BEE", &probe_mesSA_superPointChi2_BEE, &b_probe_mesSA_superPointChi2_BEE);
    fChain->SetBranchAddress("probe_mesSA_superPointChi2_BME", &probe_mesSA_superPointChi2_BME, &b_probe_mesSA_superPointChi2_BME);
+   fChain->SetBranchAddress("probe_mesSA_isRpcFailure", &probe_mesSA_isRpcFailure, &b_probe_mesSA_isRpcFailure);
+   fChain->SetBranchAddress("probe_mesSA_isTgcFailure", &probe_mesSA_isTgcFailure, &b_probe_mesSA_isTgcFailure);
    fChain->SetBranchAddress("probe_mesSA_rpcHitX", &probe_mesSA_rpcHitX, &b_probe_mesSA_rpcHitX);
    fChain->SetBranchAddress("probe_mesSA_rpcHitY", &probe_mesSA_rpcHitY, &b_probe_mesSA_rpcHitY);
    fChain->SetBranchAddress("probe_mesSA_rpcHitZ", &probe_mesSA_rpcHitZ, &b_probe_mesSA_rpcHitZ);
@@ -771,7 +823,12 @@ void RPC::Init(TTree *tree)
    fChain->SetBranchAddress("probe_mesSA_rpcHitEta", &probe_mesSA_rpcHitEta, &b_probe_mesSA_rpcHitEta);
    fChain->SetBranchAddress("probe_mesSA_rpcHitPhi", &probe_mesSA_rpcHitPhi, &b_probe_mesSA_rpcHitPhi);
    fChain->SetBranchAddress("probe_mesSA_rpcHitStationNumber", &probe_mesSA_rpcHitStationNumber, &b_probe_mesSA_rpcHitStationNumber);
-   fChain->SetBranchAddress("probe_mesSA_rpcHitStationName", &probe_mesSA_rpcHitStationName, &b_probe_mesSA_rpcHitStationName);
+   fChain->SetBranchAddress("probe_mesSA_mdtHitIsOutlier",     &probe_mesSA_mdtHitIsOutlier,     &b_probe_mesSA_mdtHitIsOutlier);
+   fChain->SetBranchAddress("probe_mesSA_mdtHitChamber",       &probe_mesSA_mdtHitChamber,       &b_probe_mesSA_mdtHitChamber);
+   fChain->SetBranchAddress("probe_mesSA_mdtHitR",             &probe_mesSA_mdtHitR,             &b_probe_mesSA_mdtHitR);
+   fChain->SetBranchAddress("probe_mesSA_mdtHitZ",             &probe_mesSA_mdtHitZ,             &b_probe_mesSA_mdtHitZ);
+   fChain->SetBranchAddress("probe_mesSA_mdtHitPhi",           &probe_mesSA_mdtHitPhi,           &b_probe_mesSA_mdtHitPhi);
+   fChain->SetBranchAddress("probe_mesSA_mdtHitResidual",      &probe_mesSA_mdtHitResidual,      &b_probe_mesSA_mdtHitResidual);
    fChain->SetBranchAddress("probe_mesCB_pass", &probe_mesCB_pass, &b_probe_mesCB_pass);
    fChain->SetBranchAddress("probe_mesCB_dR", &probe_mesCB_dR, &b_probe_mesCB_dR);
    fChain->SetBranchAddress("probe_mesCB_tpdR", &probe_mesCB_tpdR, &b_probe_mesCB_tpdR);
@@ -817,11 +874,36 @@ void RPC::InitHist(){
    h_residualRZ_BOS = new TH2F("h_residualRZ_BOS", "h_residualRZ_BOS;Z;R;Counts", 100, -0.1, 0.1, 100, -0.1, 0.1);
    h_residualRZ_BOL = new TH2F("h_residualRZ_BOL", "h_residualRZ_BOL;Z;R;Counts", 100, -0.1, 0.1, 100, -0.1, 0.1);
 
-   h_NumberOfSP_LumiBlock = new TH2F("h_NumberOfSP_LumiBlock", "h_NumberOfSP_LumiBlock;LumiBlock;Number;Counts", 100, 0, 500, 100, 0, 5);
-   h_NumberOfSP_eta = new TH2F("h_NumberOfSP_eta", "h_NumberOfSP_eta;eta;Number;Counts", 100, -2.5, 2.5, 100, 0, 5);
-   h_NumberOfSP_qeta = new TH2F("h_NumberOfSP_qeta", "h_NumberOfSP_qeta;qeta;Number;Counts", 100, -2.5, 2.5, 100, 0, 5);
-   h_NumberOfSP_pt_barrel = new TH2F("h_NumberOfSP_pt_barrel", "h_NumberOfSP_pt_barrel;pT[GeV];Number;Counts", 100, 0, 100, 100, 0, 5);
-   h_NumberOfSP_pass_barrel = new TH2F("h_NumberOfSP_pass_barrel", "h_NumberOfSP_pass_barrel;pass;Number;Counts", 100, -3, 2, 100, 0, 5);
+   h_NumberOfSP_LumiBlock   = new TH2F("h_NumberOfSP_LumiBlock",   "h_NumberOfSP_LumiBlock;LumiBlock;Number;Counts", 100, 0,    500, 100, 0, 5);
+   h_NumberOfSP_eta         = new TH2F("h_NumberOfSP_eta",         "h_NumberOfSP_eta;eta;Number;Counts",             100, -2.5, 2.5, 100, 0, 5);
+   h_NumberOfSP_qeta        = new TH2F("h_NumberOfSP_qeta",        "h_NumberOfSP_qeta;qeta;Number;Counts",           100, -2.5, 2.5, 100, 0, 5);
+   h_NumberOfSP_pt_barrel   = new TH2F("h_NumberOfSP_pt_barrel",   "h_NumberOfSP_pt_barrel;pT[GeV];Number;Counts",   100, 0,    100, 100, 0, 5);
+   h_NumberOfSP_pass_barrel = new TH2F("h_NumberOfSP_pass_barrel", "h_NumberOfSP_pass_barrel;pass;Number;Counts",    100, -3,   2,   100, 0, 5);
+
+   h_NumberOfMdt_LumiBlock    = new TH2F("h_NumberOfMdt_LumiBlock",    "h_NumberOfMdt_LumiBlock;LumiBlock;Number;Counts",    100, 0, 500, 100, 0, 50);
+   h_NumberOfMdt_LumiBlock_BI = new TH2F("h_NumberOfMdt_LumiBlock_BI", "h_NumberOfMdt_LumiBlock_BI;LumiBlock;Number (BI);Counts", 100, 0, 500, 100, 0, 50);
+   h_NumberOfMdt_LumiBlock_BM = new TH2F("h_NumberOfMdt_LumiBlock_BM", "h_NumberOfMdt_LumiBlock_BM;LumiBlock;Number (BM);Counts", 100, 0, 500, 100, 0, 50);
+   h_NumberOfMdt_LumiBlock_BO = new TH2F("h_NumberOfMdt_LumiBlock_BO", "h_NumberOfMdt_LumiBlock_BO;LumiBlock;Number (BO);Counts", 100, 0, 500, 100, 0, 50);
+
+   h_NumberOfMdt_eta    = new TH2F("h_NumberOfMdt_eta",                "h_NumberOfMdt_eta;eta;Number;Counts",              100, -1.0, 1.0, 100, 0, 50);
+   h_NumberOfMdt_eta_BI = new TH2F("h_NumberOfMdt_eta_BI",             "h_NumberOfMdt_eta_BI;eta;Number (BI);Counts",      100, -1.0, 1.0, 100, 0, 50);
+   h_NumberOfMdt_eta_BM = new TH2F("h_NumberOfMdt_eta_BM",             "h_NumberOfMdt_eta_BM;eta;Number (BM);Counts",      100, -1.0, 1.0, 100, 0, 50);
+   h_NumberOfMdt_eta_BO = new TH2F("h_NumberOfMdt_eta_BO",             "h_NumberOfMdt_eta_BO;eta;Number (BO);Counts",      100, -1.0, 1.0, 100, 0, 50);
+
+   h_NumberOfMdt_qeta    = new TH2F("h_NumberOfMdt_qeta",              "h_NumberOfMdt_qeta;qeta;Number;Counts",            100, -1.0, 1.0, 100, 0, 50);
+   h_NumberOfMdt_qeta_BI = new TH2F("h_NumberOfMdt_qeta_BI",           "h_NumberOfMdt_qeta_BI;qeta;Number (BI);Counts",    100, -1.0, 1.0, 100, 0, 50);
+   h_NumberOfMdt_qeta_BM = new TH2F("h_NumberOfMdt_qeta_BM",           "h_NumberOfMdt_qeta_BM;qeta;Number (BM);Counts",    100, -1.0, 1.0, 100, 0, 50);
+   h_NumberOfMdt_qeta_BO = new TH2F("h_NumberOfMdt_qeta_BO",           "h_NumberOfMdt_qeta_BO;qeta;Number (BO);Counts",    100, -1.0, 1.0, 100, 0, 50);
+
+   h_NumberOfMdt_pt_barrel    = new TH2F("h_NumberOfMdt_pt_barrel",    "h_NumberOfMdt_pt_barrel;pT;Number;Counts",         100, 0,    100, 100, 0, 50);
+   h_NumberOfMdt_pt_barrel_BI = new TH2F("h_NumberOfMdt_pt_barrel_BI", "h_NumberOfMdt_pt_barrel_BI;pT (BI);Number;Counts", 100, 0,    100, 100, 0, 50);
+   h_NumberOfMdt_pt_barrel_BM = new TH2F("h_NumberOfMdt_pt_barrel_BM", "h_NumberOfMdt_pt_barrel_BM;pT (BM);Number;Counts", 100, 0,    100, 100, 0, 50);
+   h_NumberOfMdt_pt_barrel_BO = new TH2F("h_NumberOfMdt_pt_barrel_BO", "h_NumberOfMdt_pt_barrel_BO;pT (BO);Number;Counts", 100, 0,    100, 100, 0, 50);
+
+   h_ResidualMdt_eta    = new TH2F("h_ResidualMdt_eta",    "h_ResidualMdt_eta;eta;Residual;Counts",                      100, -1.0, 1.0, 100, -500, 500);
+   h_ResidualMdt_eta_BI = new TH2F("h_ResidualMdt_eta_BI", "h_ResidualMdt_eta_BI;eta;(BI) MDT hit residual [mm];Counts", 100, -1.0, 1.0, 100, -500, 500);
+   h_ResidualMdt_eta_BM = new TH2F("h_ResidualMdt_eta_BM", "h_ResidualMdt_eta_BM;eta;(BM) MDT hit residual [mm];Counts", 100, -1.0, 1.0, 100, -500, 500);
+   h_ResidualMdt_eta_BO = new TH2F("h_ResidualMdt_eta_BO", "h_ResidualMdt_eta_BO;eta;(BO) MDT hit residual [mm];Counts", 100, -1.0, 1.0, 100, -500, 500);
 
 }
 
@@ -896,6 +978,15 @@ void RPC::End(){
     delete h_NumberOfSP_pass_barrel; h_NumberOfSP_pass_barrel = 0;
   }
 
+  if(h_NumberOfMdt_eta != 0) {
+    delete h_NumberOfMdt_eta; h_NumberOfMdt_eta = 0;
+  }
+  if(h_NumberOfMdt_qeta != 0) {
+    delete h_NumberOfMdt_qeta; h_NumberOfMdt_qeta = 0;
+  }
+  if(h_NumberOfMdt_pt_barrel != 0) {
+    delete h_NumberOfMdt_pt_barrel; h_NumberOfMdt_pt_barrel = 0;
+  }
 }
 
 Bool_t RPC::Notify()

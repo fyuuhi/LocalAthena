@@ -29,6 +29,7 @@
 using namespace std;
 //declare functions
 
+
 #include "/gpfs/home/yfukuhar/RootUtils/rootlogon.C"
 
 double Res(double param1, double param2);
@@ -50,7 +51,10 @@ int main(int argc, char **argv){
 
   // tree1
   TChain *tree1 = new TChain("t_tap", "t_tap");
-  tree1 -> Add("/gpfs/fs2001/yfukuhar/data/user.yfukuhar.00349533.physics_Main.YFTAP.f929_m1955_jpzYFV4_GRL_F_tree_v1_349533_EXT0/hadd/user.yfukuhar.00349533.physics_Main.YFTAP.f929_m1955_jpzYFV4_GRL_F_tree_v1_349533_EXT0.root");
+  //tree1 -> Add("/gpfs/fs2001/yfukuhar/data/user.yfukuhar.00349533.physics_Main.YFTAP.f929_m1955_jpzYFV4_GRL_F_tree_v1_349533_EXT0/hadd/user.yfukuhar.00349533.physics_Main.YFTAP.f929_m1955_jpzYFV4_GRL_F_tree_v1_349533_EXT0.root");
+  //tree1 -> Add("/gpfs/fs2001/yfukuhar/data/user.yfukuhar.00349533.physics_Main.YFTAP.f929_m1955_GRL_False_349533_mdtHit_v1_EXT0/hadd/user.yfukuhar.00349533.physics_Main.YFTAP.f929_m1955_GRL_False_349533_mdtHit_v1_EXT.root");
+  tree1 -> Add("/gpfs/fs2001/yfukuhar/data/user.yfukuhar.00349533.physics_Main.YFTAP.f929_m1955_GRL_False_349533_mdtHit_v2_EXT0/hadd/user.yfukuhar.00349533.physics_Main.YFTAP.f929_m1955_GRL_False_349533_mdtHit_v2_EXT.root");
+  //tree1 -> Add("/gpfs/home/yfukuhar/work/CalcEffTool/run/Output/");
   //tree1 -> Add("/gpfs/fs2001/yfukuhar/CalcEffPlotMakerOrigin/data/mc16c_Jpsimu6_default/mc16c_Jpsimu6_default.root");
 
   RPC t_349014(tree1); 
@@ -58,7 +62,7 @@ int main(int argc, char **argv){
   t_349014.Loop(-1, 10000);
   cout << "[INFO]: Loop SUCCESS" << endl;
 
-  t_349014.DrawHist("../plot/t_349533_LumiBlock_GRL_GOOD.pdf");
+  t_349014.DrawHist("../plot/t_349533_Mdt_LumiBlock_Good.pdf");
   cout << "[INFO]: DrawHist SUCCESS" << endl;
 
   t_349014.End();
@@ -201,10 +205,54 @@ void RPC::Loop( int Nevents, int DisplayNumber )
             continue;
           }
 
+          //// Check isRpcFailure
+          //if (probe_mesSA_isRpcFailure -> at(N50) == 1){
+          //  continue;
+          //}
+
+
+          int nMdtBI = 0;
+          int nMdtBM = 0;
+          int nMdtBO = 0;
+          //cout << "NmdtHits1: " << probe_mesSA_mdtHitIsOutlier->size() << endl;
+          //cout << "NmdtHits2: " << (probe_mesSA_mdtHitIsOutlier -> at(14)).size() << endl;
+          for ( uint32_t i = 0; i < (probe_mesSA_mdtHitIsOutlier -> at(14)).size();i++){
+            //cout << "chamber: " << probe_mesSA_mdtHitChamber -> at(14)[i] << endl;
+            switch (probe_mesSA_mdtHitChamber -> at(14)[i]) {
+              case 0:
+                nMdtBI += 1;
+                //cout << "BI" << endl;
+                h_ResidualMdt_eta_BI    -> Fill(probe_eta, probe_mesSA_mdtHitResidual -> at(N50)[i]);
+                break;
+              case 1:
+                nMdtBM += 1;
+                //cout << "BM" << endl;
+                h_ResidualMdt_eta_BM    -> Fill(probe_eta, probe_mesSA_mdtHitResidual -> at(N50)[i]);
+                break;
+              case 2:
+                nMdtBO += 1;
+                //cout << "BO" << endl;
+                h_ResidualMdt_eta_BO    -> Fill(probe_eta, probe_mesSA_mdtHitResidual -> at(N50)[i]);
+                break;
+            }
+            //cout << "mdtHits: "<< i << ": " << (probe_mesSA_mdtHitChamber -> at(14))[i] << endl;
+          }
+
+          //cout << "nMdt: " << (probe_mesSA_mdtHitIsOutlier -> at(14)).size()<< ": " << nMdtBI << ": " << nMdtBM << ": " << nMdtBO << endl;
+          //cout << "nMdtBO: " << nMdtBO << endl;
+          h_NumberOfMdt_eta    -> Fill(probe_eta, nMdtBI + nMdtBM + nMdtBO);
+          h_NumberOfMdt_eta_BI -> Fill(probe_eta, nMdtBI);
+          h_NumberOfMdt_eta_BM -> Fill(probe_eta, nMdtBM);
+          h_NumberOfMdt_eta_BO -> Fill(probe_eta, nMdtBO);
+
           h_NumberOfSP_eta->Fill(probe_eta, NumberOfSP());
           h_NumberOfSP_qeta->Fill(probe_charge*probe_eta, NumberOfSP());
           if (abs(probe_eta) < 1.05){
             //cout << NumberOfSP() << endl;
+            h_NumberOfMdt_LumiBlock->Fill(LumiBlock, (probe_mesSA_mdtHitIsOutlier -> at(14)).size());
+            h_NumberOfMdt_LumiBlock_BI->Fill(LumiBlock, nMdtBI);
+            h_NumberOfMdt_LumiBlock_BM->Fill(LumiBlock, nMdtBM);
+            h_NumberOfMdt_LumiBlock_BO->Fill(LumiBlock, nMdtBO);
             h_NumberOfSP_LumiBlock->Fill(LumiBlock, NumberOfSP());
             h_NumberOfSP_pt_barrel->Fill(probe_pt/1000., NumberOfSP());
             h_NumberOfSP_pass_barrel->Fill(probe_mesSA_pass->at(N50), NumberOfSP());
@@ -277,6 +325,34 @@ void RPC::DrawHist(TString pdf){
   c1->SetBottomMargin(0.20);
 
   c1 -> Print( pdf + "[", "pdf" );
+
+  h_ResidualMdt_eta_BI->Draw("colz");
+  c1 -> Print(pdf, "pdf" );
+
+  h_ResidualMdt_eta_BM->Draw("colz");
+  c1 -> Print(pdf, "pdf" );
+
+  h_ResidualMdt_eta_BO->Draw("colz");
+  c1 -> Print(pdf, "pdf" );
+
+
+  h_NumberOfMdt_eta->Draw("colz");
+  c1 -> Print(pdf, "pdf" );
+  h_NumberOfMdt_eta_BI->Draw("colz");
+  c1 -> Print(pdf, "pdf" );
+  h_NumberOfMdt_eta_BM->Draw("colz");
+  c1 -> Print(pdf, "pdf" );
+  h_NumberOfMdt_eta_BO->Draw("colz");
+  c1 -> Print(pdf, "pdf" );
+
+  h_NumberOfMdt_LumiBlock->Draw("colz");
+  c1 -> Print(pdf, "pdf" );
+  h_NumberOfMdt_LumiBlock_BI->Draw("colz");
+  c1 -> Print(pdf, "pdf" );
+  h_NumberOfMdt_LumiBlock_BM->Draw("colz");
+  c1 -> Print(pdf, "pdf" );
+  h_NumberOfMdt_LumiBlock_BO->Draw("colz");
+  c1 -> Print(pdf, "pdf" );
 
   h_NumberOfSP_LumiBlock->Draw("colz");
   c1 -> Print(pdf, "pdf" );
