@@ -910,10 +910,10 @@ void RPC::InitHist(){
    h_ResidualMdt_eta_BM = new TH2F("h_ResidualMdt_eta_BM", "h_ResidualMdt_eta_BM;eta;(BM) MDT hit residual [mm];Counts", 100, -1.0, 1.0, 100, -500, 500);
    h_ResidualMdt_eta_BO = new TH2F("h_ResidualMdt_eta_BO", "h_ResidualMdt_eta_BO;eta;(BO) MDT hit residual [mm];Counts", 100, -1.0, 1.0, 100, -500, 500);
 
-   h_ResidualMdt_pt_barrel    = new TH2F("h_ResidualMdt_pt_barrel",    "h_ResidualMdt_pt_barrel;pT;Residual;Counts",                      100, -1.0, 1.0, 100, -500, 500);
-   h_ResidualMdt_pt_barrel_BI = new TH2F("h_ResidualMdt_pt_barrel_BI", "h_ResidualMdt_pt_barrel_BI;pT;(BI) MDT hit residual [mm];Counts", 100, 0, 100, 100, -500, 500);
-   h_ResidualMdt_pt_barrel_BM = new TH2F("h_ResidualMdt_pt_barrel_BM", "h_ResidualMdt_pt_barrel_BM;pT;(BM) MDT hit residual [mm];Counts", 100, 0, 100, 100, -500, 500);
-   h_ResidualMdt_pt_barrel_BO = new TH2F("h_ResidualMdt_pt_barrel_BO", "h_ResidualMdt_pt_barrel_BO;pT;(BO) MDT hit residual [mm];Counts", 100, 0, 100, 100, -500, 500);
+   h_ResidualMdt_pt_barrel    = new TH2F("h_ResidualMdt_pt_barrel",    "h_ResidualMdt_pt_barrel;pT [GeV];Residual;Counts",                      100, -1.0, 1.0, 100, -500, 500);
+   h_ResidualMdt_pt_barrel_BI = new TH2F("h_ResidualMdt_pt_barrel_BI", "h_ResidualMdt_pt_barrel_BI;pT [GeV];(BI) MDT hit residual [mm];Counts", 100, 0, 100, 100, -500, 500);
+   h_ResidualMdt_pt_barrel_BM = new TH2F("h_ResidualMdt_pt_barrel_BM", "h_ResidualMdt_pt_barrel_BM;pT [GeV];(BM) MDT hit residual [mm];Counts", 100, 0, 100, 100, -500, 500);
+   h_ResidualMdt_pt_barrel_BO = new TH2F("h_ResidualMdt_pt_barrel_BO", "h_ResidualMdt_pt_barrel_BO;pT [GeV];(BO) MDT hit residual [mm];Counts", 100, 0, 100, 100, -500, 500);
 
 }
 

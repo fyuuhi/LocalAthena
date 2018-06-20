@@ -351,6 +351,56 @@ void RPC::DrawHist(TString pdf){
 
   h_NumberOfMdt_eta->Draw("colz");
   c1 -> Print(pdf, "pdf" );
+
+
+  // Begin of a Fraction plot
+  h_NumberOfMdt_LumiBlock->Draw("colz");
+  c1 -> Print(pdf, "pdf" );
+  TProfile *pf_LumiBlock_Mdt = h_NumberOfMdt_LumiBlock->ProfileX();
+  pf_LumiBlock_Mdt->Draw();
+  pf_LumiBlock_Mdt->GetYaxis()->SetTitle("Average number of Mdt");
+  c1 -> Print(pdf, "pdf" );
+
+  TH1D* h_LumiBlock_all_Mdt = h_NumberOfMdt_LumiBlock->ProjectionX("_all");
+  TH1D* h_LumiBlock_5_Mdt = h_NumberOfMdt_LumiBlock->ProjectionX("5",h_NumberOfMdt_LumiBlock->GetYaxis()->FindBin(19.9),h_NumberOfMdt_LumiBlock->GetYaxis()->FindBin(25.1));
+  TH1D* h_LumiBlock_4_Mdt = h_NumberOfMdt_LumiBlock->ProjectionX("4",h_NumberOfMdt_LumiBlock->GetYaxis()->FindBin(14.9),h_NumberOfMdt_LumiBlock->GetYaxis()->FindBin(19.9));
+  TH1D* h_LumiBlock_3_Mdt = h_NumberOfMdt_LumiBlock->ProjectionX("3",h_NumberOfMdt_LumiBlock->GetYaxis()->FindBin(9.9),h_NumberOfMdt_LumiBlock->GetYaxis()->FindBin(14.9));
+  TH1D* h_LumiBlock_2_Mdt = h_NumberOfMdt_LumiBlock->ProjectionX("2",h_NumberOfMdt_LumiBlock->GetYaxis()->FindBin(4.9),h_NumberOfMdt_LumiBlock->GetYaxis()->FindBin(9.9));
+  TH1D* h_LumiBlock_1_Mdt = h_NumberOfMdt_LumiBlock->ProjectionX("1",h_NumberOfMdt_LumiBlock->GetYaxis()->FindBin(-0.9),h_NumberOfMdt_LumiBlock->GetYaxis()->FindBin(4.9));
+
+  h_LumiBlock_5_Mdt->Divide(h_LumiBlock_all_Mdt);
+  h_LumiBlock_4_Mdt->Divide(h_LumiBlock_all_Mdt);
+  h_LumiBlock_3_Mdt->Divide(h_LumiBlock_all_Mdt);
+  h_LumiBlock_2_Mdt->Divide(h_LumiBlock_all_Mdt);
+  h_LumiBlock_1_Mdt->Divide(h_LumiBlock_all_Mdt);
+
+
+  THStack *hs_LumiBlock_Mdt = new THStack("hs_LumiBlock_Mdt",";LumiBlock;Fraction of number of Mdts");
+  h_LumiBlock_5_Mdt->SetFillColor(kCyan);//あらかじめFillColorをSetしておく
+  h_LumiBlock_4_Mdt->SetFillColor(kMagenta);//あらかじめFillColorをSetしておく
+  h_LumiBlock_3_Mdt->SetFillColor(kRed);//あらかじめFillColorをSetしておく
+  h_LumiBlock_2_Mdt->SetFillColor(kBlue);
+  h_LumiBlock_1_Mdt->SetFillColor(kGreen);
+  hs_LumiBlock_Mdt->Add(h_LumiBlock_5_Mdt);
+  hs_LumiBlock_Mdt->Add(h_LumiBlock_4_Mdt);
+  hs_LumiBlock_Mdt->Add(h_LumiBlock_3_Mdt);
+  hs_LumiBlock_Mdt->Add(h_LumiBlock_2_Mdt);
+  hs_LumiBlock_Mdt->Add(h_LumiBlock_1_Mdt);
+
+  hs_LumiBlock_Mdt->Draw();
+
+  TLegend *leg_LumiBlock_Mdt = new TLegend(0.82,0.62,0.9,0.92);
+  leg_LumiBlock_Mdt->AddEntry(h_LumiBlock_1_Mdt," n=20~25","f");
+  leg_LumiBlock_Mdt->AddEntry(h_LumiBlock_2_Mdt," n=15~20","f");
+  leg_LumiBlock_Mdt->AddEntry(h_LumiBlock_3_Mdt," n=10~15","f");
+  leg_LumiBlock_Mdt->AddEntry(h_LumiBlock_4_Mdt," n=5~10","f");
+  leg_LumiBlock_Mdt->AddEntry(h_LumiBlock_5_Mdt," n=0~5","f");
+  leg_LumiBlock_Mdt->Draw();
+  c1 -> Print(pdf, "pdf" );
+  delete leg_LumiBlock_Mdt;
+  // End of a Fraction plot
+
+
   h_NumberOfMdt_eta_BI->Draw("colz");
   c1 -> Print(pdf, "pdf" );
   h_NumberOfMdt_eta_BM->Draw("colz");
@@ -367,6 +417,7 @@ void RPC::DrawHist(TString pdf){
   h_NumberOfMdt_LumiBlock_BO->Draw("colz");
   c1 -> Print(pdf, "pdf" );
 
+  // Begin of a Fraction plot
   h_NumberOfSP_LumiBlock->Draw("colz");
   c1 -> Print(pdf, "pdf" );
   TProfile *pf_LumiBlock = h_NumberOfSP_LumiBlock->ProfileX();
@@ -416,6 +467,7 @@ void RPC::DrawHist(TString pdf){
   leg_LumiBlock->Draw();
   c1 -> Print(pdf, "pdf" );
   delete leg_LumiBlock;
+  // End of a Fraction plot
 
 
   h_NumberOfSP_eta->Draw("colz");
