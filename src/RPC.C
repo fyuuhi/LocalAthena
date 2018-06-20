@@ -62,7 +62,7 @@ int main(int argc, char **argv){
   t_349014.Loop(-1, 10000);
   cout << "[INFO]: Loop SUCCESS" << endl;
 
-  t_349014.DrawHist("../plot/t_349533_Mdt_LumiBlock_Good.pdf");
+  t_349014.DrawHist("../plot/t_349533_Mdt_LumiBlock_Bad.pdf");
   cout << "[INFO]: DrawHist SUCCESS" << endl;
 
   t_349014.End();
@@ -201,7 +201,7 @@ void RPC::Loop( int Nevents, int DisplayNumber )
           }
 
           // Check GRL
-          if (!GRLlist(LumiBlock)){
+          if (GRLlist(LumiBlock)){
             continue;
           }
 
@@ -223,23 +223,24 @@ void RPC::Loop( int Nevents, int DisplayNumber )
                 nMdtBI += 1;
                 //cout << "BI" << endl;
                 h_ResidualMdt_eta_BI    -> Fill(probe_eta, probe_mesSA_mdtHitResidual -> at(N50)[i]);
+                if (abs(probe_eta) < 1.05) h_ResidualMdt_pt_barrel_BI -> Fill(probe_pt/1000., probe_mesSA_mdtHitResidual -> at(N50)[i]);
                 break;
               case 1:
                 nMdtBM += 1;
                 //cout << "BM" << endl;
                 h_ResidualMdt_eta_BM    -> Fill(probe_eta, probe_mesSA_mdtHitResidual -> at(N50)[i]);
+                if (abs(probe_eta) < 1.05) h_ResidualMdt_pt_barrel_BM -> Fill(probe_pt/1000., probe_mesSA_mdtHitResidual -> at(N50)[i]);
                 break;
               case 2:
                 nMdtBO += 1;
                 //cout << "BO" << endl;
                 h_ResidualMdt_eta_BO    -> Fill(probe_eta, probe_mesSA_mdtHitResidual -> at(N50)[i]);
+                if (abs(probe_eta) < 1.05) h_ResidualMdt_pt_barrel_BO -> Fill(probe_pt/1000., probe_mesSA_mdtHitResidual -> at(N50)[i]);
                 break;
             }
             //cout << "mdtHits: "<< i << ": " << (probe_mesSA_mdtHitChamber -> at(14))[i] << endl;
           }
 
-          //cout << "nMdt: " << (probe_mesSA_mdtHitIsOutlier -> at(14)).size()<< ": " << nMdtBI << ": " << nMdtBM << ": " << nMdtBO << endl;
-          //cout << "nMdtBO: " << nMdtBO << endl;
           h_NumberOfMdt_eta    -> Fill(probe_eta, nMdtBI + nMdtBM + nMdtBO);
           h_NumberOfMdt_eta_BI -> Fill(probe_eta, nMdtBI);
           h_NumberOfMdt_eta_BM -> Fill(probe_eta, nMdtBM);
@@ -325,6 +326,15 @@ void RPC::DrawHist(TString pdf){
   c1->SetBottomMargin(0.20);
 
   c1 -> Print( pdf + "[", "pdf" );
+
+  h_ResidualMdt_pt_barrel_BI->Draw("colz");
+  c1 -> Print(pdf, "pdf" );
+
+  h_ResidualMdt_pt_barrel_BM->Draw("colz");
+  c1 -> Print(pdf, "pdf" );
+
+  h_ResidualMdt_pt_barrel_BO->Draw("colz");
+  c1 -> Print(pdf, "pdf" );
 
   h_ResidualMdt_eta_BI->Draw("colz");
   c1 -> Print(pdf, "pdf" );
