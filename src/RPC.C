@@ -62,7 +62,7 @@ int main(int argc, char **argv){
   t_349014.Loop(-1, 10000);
   cout << "[INFO]: Loop SUCCESS" << endl;
 
-  t_349014.DrawHist("../plot/t_349533_Mdt_LumiBlock_Bad.pdf");
+  t_349014.DrawHist("../plot/t_349533_Mdt_LumiBlock_Good_OL1.pdf");
   cout << "[INFO]: DrawHist SUCCESS" << endl;
 
   t_349014.End();
@@ -201,7 +201,7 @@ void RPC::Loop( int Nevents, int DisplayNumber )
           }
 
           // Check GRL
-          if (GRLlist(LumiBlock)){
+          if (!GRLlist(LumiBlock)){
             continue;
           }
 
@@ -216,9 +216,12 @@ void RPC::Loop( int Nevents, int DisplayNumber )
           int nMdtBO = 0;
           //cout << "NmdtHits1: " << probe_mesSA_mdtHitIsOutlier->size() << endl;
           //cout << "NmdtHits2: " << (probe_mesSA_mdtHitIsOutlier -> at(14)).size() << endl;
-          for ( uint32_t i = 0; i < (probe_mesSA_mdtHitIsOutlier -> at(14)).size();i++){
+          for ( uint32_t i = 0; i < (probe_mesSA_mdtHitIsOutlier -> at(N50)).size();i++){
+            if (probe_mesSA_mdtHitIsOutlier -> at(N50)[i] == 0) {
+              continue;
+            }
             //cout << "chamber: " << probe_mesSA_mdtHitChamber -> at(14)[i] << endl;
-            switch (probe_mesSA_mdtHitChamber -> at(14)[i]) {
+            switch (probe_mesSA_mdtHitChamber -> at(N50)[i]) {
               case 0:
                 nMdtBI += 1;
                 //cout << "BI" << endl;
