@@ -486,6 +486,7 @@ public :
    virtual void     InitHist();
    virtual void     End();
    virtual int     NumberOfSP();
+   virtual void FractionOfnMDTs(TH2F* h_NumberOfMdt, TCanvas* c1, TString pdf);
    virtual void     Loop( int Nevents, int DisplayNumber );
    virtual void     DrawHist(TString pdf);
    virtual Bool_t   Notify();

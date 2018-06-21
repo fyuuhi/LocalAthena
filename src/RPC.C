@@ -217,7 +217,7 @@ void RPC::Loop( int Nevents, int DisplayNumber )
           //cout << "NmdtHits1: " << probe_mesSA_mdtHitIsOutlier->size() << endl;
           //cout << "NmdtHits2: " << (probe_mesSA_mdtHitIsOutlier -> at(14)).size() << endl;
           for ( uint32_t i = 0; i < (probe_mesSA_mdtHitIsOutlier -> at(N50)).size();i++){
-            if (probe_mesSA_mdtHitIsOutlier -> at(N50)[i] == 0) {
+            if (probe_mesSA_mdtHitIsOutlier -> at(N50)[i] == 1) {
               continue;
             }
             //cout << "chamber: " << probe_mesSA_mdtHitChamber -> at(14)[i] << endl;
@@ -352,54 +352,15 @@ void RPC::DrawHist(TString pdf){
   h_NumberOfMdt_eta->Draw("colz");
   c1 -> Print(pdf, "pdf" );
 
-
   // Begin of a Fraction plot
   h_NumberOfMdt_LumiBlock->Draw("colz");
   c1 -> Print(pdf, "pdf" );
-  TProfile *pf_LumiBlock_Mdt = h_NumberOfMdt_LumiBlock->ProfileX();
-  pf_LumiBlock_Mdt->Draw();
-  pf_LumiBlock_Mdt->GetYaxis()->SetTitle("Average number of Mdt");
-  c1 -> Print(pdf, "pdf" );
 
-  TH1D* h_LumiBlock_all_Mdt = h_NumberOfMdt_LumiBlock->ProjectionX("_all");
-  TH1D* h_LumiBlock_5_Mdt = h_NumberOfMdt_LumiBlock->ProjectionX("5",h_NumberOfMdt_LumiBlock->GetYaxis()->FindBin(19.9),h_NumberOfMdt_LumiBlock->GetYaxis()->FindBin(25.1));
-  TH1D* h_LumiBlock_4_Mdt = h_NumberOfMdt_LumiBlock->ProjectionX("4",h_NumberOfMdt_LumiBlock->GetYaxis()->FindBin(14.9),h_NumberOfMdt_LumiBlock->GetYaxis()->FindBin(19.9));
-  TH1D* h_LumiBlock_3_Mdt = h_NumberOfMdt_LumiBlock->ProjectionX("3",h_NumberOfMdt_LumiBlock->GetYaxis()->FindBin(9.9),h_NumberOfMdt_LumiBlock->GetYaxis()->FindBin(14.9));
-  TH1D* h_LumiBlock_2_Mdt = h_NumberOfMdt_LumiBlock->ProjectionX("2",h_NumberOfMdt_LumiBlock->GetYaxis()->FindBin(4.9),h_NumberOfMdt_LumiBlock->GetYaxis()->FindBin(9.9));
-  TH1D* h_LumiBlock_1_Mdt = h_NumberOfMdt_LumiBlock->ProjectionX("1",h_NumberOfMdt_LumiBlock->GetYaxis()->FindBin(-0.9),h_NumberOfMdt_LumiBlock->GetYaxis()->FindBin(4.9));
+  FractionOfnMDTs(h_NumberOfMdt_LumiBlock, c1, pdf);
 
-  h_LumiBlock_5_Mdt->Divide(h_LumiBlock_all_Mdt);
-  h_LumiBlock_4_Mdt->Divide(h_LumiBlock_all_Mdt);
-  h_LumiBlock_3_Mdt->Divide(h_LumiBlock_all_Mdt);
-  h_LumiBlock_2_Mdt->Divide(h_LumiBlock_all_Mdt);
-  h_LumiBlock_1_Mdt->Divide(h_LumiBlock_all_Mdt);
-
-
-  THStack *hs_LumiBlock_Mdt = new THStack("hs_LumiBlock_Mdt",";LumiBlock;Fraction of number of Mdts");
-  h_LumiBlock_5_Mdt->SetFillColor(kCyan);//あらかじめFillColorをSetしておく
-  h_LumiBlock_4_Mdt->SetFillColor(kMagenta);//あらかじめFillColorをSetしておく
-  h_LumiBlock_3_Mdt->SetFillColor(kRed);//あらかじめFillColorをSetしておく
-  h_LumiBlock_2_Mdt->SetFillColor(kBlue);
-  h_LumiBlock_1_Mdt->SetFillColor(kGreen);
-  hs_LumiBlock_Mdt->Add(h_LumiBlock_5_Mdt);
-  hs_LumiBlock_Mdt->Add(h_LumiBlock_4_Mdt);
-  hs_LumiBlock_Mdt->Add(h_LumiBlock_3_Mdt);
-  hs_LumiBlock_Mdt->Add(h_LumiBlock_2_Mdt);
-  hs_LumiBlock_Mdt->Add(h_LumiBlock_1_Mdt);
-
-  hs_LumiBlock_Mdt->Draw();
-
-  TLegend *leg_LumiBlock_Mdt = new TLegend(0.82,0.62,0.9,0.92);
-  leg_LumiBlock_Mdt->AddEntry(h_LumiBlock_1_Mdt," n=20~25","f");
-  leg_LumiBlock_Mdt->AddEntry(h_LumiBlock_2_Mdt," n=15~20","f");
-  leg_LumiBlock_Mdt->AddEntry(h_LumiBlock_3_Mdt," n=10~15","f");
-  leg_LumiBlock_Mdt->AddEntry(h_LumiBlock_4_Mdt," n=5~10","f");
-  leg_LumiBlock_Mdt->AddEntry(h_LumiBlock_5_Mdt," n=0~5","f");
-  leg_LumiBlock_Mdt->Draw();
-  c1 -> Print(pdf, "pdf" );
-  delete leg_LumiBlock_Mdt;
-  // End of a Fraction plot
-
+  FractionOfnMDTs(h_NumberOfMdt_eta_BI, c1, pdf);
+  FractionOfnMDTs(h_NumberOfMdt_eta_BM, c1, pdf);
+  FractionOfnMDTs(h_NumberOfMdt_eta_BO, c1, pdf);
 
   h_NumberOfMdt_eta_BI->Draw("colz");
   c1 -> Print(pdf, "pdf" );
@@ -819,4 +780,63 @@ bool GRLlist(int LumiBlock){
  bool lb_3= (LumiBlock > 169 && LumiBlock < 239);
 
  return (lb_1 || lb_2 || lb_3);
+}
+
+void RPC::FractionOfnMDTs(TH2F* h_NumberOfMdt, TCanvas* c1, TString pdf){
+
+  // Begin of a Fraction plot
+  TProfile *pf_Mdt = h_NumberOfMdt->ProfileX();
+  pf_Mdt->Draw();
+  pf_Mdt->GetYaxis()->SetTitle("Average number of Mdt");
+  c1 -> Print(pdf, "pdf" );
+
+  TH1D* h_all_Mdt = h_NumberOfMdt->ProjectionX("_all");
+  TH1D* h_6_Mdt = h_NumberOfMdt->ProjectionX("6",h_NumberOfMdt->GetYaxis()->FindBin(24.9),h_NumberOfMdt->GetYaxis()->FindBin(30.1));
+  TH1D* h_5_Mdt = h_NumberOfMdt->ProjectionX("5",h_NumberOfMdt->GetYaxis()->FindBin(19.9),h_NumberOfMdt->GetYaxis()->FindBin(25.1));
+  TH1D* h_4_Mdt = h_NumberOfMdt->ProjectionX("4",h_NumberOfMdt->GetYaxis()->FindBin(14.9),h_NumberOfMdt->GetYaxis()->FindBin(19.9));
+  TH1D* h_3_Mdt = h_NumberOfMdt->ProjectionX("3",h_NumberOfMdt->GetYaxis()->FindBin(9.9),h_NumberOfMdt->GetYaxis()->FindBin(14.9));
+  TH1D* h_2_Mdt = h_NumberOfMdt->ProjectionX("2",h_NumberOfMdt->GetYaxis()->FindBin(4.9),h_NumberOfMdt->GetYaxis()->FindBin(9.9));
+  TH1D* h_1_Mdt = h_NumberOfMdt->ProjectionX("1",h_NumberOfMdt->GetYaxis()->FindBin(-0.9),h_NumberOfMdt->GetYaxis()->FindBin(4.9));
+
+  h_6_Mdt->Divide(h_all_Mdt);
+  h_5_Mdt->Divide(h_all_Mdt);
+  h_4_Mdt->Divide(h_all_Mdt);
+  h_3_Mdt->Divide(h_all_Mdt);
+  h_2_Mdt->Divide(h_all_Mdt);
+  h_1_Mdt->Divide(h_all_Mdt);
+
+  //TString ytitle = h_NumberOfMdt -> GetYaxis()-> GetTitle();
+
+  cout << "hello" << endl;
+
+  THStack *hs_Mdt = new THStack("hs_Mdt",";LumiBlock;Fraction of number of Mdts");
+  hs_Mdt -> GetXaxis() -> SetTitle(h_NumberOfMdt -> GetYaxis()-> GetTitle());
+  cout << "hello" << endl;
+  h_6_Mdt->SetFillColor(kYellow);//あらかじめFillColorをSetしておく
+  h_5_Mdt->SetFillColor(kCyan);//あらかじめFillColorをSetしておく
+  h_4_Mdt->SetFillColor(kMagenta);//あらかじめFillColorをSetしておく
+  h_3_Mdt->SetFillColor(kRed);//あらかじめFillColorをSetしておく
+  h_2_Mdt->SetFillColor(kBlue);
+  h_1_Mdt->SetFillColor(kGreen);
+  hs_Mdt->Add(h_1_Mdt);
+  hs_Mdt->Add(h_2_Mdt);
+  hs_Mdt->Add(h_3_Mdt);
+  hs_Mdt->Add(h_4_Mdt);
+  hs_Mdt->Add(h_5_Mdt);
+  hs_Mdt->Add(h_6_Mdt);
+
+  hs_Mdt->Draw();
+
+  TLegend *leg_Mdt = new TLegend(0.82,0.62,0.95,0.92);
+  leg_Mdt->AddEntry(h_1_Mdt," n=0~5","f");
+  leg_Mdt->AddEntry(h_2_Mdt," n=5~10","f");
+  leg_Mdt->AddEntry(h_3_Mdt," n=10~15","f");
+  leg_Mdt->AddEntry(h_4_Mdt," n=15~20","f");
+  leg_Mdt->AddEntry(h_5_Mdt," n=20~25","f");
+  leg_Mdt->AddEntry(h_6_Mdt," n=25~30","f");
+  leg_Mdt->Draw();
+  c1 -> Print(pdf, "pdf" );
+  delete leg_Mdt;
+  delete hs_Mdt;
+  // End of a Fraction plot
 }
