@@ -807,11 +807,7 @@ void RPC::FractionOfnMDTs(TH2F* h_NumberOfMdt, TCanvas* c1, TString pdf){
 
   //TString ytitle = h_NumberOfMdt -> GetYaxis()-> GetTitle();
 
-  cout << "hello" << endl;
-
   THStack *hs_Mdt = new THStack("hs_Mdt",";LumiBlock;Fraction of number of Mdts");
-  hs_Mdt -> GetXaxis() -> SetTitle(h_NumberOfMdt -> GetYaxis()-> GetTitle());
-  cout << "hello" << endl;
   h_6_Mdt->SetFillColor(kYellow);//あらかじめFillColorをSetしておく
   h_5_Mdt->SetFillColor(kCyan);//あらかじめFillColorをSetしておく
   h_4_Mdt->SetFillColor(kMagenta);//あらかじめFillColorをSetしておく
