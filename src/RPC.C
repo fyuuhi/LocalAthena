@@ -836,3 +836,4 @@ void RPC::FractionOfnMDTs(TH2F* h_NumberOfMdt, TCanvas* c1, TString pdf){
   delete hs_Mdt;
   // End of a Fraction plot
 }
+
