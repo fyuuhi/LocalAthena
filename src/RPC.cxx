@@ -837,3 +837,68 @@ void RPC::FractionOfnMDTs(TH2F* h_NumberOfMdt, TCanvas* c1, TString pdf){
   // End of a Fraction plot
 }
 
+
+void RPC::FillEffHist(){
+  switch (tag_proc) {
+    case 1: //Jpsi until L2
+      // Check TAP
+      if (!(probe_mesEFTAG_pass -> at(N4) > -1 && ( sumReqdRL1<tp_extdR && 0.2<tp_extdR ) && ( sumReqdREF<tp_dR ))){
+        return;
+      }
+      // Fill L1 probe hists
+      if (probe_mesL1_pass -> at(N4) > -1){
+        h_probe_pt_mu4_L1 -> Fill(probe_pt/1000.);
+        hh_probe_qetapt_mu4_L1 -> Fill(probe_charge*probe_eta, probe_pt/1000.);
+        // Plateau cut
+        if (probe_pt/1000. > 8.0) {
+          h_probe_eta_mu4_L1 -> Fill(probe_eta);
+          h_probe_phi_mu4_L1 -> Fill(probe_phi);
+          hh_probe_etaphi_mu4_L1 -> Fill(probe_eta, probe_phi);
+        }
+      }
+      // Fill SA probe hists
+      if (probe_mesL1_pass -> at(N4) > -1 && probe_mesSA_pass -> at(N4) > -1){
+        h_probe_pt_mu4_SA -> Fill(probe_pt/1000.);
+        hh_probe_qetapt_mu4_SA -> Fill(probe_charge*probe_eta, probe_pt/1000.);
+        // Plateau cut
+        if (probe_pt/1000. > 8.0) {
+          h_probe_eta_mu4_SA -> Fill(probe_eta);
+          h_probe_phi_mu4_SA -> Fill(probe_phi);
+          hh_probe_etaphi_mu4_SA -> Fill(probe_eta, probe_phi);
+        }
+      }
+
+      break;
+    case 2: //Jpsi from L2:
+      break;
+    case 3: //Z
+      // Check TAP
+      if (!(probe_mesEFTAG_pass -> at(N50) > -1 && ( sumReqdRL1<tp_extdR && 0.2<tp_extdR ) && ( sumReqdREF<tp_dR ))){
+        return;
+      }
+      // Fill L1 probe hists
+      if (probe_mesL1_pass -> at(N50) > -1){
+        h_probe_pt_mu50_L1 -> Fill(probe_pt/1000.);
+        hh_probe_qetapt_mu50_L1 -> Fill(probe_charge*probe_eta, probe_pt/1000.);
+        // Plateau cut
+        if (probe_pt/1000. > 8.0) {
+          h_probe_eta_mu50_L1 -> Fill(probe_eta);
+          h_probe_phi_mu50_L1 -> Fill(probe_phi);
+          hh_probe_etaphi_mu50_L1 -> Fill(probe_eta, probe_phi);
+        }
+      }
+      // Fill SA probe hists
+      if (probe_mesL1_pass -> at(N50) > -1 && probe_mesSA_pass -> at(N50) > -1){
+        h_probe_pt_mu50_SA -> Fill(probe_pt/1000.);
+        hh_probe_qetapt_mu50_SA -> Fill(probe_charge*probe_eta, probe_pt/1000.);
+        // Plateau cut
+        if (probe_pt/1000. > 8.0) {
+          h_probe_eta_mu50_SA -> Fill(probe_eta);
+          h_probe_phi_mu50_SA -> Fill(probe_phi);
+          hh_probe_etaphi_mu50_SA -> Fill(probe_eta, probe_phi);
+        }
+      }
+
+      break;
+  }
+}

@@ -42,6 +42,7 @@ public :
 
 // Fixed size dimensions of array or collections stored in the TTree if any.
 
+   const int N4 = 0;
    const int N50 = 14;
    const int NTagProc = 3;
    // Declaration of leaf types
@@ -537,6 +538,7 @@ public :
    virtual void     End();
    virtual int     NumberOfSP();
    virtual void FractionOfnMDTs(TH2F* h_NumberOfMdt, TCanvas* c1, TString pdf);
+   virtual void     FillEffHist();
    virtual void     Loop( int Nevents, int DisplayNumber );
    virtual void     DrawHist(TString pdf);
    virtual Bool_t   Notify();
