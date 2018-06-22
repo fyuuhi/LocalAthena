@@ -538,14 +538,14 @@ public :
    virtual void     End();
    virtual int     NumberOfSP();
    virtual void FractionOfnMDTs(TH2F* h_NumberOfMdt, TCanvas* c1, TString pdf);
-   virtual void     FillEffHist();
    virtual void     Loop( int Nevents, int DisplayNumber );
    virtual void     DrawHist(TString pdf);
    virtual Bool_t   Notify();
    virtual void     Show(Long64_t entry = -1);
    virtual void     Display(Long64_t entry);
+   virtual void     FillProbeHist();
    virtual void     CalcEff();
-   virtual void     DrawEffHist();
+   virtual void     DrawEffHist(TString pdf);
    void CalcHistToHist( TH1F* h1, TH1F* h2, TH1F* hout );
    void CalcHistToHist( TH2F* h1, TH2F* h2, TH2F* hout );
 };
@@ -921,50 +921,50 @@ void RPC::InitHist(){
   h_eff_pt_mu4_L1    = new TH1F("h_eff_pt_mu4_L1",   "eff;Probe p_{T}[GeV];Efficiency", 30, 0, 14);
   h_eff_pt_mu4_L1SA  = new TH1F("h_eff_pt_mu4_L1SA", "eff;Probe p_{T}[GeV];Efficiency", 30, 0, 14);
 
-  h_probe_phi_mu4_L1  = new TH1F("h_probe_phi_mu4_L1", "probe;Probe #{phi};Entries", 30, -3.2, 3.2);
-  h_probe_phi_mu4_SA  = new TH1F("h_probe_phi_mu4_SA", "probe;Probe #{phi};Entries", 30, -3.2, 3.2);
-  h_eff_phi_mu4_L1    = new TH1F("h_eff_phi_mu4_L1",   "eff;Probe #{phi};Efficiency", 30, -3.2, 3.2);
-  h_eff_phi_mu4_L1SA  = new TH1F("h_eff_phi_mu4_L1SA", "eff;Probe #{phi};Efficiency", 30, -3.2, 3.2);
+  h_probe_phi_mu4_L1  = new TH1F("h_probe_phi_mu4_L1", "probe;Probe #phi;Entries", 30, -3.5, 3.5);
+  h_probe_phi_mu4_SA  = new TH1F("h_probe_phi_mu4_SA", "probe;Probe #phi;Entries", 30, -3.5, 3.5);
+  h_eff_phi_mu4_L1    = new TH1F("h_eff_phi_mu4_L1",   "eff;Probe #phi;Efficiency", 30, -3.5, 3.5);
+  h_eff_phi_mu4_L1SA  = new TH1F("h_eff_phi_mu4_L1SA", "eff;Probe #phi;Efficiency", 30, -3.5, 3.5);
 
-  h_probe_eta_mu4_L1  = new TH1F("h_probe_eta_mu4_L1", "probe;Probe #{eta};Entries", 30, -2.5, 2.5);
-  h_probe_eta_mu4_SA  = new TH1F("h_probe_eta_mu4_SA", "probe;Probe #{eta};Entries", 30, -2.5, 2.5);
-  h_eff_eta_mu4_L1    = new TH1F("h_eff_eta_mu4_L1",   "eff;Probe #{eta};Efficiency", 30, -2.5, 2.5);
-  h_eff_eta_mu4_L1SA  = new TH1F("h_eff_eta_mu4_L1SA", "eff;Probe #{eta};Efficiency", 30, -2.5, 2.5);
+  h_probe_eta_mu4_L1  = new TH1F("h_probe_eta_mu4_L1", "probe;Probe #eta;Entries", 30, -2.5, 2.5);
+  h_probe_eta_mu4_SA  = new TH1F("h_probe_eta_mu4_SA", "probe;Probe #eta;Entries", 30, -2.5, 2.5);
+  h_eff_eta_mu4_L1    = new TH1F("h_eff_eta_mu4_L1",   "eff;Probe #eta;Efficiency", 30, -2.5, 2.5);
+  h_eff_eta_mu4_L1SA  = new TH1F("h_eff_eta_mu4_L1SA", "eff;Probe #eta;Efficiency", 30, -2.5, 2.5);
 
-  hh_probe_etaphi_mu4_L1 = new TH2F("hh_probe_etaphi_mu4_L1", "probe;Probe #{eta};Probe #{phi};Entries", 30, -2.5, 2.5, 30, -3.2, 3.2);
-  hh_probe_etaphi_mu4_SA = new TH2F("hh_probe_etaphi_mu4_SA", "probe;Probe #{eta};Probe #{phi};Entries", 30, -2.5, 2.5, 30, -3.2, 3.2);
-  hh_eff_etaphi_mu4_L1   = new TH2F("hh_eff_etaphi_mu4_L1",   "eff;Probe #{eta};Probe #{phi};Efficiency",   30, -2.5, 2.5, 30, -3.2, 3.2);
-  hh_eff_etaphi_mu4_L1SA = new TH2F("hh_eff_etaphi_mu4_L1SA", "eff;Probe #{eta};Probe #{phi};Efficiency",   30, -2.5, 2.5, 30, -3.2, 3.2);
+  hh_probe_etaphi_mu4_L1 = new TH2F("hh_probe_etaphi_mu4_L1", "probe;Probe #eta;Probe #phi;Entries", 30, -2.5, 2.5, 30, -3.5, 3.5);
+  hh_probe_etaphi_mu4_SA = new TH2F("hh_probe_etaphi_mu4_SA", "probe;Probe #eta;Probe #phi;Entries", 30, -2.5, 2.5, 30, -3.5, 3.5);
+  hh_eff_etaphi_mu4_L1   = new TH2F("hh_eff_etaphi_mu4_L1",   "eff;Probe #eta;Probe #phi;Efficiency",   30, -2.5, 2.5, 30, -3.5, 3.5);
+  hh_eff_etaphi_mu4_L1SA = new TH2F("hh_eff_etaphi_mu4_L1SA", "eff;Probe #eta;Probe #phi;Efficiency",   30, -2.5, 2.5, 30, -3.5, 3.5);
 
-  hh_probe_qetapt_mu4_L1 = new TH2F("hh_probe_qetapt_mu4_L1", "probe;Probe #{eta};Probe #{phi};Entries", 30, -2.5, 2.5, 30, 0, 14);
-  hh_probe_qetapt_mu4_SA = new TH2F("hh_probe_qetapt_mu4_SA", "probe;Probe #{eta};Probe #{phi};Entries", 30, -2.5, 2.5, 30, 0, 14);
-  hh_eff_qetapt_mu4_L1   = new TH2F("hh_eff_qetapt_mu4_L1",   "eff;Probe #{eta};Probe #{phi};Efficiency",   30, -2.5, 2.5, 30, 0, 14);
-  hh_eff_qetapt_mu4_L1SA = new TH2F("hh_eff_qetapt_mu4_L1SA", "eff;Probe #{eta};Probe #{phi};Efficiency",   30, -2.5, 2.5, 30, 0, 14);
+  hh_probe_qetapt_mu4_L1 = new TH2F("hh_probe_qetapt_mu4_L1", "probe;Probe Q#eta;Probe p_{T};Entries", 30, -2.5, 2.5, 30, 0, 14);
+  hh_probe_qetapt_mu4_SA = new TH2F("hh_probe_qetapt_mu4_SA", "probe;Probe Q#eta;Probe p_{T};Entries", 30, -2.5, 2.5, 30, 0, 14);
+  hh_eff_qetapt_mu4_L1   = new TH2F("hh_eff_qetapt_mu4_L1",   "eff;Probe Q#eta;Probe p_{T};Efficiency",   30, -2.5, 2.5, 30, 0, 14);
+  hh_eff_qetapt_mu4_L1SA = new TH2F("hh_eff_qetapt_mu4_L1SA", "eff;Probe Q#eta;Probe p_{T};Efficiency",   30, -2.5, 2.5, 30, 0, 14);
 
   h_probe_pt_mu50_L1  = new TH1F("h_probe_pt_mu50_L1", "probe;Probe p_{T}[GeV];Entries", 30, 0, 100);
   h_probe_pt_mu50_SA  = new TH1F("h_probe_pt_mu50_SA", "probe;Probe p_{T}[GeV];Entries", 30, 0, 100);
   h_eff_pt_mu50_L1    = new TH1F("h_eff_pt_mu50_L1",   "eff;Probe p_{T}[GeV];Efficiency", 30, 0, 100);
   h_eff_pt_mu50_L1SA  = new TH1F("h_eff_pt_mu50_L1SA", "eff;Probe p_{T}[GeV];Efficiency", 30, 0, 100);
 
-  h_probe_phi_mu50_L1  = new TH1F("h_probe_phi_mu50_L1", "probe;Probe #{phi};Entries", 30, -3.2, 3.2);
-  h_probe_phi_mu50_SA  = new TH1F("h_probe_phi_mu50_SA", "probe;Probe #{phi};Entries", 30, -3.2, 3.2);
-  h_eff_phi_mu50_L1    = new TH1F("h_eff_phi_mu50_L1",   "eff;Probe #{phi};Efficiency", 30, -3.2, 3.2);
-  h_eff_phi_mu50_L1SA  = new TH1F("h_eff_phi_mu50_L1SA", "eff;Probe #{phi};Efficiency", 30, -3.2, 3.2);
+  h_probe_phi_mu50_L1  = new TH1F("h_probe_phi_mu50_L1", "probe;Probe #phi;Entries", 30, -3.5, 3.5);
+  h_probe_phi_mu50_SA  = new TH1F("h_probe_phi_mu50_SA", "probe;Probe #phi;Entries", 30, -3.5, 3.5);
+  h_eff_phi_mu50_L1    = new TH1F("h_eff_phi_mu50_L1",   "eff;Probe #phi;Efficiency", 30, -3.5, 3.5);
+  h_eff_phi_mu50_L1SA  = new TH1F("h_eff_phi_mu50_L1SA", "eff;Probe #phi;Efficiency", 30, -3.5, 3.5);
 
-  h_probe_eta_mu50_L1  = new TH1F("h_probe_eta_mu50_L1", "probe;Probe #{eta};Entries", 30, -2.5, 2.5);
-  h_probe_eta_mu50_SA  = new TH1F("h_probe_eta_mu50_SA", "probe;Probe #{eta};Entries", 30, -2.5, 2.5);
-  h_eff_eta_mu50_L1    = new TH1F("h_eff_eta_mu50_L1",   "eff;Probe #{eta};Efficiency", 30, -2.5, 2.5);
-  h_eff_eta_mu50_L1SA  = new TH1F("h_eff_eta_mu50_L1SA", "eff;Probe #{eta};Efficiency", 30, -2.5, 2.5);
+  h_probe_eta_mu50_L1  = new TH1F("h_probe_eta_mu50_L1", "probe;Probe #eta;Entries", 30, -2.5, 2.5);
+  h_probe_eta_mu50_SA  = new TH1F("h_probe_eta_mu50_SA", "probe;Probe #eta;Entries", 30, -2.5, 2.5);
+  h_eff_eta_mu50_L1    = new TH1F("h_eff_eta_mu50_L1",   "eff;Probe #eta;Efficiency", 30, -2.5, 2.5);
+  h_eff_eta_mu50_L1SA  = new TH1F("h_eff_eta_mu50_L1SA", "eff;Probe #eta;Efficiency", 30, -2.5, 2.5);
 
-  hh_probe_etaphi_mu50_L1 = new TH2F("hh_probe_etaphi_mu50_L1", "probe;Probe #{eta};Probe #{phi};Entries", 30, -2.5, 2.5, 30, -3.2, 3.2);
-  hh_probe_etaphi_mu50_SA = new TH2F("hh_probe_etaphi_mu50_SA", "probe;Probe #{eta};Probe #{phi};Entries", 30, -2.5, 2.5, 30, -3.2, 3.2);
-  hh_eff_etaphi_mu50_L1   = new TH2F("hh_eff_etaphi_mu50_L1",   "eff;Probe #{eta};Probe #{phi};Efficiency",   30, -2.5, 2.5, 30, -3.2, 3.2);
-  hh_eff_etaphi_mu50_L1SA = new TH2F("hh_eff_etaphi_mu50_L1SA", "eff;Probe #{eta};Probe #{phi};Efficiency",   30, -2.5, 2.5, 30, -3.2, 3.2);
+  hh_probe_etaphi_mu50_L1 = new TH2F("hh_probe_etaphi_mu50_L1", "probe;Probe #eta;Probe #phi;Entries", 30, -2.5, 2.5, 30, -3.5, 3.5);
+  hh_probe_etaphi_mu50_SA = new TH2F("hh_probe_etaphi_mu50_SA", "probe;Probe #eta;Probe #phi;Entries", 30, -2.5, 2.5, 30, -3.5, 3.5);
+  hh_eff_etaphi_mu50_L1   = new TH2F("hh_eff_etaphi_mu50_L1",   "eff;Probe #eta;Probe #phi;Efficiency",   30, -2.5, 2.5, 30, -3.5, 3.5);
+  hh_eff_etaphi_mu50_L1SA = new TH2F("hh_eff_etaphi_mu50_L1SA", "eff;Probe #eta;Probe #phi;Efficiency",   30, -2.5, 2.5, 30, -3.5, 3.5);
 
-  hh_probe_qetapt_mu50_L1 = new TH2F("hh_probe_qetapt_mu50_L1", "probe;Probe #{eta};Probe #{phi};Entries", 30, -2.5, 2.5, 30, 0, 100);
-  hh_probe_qetapt_mu50_SA = new TH2F("hh_probe_qetapt_mu50_SA", "probe;Probe #{eta};Probe #{phi};Entries", 30, -2.5, 2.5, 30, 0, 100);
-  hh_eff_qetapt_mu50_L1   = new TH2F("hh_eff_qetapt_mu50_L1",   "eff;Probe #{eta};Probe #{phi};Efficiency",   30, -2.5, 2.5, 30, 0, 100);
-  hh_eff_qetapt_mu50_L1SA = new TH2F("hh_eff_qetapt_mu50_L1SA", "eff;Probe #{eta};Probe #{phi};Efficiency",   30, -2.5, 2.5, 30, 0, 100);
+  hh_probe_qetapt_mu50_L1 = new TH2F("hh_probe_qetapt_mu50_L1", "probe;Probe Q#eta;Probe p_{T};Entries", 30, -2.5, 2.5, 30, 0, 100);
+  hh_probe_qetapt_mu50_SA = new TH2F("hh_probe_qetapt_mu50_SA", "probe;Probe Q#eta;Probe p_{T};Entries", 30, -2.5, 2.5, 30, 0, 100);
+  hh_eff_qetapt_mu50_L1   = new TH2F("hh_eff_qetapt_mu50_L1",   "eff;Probe Q#eta;Probe p_{T};Efficiency",   30, -2.5, 2.5, 30, 0, 100);
+  hh_eff_qetapt_mu50_L1SA = new TH2F("hh_eff_qetapt_mu50_L1SA", "eff;Probe Q#eta;Probe p_{T};Efficiency",   30, -2.5, 2.5, 30, 0, 100);
 
   h_superPointRZ_BIS = new TH2F("h_superPointRZ_BIS", "h_superPointRZ_BIS;Z;R;Counts", 100, -15, 15, 100, 0, 20);
   h_superPointRZ_BIL = new TH2F("h_superPointRZ_BIL", "h_superPointRZ_BIL;Z;R;Counts", 100, -15, 15, 100, 0, 20);
