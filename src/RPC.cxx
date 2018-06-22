@@ -901,6 +901,21 @@ void RPC::FillEffHist(){
 
       break;
   }
+  return;
+}
+
+void RPC::CalcEff(){
+  CalcHistToHist( h_probe_pt_mu4_L1, h_probe_pt_mu4_SA, h_eff_pt_mu4_L1SA);
+  CalcHistToHist( h_probe_eta_mu4_L1, h_probe_eta_mu4_SA, h_eff_eta_mu4_L1SA);
+  CalcHistToHist( h_probe_phi_mu4_L1, h_probe_phi_mu4_SA, h_eff_phi_mu4_L1SA);
+  CalcHistToHist( hh_probe_qetapt_mu4_L1, hh_probe_qetapt_mu4_SA, hh_eff_qetapt_mu4_L1SA);
+  CalcHistToHist( hh_probe_etaphi_mu4_L1, hh_probe_etaphi_mu4_SA, hh_eff_etaphi_mu4_L1SA);
+
+  CalcHistToHist( h_probe_pt_mu50_L1, h_probe_pt_mu50_SA, h_eff_pt_mu50_L1SA);
+  CalcHistToHist( h_probe_eta_mu50_L1, h_probe_eta_mu50_SA, h_eff_eta_mu50_L1SA);
+  CalcHistToHist( h_probe_phi_mu50_L1, h_probe_phi_mu50_SA, h_eff_phi_mu50_L1SA);
+  CalcHistToHist( hh_probe_qetapt_mu50_L1, hh_probe_qetapt_mu50_SA, hh_eff_qetapt_mu50_L1SA);
+  CalcHistToHist( hh_probe_etaphi_mu50_L1, hh_probe_etaphi_mu50_SA, hh_eff_etaphi_mu50_L1SA);
 }
 
 
