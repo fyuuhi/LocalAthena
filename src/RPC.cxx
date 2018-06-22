@@ -902,3 +902,64 @@ void RPC::FillEffHist(){
       break;
   }
 }
+
+
+void RPC::CalcHistToHist( TH1F* h1, TH1F* h2, TH1F* hout ) {
+ 
+  double entry[3], error[3];
+  const int nbinX = hout->GetXaxis()->GetNbins();
+
+  if ( h1->GetXaxis()->GetNbins() != nbinX || h2->GetXaxis()->GetNbins() != nbinX ) {
+    cerr << "Error::CalcHistToHist() : Number of bin mismatched" << endl;
+    return;
+  }
+
+  for (int ibinX=0; ibinX<nbinX; ibinX++) {
+    entry[0] = h1->GetBinContent(ibinX+1);
+    error[0] = h1->GetBinError(ibinX+1);
+    entry[1] = h2->GetBinContent(ibinX+1);
+    error[1] = h2->GetBinError(ibinX+1);
+    entry[2] = ( entry[1]!=0 )? entry[0]/entry[1]:0;
+    error[2] = ( entry[1]!=0 )? sqrt( ( entry[0]*( 1. - 2*entry[2] ) + ( entry[1]*entry[2]*entry[2] ) )/(entry[1]*entry[1]) ):0;
+    if ( entry[2] >= 1 ) {
+      error[2] = 0;
+      }
+    hout->SetBinContent(ibinX+1, entry[2]);
+    hout->SetBinError(ibinX+1, error[2]);
+  }
+
+  return;
+}
+
+void RPC::CalcHistToHist( TH2F* h1, TH2F* h2, TH2F* hout ) {
+
+  double entry[3], error[3];
+  const int nbinX = hout->GetXaxis()->GetNbins();
+  const int nbinY = hout->GetYaxis()->GetNbins();
+
+  if ( h1->GetXaxis()->GetNbins() != nbinX || h2->GetXaxis()->GetNbins() != nbinX ) {
+    cerr << "Error::CalcHistToHist() : Number of Xbin mismatched" << endl;
+    return;
+  }
+  if ( h1->GetYaxis()->GetNbins() != nbinY || h2->GetYaxis()->GetNbins() != nbinY ) {
+    cerr << "Error::CalcHistToHist() : Number of Ybin mismatched" << endl;
+    return;
+  }
+
+  for (int ibinX=0; ibinX<nbinX; ibinX++) {
+    for (int ibinY=0; ibinY<nbinY; ibinY++) {
+      entry[0] = h1->GetBinContent(ibinX+1, ibinY+1);
+      error[0] = h1->GetBinError(ibinX+1, ibinY+1);
+      entry[1] = h2->GetBinContent(ibinX+1, ibinY+1);
+      error[1] = h2->GetBinError(ibinX+1, ibinY+1);
+      error[0] = sqrt( entry[0] + 0.25 ) + 0.5;
+      error[1] = sqrt( entry[0] + 0.25 ) + 0.5;
+      entry[2] = ( entry[1]!=0 )? entry[0]/entry[1]:0;
+      error[2] = ( entry[1]!=0 )? sqrt( entry[0]*entry[0]*error[1]*error[1] + entry[1]*entry[1]*error[0]*error[0] )/( entry[1]*entry[1] ):0;
+      hout->SetBinContent(ibinX+1, ibinY+1, entry[2]);
+      hout->SetBinError(ibinX+1, ibinY+1, error[2]);
+    }
+  }
+
+  return;
+}

@@ -544,6 +544,10 @@ public :
    virtual Bool_t   Notify();
    virtual void     Show(Long64_t entry = -1);
    virtual void     Display(Long64_t entry);
+   virtual void     CalcEff();
+   virtual void     DrawEffHist();
+   void CalcHistToHist( TH1F* h1, TH1F* h2, TH1F* hout );
+   void CalcHistToHist( TH2F* h1, TH2F* h2, TH2F* hout );
 };
 
 #endif
