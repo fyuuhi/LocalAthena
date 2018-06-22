@@ -941,10 +941,10 @@ void RPC::InitHist(){
   hh_eff_qetapt_mu4_L1   = new TH2F("hh_eff_qetapt_mu4_L1",   "eff;Probe Q#eta;Probe p_{T};Efficiency",   30, -2.5, 2.5, 30, 0, 14);
   hh_eff_qetapt_mu4_L1SA = new TH2F("hh_eff_qetapt_mu4_L1SA", "eff;Probe Q#eta;Probe p_{T};Efficiency",   30, -2.5, 2.5, 30, 0, 14);
 
-  h_probe_pt_mu50_L1  = new TH1F("h_probe_pt_mu50_L1", "probe;Probe p_{T}[GeV];Entries", 30, 0, 100);
-  h_probe_pt_mu50_SA  = new TH1F("h_probe_pt_mu50_SA", "probe;Probe p_{T}[GeV];Entries", 30, 0, 100);
-  h_eff_pt_mu50_L1    = new TH1F("h_eff_pt_mu50_L1",   "eff;Probe p_{T}[GeV];Efficiency", 30, 0, 100);
-  h_eff_pt_mu50_L1SA  = new TH1F("h_eff_pt_mu50_L1SA", "eff;Probe p_{T}[GeV];Efficiency", 30, 0, 100);
+  h_probe_pt_mu50_L1  = new TH1F("h_probe_pt_mu50_L1", "probe;Probe p_{T}[GeV];Entries", 50, 0, 100);
+  h_probe_pt_mu50_SA  = new TH1F("h_probe_pt_mu50_SA", "probe;Probe p_{T}[GeV];Entries", 50, 0, 100);
+  h_eff_pt_mu50_L1    = new TH1F("h_eff_pt_mu50_L1",   "eff;Probe p_{T}[GeV];Efficiency", 50, 0, 100);
+  h_eff_pt_mu50_L1SA  = new TH1F("h_eff_pt_mu50_L1SA", "eff;Probe p_{T}[GeV];Efficiency", 50, 0, 100);
 
   h_probe_phi_mu50_L1  = new TH1F("h_probe_phi_mu50_L1", "probe;Probe #phi;Entries", 30, -3.5, 3.5);
   h_probe_phi_mu50_SA  = new TH1F("h_probe_phi_mu50_SA", "probe;Probe #phi;Entries", 30, -3.5, 3.5);

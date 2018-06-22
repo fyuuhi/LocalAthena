@@ -76,6 +76,7 @@ int main(int argc, char **argv){
   //}
   //t_349014.Display(5);
 
+
   // tree2
   //TChain *tree2 = new TChain("t_tap", "t_tap");
   ////tree2 -> Add("/gpfs/fs2001/yfukuhar/data/hadd_data18_v3_mu26ivm_ok/user.yfukuhar.00349533.physics_Main.YFTAP.f929_m1955_jpzYFV3GRL_EXT0/hadd_data18_v3_mu26ivm_ok_user.yfukuhar.00349533.physics_Main.YFTAP.f929_m1955_jpzYFV3GRL_EXT0.root");
@@ -852,6 +853,7 @@ void RPC::FractionOfnMDTs(TH2F* h_NumberOfMdt, TCanvas* c1, TString pdf){
 
 
 void RPC::FillProbeHist(){
+  if (abs(probe_eta) > 1.05){ return;}
   switch (tag_proc) {
     case 1: //Jpsi until L2
       // Check TAP
@@ -967,7 +969,7 @@ void RPC::DrawEffHist(TString pdf){
 
 
   h_eff_pt_mu50_L1SA->Draw();
-  h_eff_phi_mu50_L1SA->GetYaxis()->SetRangeUser(0,1.1);
+  h_eff_pt_mu50_L1SA->GetYaxis()->SetRangeUser(0,1.1);
   c1 -> Print( pdf, "pdf" );
 
   h_eff_eta_mu50_L1SA->Draw();
