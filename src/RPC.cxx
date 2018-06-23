@@ -47,18 +47,18 @@ int main(int argc, char **argv){
   TChain *tree1 = new TChain("t_tap", "t_tap");
   //tree1 -> Add("/gpfs/fs2001/yfukuhar/data/user.yfukuhar.00349533.physics_Main.YFTAP.f929_m1955_jpzYFV4_GRL_F_tree_v1_349533_EXT0/hadd/user.yfukuhar.00349533.physics_Main.YFTAP.f929_m1955_jpzYFV4_GRL_F_tree_v1_349533_EXT0.root");
   //tree1 -> Add("/gpfs/fs2001/yfukuhar/data/user.yfukuhar.00349533.physics_Main.YFTAP.f929_m1955_GRL_False_349533_mdtHit_v1_EXT0/hadd/user.yfukuhar.00349533.physics_Main.YFTAP.f929_m1955_GRL_False_349533_mdtHit_v1_EXT.root");
-  tree1 -> Add("/gpfs/fs2001/yfukuhar/data/user.yfukuhar.00349533.physics_Main.YFTAP.f929_m1955_GRL_False_349533_mdtHit_v2_EXT0/hadd/user.yfukuhar.00349533.physics_Main.YFTAP.f929_m1955_GRL_False_349533_mdtHit_v2_EXT.root");
-  //tree1 -> Add("/gpfs/fs2001/yfukuhar/data/data18_0621/data18_0621.root");
+  //tree1 -> Add("/gpfs/fs2001/yfukuhar/data/user.yfukuhar.00349533.physics_Main.YFTAP.f929_m1955_GRL_False_349533_mdtHit_v2_EXT0/hadd/user.yfukuhar.00349533.physics_Main.YFTAP.f929_m1955_GRL_False_349533_mdtHit_v2_EXT.root");
+  tree1 -> Add("/gpfs/fs2001/yfukuhar/data/data18_0621/data18_0621.root");
   //tree1 -> Add("/gpfs/home/yfukuhar/work/CalcEffTool/run/Output/");
   //tree1 -> Add("/gpfs/fs2001/yfukuhar/CalcEffPlotMakerOrigin/data/mc16c_Jpsimu6_default/mc16c_Jpsimu6_default.root");
 
   RPC t_349014(tree1); 
 
-  t_349014.Loop(-1, 10000);
+  t_349014.Loop(100000, 10000);
   cout << "[INFO]: Loop SUCCESS" << endl;
 
   //t_349014.DrawHist("../plot/data18_0621.pdf");
-  t_349014.DrawHist("../plot/t_349014.pdf");
+  t_349014.DrawHist("../plot/t_0621.pdf");
   cout << "[INFO]: DrawHist SUCCESS" << endl;
 
   //t_349014.CalcEff();
@@ -288,10 +288,12 @@ void RPC::DrawHist(TString pdf){
   h_NumberOfMdt_eta->Draw("colz");
   c1 -> Print(pdf, "pdf" );
 
-  h_NumberOfMdt_LumiBlock->Draw("colz");
-  c1 -> Print(pdf, "pdf" );
+  //h_NumberOfMdt_LumiBlock->Draw("colz");
+  //c1 -> Print(pdf, "pdf" );
 
-  DrawFractionOfnMDTs(h_NumberOfMdt_LumiBlock, c1, pdf);
+  DrawFractionOfnMDTs(h_NumberOfMdt_pt_barrel_BI, c1, pdf);
+  DrawFractionOfnMDTs(h_NumberOfMdt_pt_barrel_BM, c1, pdf);
+  DrawFractionOfnMDTs(h_NumberOfMdt_pt_barrel_BO, c1, pdf);
   DrawFractionOfnMDTs(h_NumberOfMdt_eta_BI, c1, pdf);
   DrawFractionOfnMDTs(h_NumberOfMdt_eta_BM, c1, pdf);
   DrawFractionOfnMDTs(h_NumberOfMdt_eta_BO, c1, pdf);
@@ -303,14 +305,14 @@ void RPC::DrawHist(TString pdf){
   h_NumberOfMdt_eta_BO->Draw("colz");
   c1 -> Print(pdf, "pdf" );
 
-  h_NumberOfMdt_LumiBlock->Draw("colz");
-  c1 -> Print(pdf, "pdf" );
-  h_NumberOfMdt_LumiBlock_BI->Draw("colz");
-  c1 -> Print(pdf, "pdf" );
-  h_NumberOfMdt_LumiBlock_BM->Draw("colz");
-  c1 -> Print(pdf, "pdf" );
-  h_NumberOfMdt_LumiBlock_BO->Draw("colz");
-  c1 -> Print(pdf, "pdf" );
+  //h_NumberOfMdt_LumiBlock->Draw("colz");
+  //c1 -> Print(pdf, "pdf" );
+  //h_NumberOfMdt_LumiBlock_BI->Draw("colz");
+  //c1 -> Print(pdf, "pdf" );
+  //h_NumberOfMdt_LumiBlock_BM->Draw("colz");
+  //c1 -> Print(pdf, "pdf" );
+  //h_NumberOfMdt_LumiBlock_BO->Draw("colz");
+  //c1 -> Print(pdf, "pdf" );
 
 
 
@@ -603,10 +605,10 @@ void RPC::FillMdtHist(){
   h_NumberOfMdt_eta_BO -> Fill(probe_eta, nMdtBO);
 
   if (abs(probe_eta) < 1.05){
-    h_NumberOfMdt_LumiBlock->Fill(LumiBlock, (probe_mesSA_mdtHitIsOutlier -> at(14)).size());
-    h_NumberOfMdt_LumiBlock_BI->Fill(LumiBlock, nMdtBI);
-    h_NumberOfMdt_LumiBlock_BM->Fill(LumiBlock, nMdtBM);
-    h_NumberOfMdt_LumiBlock_BO->Fill(LumiBlock, nMdtBO);
+    //h_NumberOfMdt_LumiBlock->Fill(LumiBlock, (probe_mesSA_mdtHitIsOutlier -> at(14)).size());
+    h_NumberOfMdt_pt_barrel_BI->Fill(probe_pt/1000., nMdtBI);
+    h_NumberOfMdt_pt_barrel_BM->Fill(probe_pt/1000., nMdtBM);
+    h_NumberOfMdt_pt_barrel_BO->Fill(probe_pt/1000., nMdtBO);
   }
 }
 
