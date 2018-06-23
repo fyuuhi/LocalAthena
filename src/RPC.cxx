@@ -194,16 +194,8 @@ void RPC::Loop( int Nevents, int DisplayNumber )
           //  continue;
           //}
 
-
-          h_NumberOfSP_eta->Fill(probe_eta, NumberOfSP());
-          h_NumberOfSP_qeta->Fill(probe_charge*probe_eta, NumberOfSP());
-          if (abs(probe_eta) < 1.05){
-            //cout << NumberOfSP() << endl;
-            h_NumberOfMdt_LumiBlock->Fill(LumiBlock, (probe_mesSA_mdtHitIsOutlier -> at(14)).size());
-            h_NumberOfSP_LumiBlock->Fill(LumiBlock, NumberOfSP());
-            h_NumberOfSP_pt_barrel->Fill(probe_pt/1000., NumberOfSP());
-            h_NumberOfSP_pass_barrel->Fill(probe_mesSA_pass->at(N50), NumberOfSP());
-          }
+          FillMdtHist();
+          FillSPHist();
 
           //BIS
           if (probe_mesSA_superPointR_BI->at(N50) != 0 &&
@@ -647,6 +639,19 @@ double Res(double param1, double param2){
 //  }
 //
 //}
+
+void RPC::FillSPHist(){
+  h_NumberOfSP_eta->Fill(probe_eta, NumberOfSP());
+  h_NumberOfSP_qeta->Fill(probe_charge*probe_eta, NumberOfSP());
+  if (abs(probe_eta) < 1.05){
+    //cout << NumberOfSP() << endl;
+    h_NumberOfMdt_LumiBlock->Fill(LumiBlock, (probe_mesSA_mdtHitIsOutlier -> at(14)).size());
+    h_NumberOfSP_LumiBlock->Fill(LumiBlock, NumberOfSP());
+    h_NumberOfSP_pt_barrel->Fill(probe_pt/1000., NumberOfSP());
+    h_NumberOfSP_pass_barrel->Fill(probe_mesSA_pass->at(N50), NumberOfSP());
+  }
+}
+
 
 int RPC::NumberOfSP(){
   int number = 0;

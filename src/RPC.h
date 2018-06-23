@@ -543,6 +543,7 @@ public :
    virtual void     Show(Long64_t entry = -1);
 
    // SuperPoints
+   virtual void FillSPHist();
    virtual int     NumberOfSP();
 
    // MDT hits
