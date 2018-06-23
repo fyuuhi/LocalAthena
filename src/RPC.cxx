@@ -294,6 +294,7 @@ void RPC::DrawHist(TString pdf){
   DrawFractionOfnMDTs(h_NumberOfMdt_pt_barrel_BI, c1, pdf);
   DrawFractionOfnMDTs(h_NumberOfMdt_pt_barrel_BM, c1, pdf);
   DrawFractionOfnMDTs(h_NumberOfMdt_pt_barrel_BO, c1, pdf);
+  DrawFractionOfnMDTs(h_NumberOfMdt_eta, c1, pdf);
   DrawFractionOfnMDTs(h_NumberOfMdt_eta_BI, c1, pdf);
   DrawFractionOfnMDTs(h_NumberOfMdt_eta_BM, c1, pdf);
   DrawFractionOfnMDTs(h_NumberOfMdt_eta_BO, c1, pdf);
@@ -573,7 +574,9 @@ void RPC::FillMdtHist(){
   int nMdtBI = 0;
   int nMdtBM = 0;
   int nMdtBO = 0;
+  int nMdt = 0;
   for ( uint32_t i = 0; i < (probe_mesSA_mdtHitIsOutlier -> at(N50)).size();i++){
+    nMdt += 1;
     if (probe_mesSA_mdtHitIsOutlier -> at(N50)[i] == 1) {
       continue;
     }
@@ -599,7 +602,7 @@ void RPC::FillMdtHist(){
     }
   }
 
-  h_NumberOfMdt_eta    -> Fill(probe_eta, nMdtBI + nMdtBM + nMdtBO);
+  h_NumberOfMdt_eta    -> Fill(probe_eta, nMdt);
   h_NumberOfMdt_eta_BI -> Fill(probe_eta, nMdtBI);
   h_NumberOfMdt_eta_BM -> Fill(probe_eta, nMdtBM);
   h_NumberOfMdt_eta_BO -> Fill(probe_eta, nMdtBO);
