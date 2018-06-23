@@ -535,14 +535,21 @@ public :
    virtual Long64_t LoadTree(Long64_t entry);
    virtual void     Init(TTree *tree);
    virtual void     InitHist();
-   virtual void     End();
-   virtual int     NumberOfSP();
-   virtual void FractionOfnMDTs(TH2F* h_NumberOfMdt, TCanvas* c1, TString pdf);
    virtual void     Loop( int Nevents, int DisplayNumber );
    virtual void     DrawHist(TString pdf);
+   virtual void     End();
    virtual Bool_t   Notify();
-   virtual void     Show(Long64_t entry = -1);
    virtual void     Display(Long64_t entry);
+   virtual void     Show(Long64_t entry = -1);
+
+   // SuperPoints
+   virtual int     NumberOfSP();
+
+   // MDT hits
+   virtual void FillMdtHist();
+   virtual void FractionOfnMDTs(TH2F* h_NumberOfMdt, TCanvas* c1, TString pdf);
+
+   // Efficiency
    virtual void     FillProbeHist();
    virtual void     CalcEff();
    virtual void     DrawEffHist(TString pdf);
