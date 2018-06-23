@@ -288,12 +288,10 @@ void RPC::DrawHist(TString pdf){
   h_NumberOfMdt_eta->Draw("colz");
   c1 -> Print(pdf, "pdf" );
 
-  // Begin of a Fraction plot
   h_NumberOfMdt_LumiBlock->Draw("colz");
   c1 -> Print(pdf, "pdf" );
 
   DrawFractionOfnMDTs(h_NumberOfMdt_LumiBlock, c1, pdf);
-
   DrawFractionOfnMDTs(h_NumberOfMdt_eta_BI, c1, pdf);
   DrawFractionOfnMDTs(h_NumberOfMdt_eta_BM, c1, pdf);
   DrawFractionOfnMDTs(h_NumberOfMdt_eta_BO, c1, pdf);
@@ -314,240 +312,21 @@ void RPC::DrawHist(TString pdf){
   h_NumberOfMdt_LumiBlock_BO->Draw("colz");
   c1 -> Print(pdf, "pdf" );
 
-  // Begin of a Fraction plot
-  h_NumberOfSP_LumiBlock->Draw("colz");
-  c1 -> Print(pdf, "pdf" );
-  TProfile *pf_LumiBlock = h_NumberOfSP_LumiBlock->ProfileX();
-  pf_LumiBlock->Draw();
-  pf_LumiBlock->GetYaxis()->SetTitle("Average number of SP");
-  c1 -> Print(pdf, "pdf" );
-
-  TH1D* h_LumiBlock_all = h_NumberOfSP_LumiBlock->ProjectionX("_all");
-  TH1D* h_LumiBlock_5 = h_NumberOfSP_LumiBlock->ProjectionX("5",h_NumberOfSP_LumiBlock->GetYaxis()->FindBin(4.9),h_NumberOfSP_LumiBlock->GetYaxis()->FindBin(5.1));
-  TH1D* h_LumiBlock_4 = h_NumberOfSP_LumiBlock->ProjectionX("4",h_NumberOfSP_LumiBlock->GetYaxis()->FindBin(3.9),h_NumberOfSP_LumiBlock->GetYaxis()->FindBin(4.1));
-  TH1D* h_LumiBlock_3 = h_NumberOfSP_LumiBlock->ProjectionX("3",h_NumberOfSP_LumiBlock->GetYaxis()->FindBin(2.9),h_NumberOfSP_LumiBlock->GetYaxis()->FindBin(3.1));
-  TH1D* h_LumiBlock_2 = h_NumberOfSP_LumiBlock->ProjectionX("2",h_NumberOfSP_LumiBlock->GetYaxis()->FindBin(1.9),h_NumberOfSP_LumiBlock->GetYaxis()->FindBin(2.1));
-  TH1D* h_LumiBlock_1 = h_NumberOfSP_LumiBlock->ProjectionX("1",h_NumberOfSP_LumiBlock->GetYaxis()->FindBin(0.9),h_NumberOfSP_LumiBlock->GetYaxis()->FindBin(1.1));
-  TH1D* h_LumiBlock_0 = h_NumberOfSP_LumiBlock->ProjectionX("0",h_NumberOfSP_LumiBlock->GetYaxis()->FindBin(-0.9),h_NumberOfSP_LumiBlock->GetYaxis()->FindBin(0.1));
-
-  h_LumiBlock_5->Divide(h_LumiBlock_all);
-  h_LumiBlock_4->Divide(h_LumiBlock_all);
-  h_LumiBlock_3->Divide(h_LumiBlock_all);
-  h_LumiBlock_2->Divide(h_LumiBlock_all);
-  h_LumiBlock_1->Divide(h_LumiBlock_all);
-  h_LumiBlock_0->Divide(h_LumiBlock_all);
-
-
-  THStack *hs_LumiBlock = new THStack("hs_LumiBlock",";LumiBlock;Fraction of number of SPs");
-  h_LumiBlock_5->SetFillColor(kCyan);//あらかじめFillColorをSetしておく
-  h_LumiBlock_4->SetFillColor(kMagenta);//あらかじめFillColorをSetしておく
-  h_LumiBlock_3->SetFillColor(kRed);//あらかじめFillColorをSetしておく
-  h_LumiBlock_2->SetFillColor(kBlue);
-  h_LumiBlock_1->SetFillColor(kGreen);
-  h_LumiBlock_0->SetFillColor(kYellow);
-  hs_LumiBlock->Add(h_LumiBlock_5);
-  hs_LumiBlock->Add(h_LumiBlock_4);
-  hs_LumiBlock->Add(h_LumiBlock_3);
-  hs_LumiBlock->Add(h_LumiBlock_2);
-  hs_LumiBlock->Add(h_LumiBlock_1);
-  hs_LumiBlock->Add(h_LumiBlock_0);
-
-  hs_LumiBlock->Draw();
-
-  TLegend *leg_LumiBlock = new TLegend(0.82,0.62,0.9,0.92);
-  leg_LumiBlock->AddEntry(h_LumiBlock_0," n=0","f");
-  leg_LumiBlock->AddEntry(h_LumiBlock_1," n=1","f");
-  leg_LumiBlock->AddEntry(h_LumiBlock_2," n=2","f");
-  leg_LumiBlock->AddEntry(h_LumiBlock_3," n=3","f");
-  leg_LumiBlock->AddEntry(h_LumiBlock_4," n=4","f");
-  leg_LumiBlock->AddEntry(h_LumiBlock_5," n=5","f");
-  leg_LumiBlock->Draw();
-  c1 -> Print(pdf, "pdf" );
-  delete leg_LumiBlock;
-  // End of a Fraction plot
 
 
   h_NumberOfSP_eta->Draw("colz");
   c1 -> Print(pdf, "pdf" );
-  TProfile *pf_eta = h_NumberOfSP_eta->ProfileX();
-  pf_eta->Draw();
-  pf_eta->GetYaxis()->SetTitle("Average number of SP");
-  c1 -> Print(pdf, "pdf" );
-
-  TH1D* h_eta_all = h_NumberOfSP_eta->ProjectionX("_all");
-  TH1D* h_eta_5 = h_NumberOfSP_eta->ProjectionX("5",h_NumberOfSP_eta->GetYaxis()->FindBin(4.9),h_NumberOfSP_eta->GetYaxis()->FindBin(5.1));
-  TH1D* h_eta_4 = h_NumberOfSP_eta->ProjectionX("4",h_NumberOfSP_eta->GetYaxis()->FindBin(3.9),h_NumberOfSP_eta->GetYaxis()->FindBin(4.1));
-  TH1D* h_eta_3 = h_NumberOfSP_eta->ProjectionX("3",h_NumberOfSP_eta->GetYaxis()->FindBin(2.9),h_NumberOfSP_eta->GetYaxis()->FindBin(3.1));
-  TH1D* h_eta_2 = h_NumberOfSP_eta->ProjectionX("2",h_NumberOfSP_eta->GetYaxis()->FindBin(1.9),h_NumberOfSP_eta->GetYaxis()->FindBin(2.1));
-  TH1D* h_eta_1 = h_NumberOfSP_eta->ProjectionX("1",h_NumberOfSP_eta->GetYaxis()->FindBin(0.9),h_NumberOfSP_eta->GetYaxis()->FindBin(1.1));
-  TH1D* h_eta_0 = h_NumberOfSP_eta->ProjectionX("0",h_NumberOfSP_eta->GetYaxis()->FindBin(-0.9),h_NumberOfSP_eta->GetYaxis()->FindBin(0.1));
-
-  h_eta_5->Divide(h_eta_all);
-  h_eta_4->Divide(h_eta_all);
-  h_eta_3->Divide(h_eta_all);
-  h_eta_2->Divide(h_eta_all);
-  h_eta_1->Divide(h_eta_all);
-  h_eta_0->Divide(h_eta_all);
-
-
-  THStack *hs_eta = new THStack("hs_eta",";eta;Fraction of number of SPs");
-  h_eta_5->SetFillColor(kCyan);//あらかじめFillColorをSetしておく
-  h_eta_4->SetFillColor(kMagenta);//あらかじめFillColorをSetしておく
-  h_eta_3->SetFillColor(kRed);//あらかじめFillColorをSetしておく
-  h_eta_2->SetFillColor(kBlue);
-  h_eta_1->SetFillColor(kGreen);
-  h_eta_0->SetFillColor(kYellow);
-  hs_eta->Add(h_eta_5);
-  hs_eta->Add(h_eta_4);
-  hs_eta->Add(h_eta_3);
-  hs_eta->Add(h_eta_2);
-  hs_eta->Add(h_eta_1);
-  hs_eta->Add(h_eta_0);
-
-  hs_eta->Draw();
-
-  TLegend *leg_eta = new TLegend(0.82,0.62,0.9,0.92);
-  leg_eta->AddEntry(h_eta_0," n=0","f");
-  leg_eta->AddEntry(h_eta_1," n=1","f");
-  leg_eta->AddEntry(h_eta_2," n=2","f");
-  leg_eta->AddEntry(h_eta_3," n=3","f");
-  leg_eta->AddEntry(h_eta_4," n=4","f");
-  leg_eta->AddEntry(h_eta_5," n=5","f");
-  leg_eta->Draw();
-  c1 -> Print(pdf, "pdf" );
-  delete leg_eta;
 
   h_NumberOfSP_qeta->Draw("colz");
   c1 -> Print(pdf, "pdf" );
-  TProfile *pf_qeta = h_NumberOfSP_qeta->ProfileX();
-  pf_qeta->Draw();
-  pf_qeta->GetYaxis()->SetTitle("Average number of SP");
-  c1 -> Print(pdf, "pdf" );
-
-  TH1D* h_qeta_all = h_NumberOfSP_qeta->ProjectionX("_all");
-  TH1D* h_qeta_5 = h_NumberOfSP_qeta->ProjectionX("5",h_NumberOfSP_qeta->GetYaxis()->FindBin(4.9),h_NumberOfSP_qeta->GetYaxis()->FindBin(5.1));
-  TH1D* h_qeta_4 = h_NumberOfSP_qeta->ProjectionX("4",h_NumberOfSP_qeta->GetYaxis()->FindBin(3.9),h_NumberOfSP_qeta->GetYaxis()->FindBin(4.1));
-  TH1D* h_qeta_3 = h_NumberOfSP_qeta->ProjectionX("3",h_NumberOfSP_qeta->GetYaxis()->FindBin(2.9),h_NumberOfSP_qeta->GetYaxis()->FindBin(3.1));
-  TH1D* h_qeta_2 = h_NumberOfSP_qeta->ProjectionX("2",h_NumberOfSP_qeta->GetYaxis()->FindBin(1.9),h_NumberOfSP_qeta->GetYaxis()->FindBin(2.1));
-  TH1D* h_qeta_1 = h_NumberOfSP_qeta->ProjectionX("1",h_NumberOfSP_qeta->GetYaxis()->FindBin(0.9),h_NumberOfSP_qeta->GetYaxis()->FindBin(1.1));
-  TH1D* h_qeta_0 = h_NumberOfSP_qeta->ProjectionX("0",h_NumberOfSP_qeta->GetYaxis()->FindBin(-0.9),h_NumberOfSP_qeta->GetYaxis()->FindBin(0.1));
-
-  h_qeta_5->Divide(h_qeta_all);
-  h_qeta_4->Divide(h_qeta_all);
-  h_qeta_3->Divide(h_qeta_all);
-  h_qeta_2->Divide(h_qeta_all);
-  h_qeta_1->Divide(h_qeta_all);
-  h_qeta_0->Divide(h_qeta_all);
-
-
-  THStack *hs_qeta = new THStack("hs_qeta",";qeta;Fraction of number of SPs");
-  h_qeta_5->SetFillColor(kCyan);//あらかじめFillColorをSetしておく
-  h_qeta_4->SetFillColor(kMagenta);//あらかじめFillColorをSetしておく
-  h_qeta_3->SetFillColor(kRed);//あらかじめFillColorをSetしておく
-  h_qeta_2->SetFillColor(kBlue);
-  h_qeta_1->SetFillColor(kGreen);
-  h_qeta_0->SetFillColor(kYellow);
-  hs_qeta->Add(h_qeta_5);
-  hs_qeta->Add(h_qeta_4);
-  hs_qeta->Add(h_qeta_3);
-  hs_qeta->Add(h_qeta_2);
-  hs_qeta->Add(h_qeta_1);
-  hs_qeta->Add(h_qeta_0);
-
-  hs_qeta->Draw();
-
-  TLegend *leg_qeta = new TLegend(0.82,0.62,0.9,0.92);
-  leg_qeta->AddEntry(h_qeta_0," n=0","f");
-  leg_qeta->AddEntry(h_qeta_1," n=1","f");
-  leg_qeta->AddEntry(h_qeta_2," n=2","f");
-  leg_qeta->AddEntry(h_qeta_3," n=3","f");
-  leg_qeta->AddEntry(h_qeta_4," n=4","f");
-  leg_qeta->AddEntry(h_qeta_5," n=5","f");
-  leg_qeta->Draw();
-  c1 -> Print(pdf, "pdf" );
-  delete leg_qeta;
 
   h_NumberOfSP_pt_barrel->Draw("colz");
   c1 -> Print(pdf, "pdf" );
-  TProfile *pf_pt = h_NumberOfSP_pt_barrel->ProfileX();
-  pf_pt->Draw();
-  pf_pt->GetYaxis()->SetTitle("Average number of SP");
-  c1 -> Print(pdf, "pdf" );
-
-  TH1D* h_pt_all = h_NumberOfSP_pt_barrel->ProjectionX("_all");
-  TH1D* h_pt_5 = h_NumberOfSP_pt_barrel->ProjectionX("5",h_NumberOfSP_pt_barrel->GetYaxis()->FindBin(4.9),h_NumberOfSP_pt_barrel->GetYaxis()->FindBin(5.1));
-  TH1D* h_pt_4 = h_NumberOfSP_pt_barrel->ProjectionX("4",h_NumberOfSP_pt_barrel->GetYaxis()->FindBin(3.9),h_NumberOfSP_pt_barrel->GetYaxis()->FindBin(4.1));
-  TH1D* h_pt_3 = h_NumberOfSP_pt_barrel->ProjectionX("3",h_NumberOfSP_pt_barrel->GetYaxis()->FindBin(2.9),h_NumberOfSP_pt_barrel->GetYaxis()->FindBin(3.1));
-  TH1D* h_pt_2 = h_NumberOfSP_pt_barrel->ProjectionX("2",h_NumberOfSP_pt_barrel->GetYaxis()->FindBin(1.9),h_NumberOfSP_pt_barrel->GetYaxis()->FindBin(2.1));
-  TH1D* h_pt_1 = h_NumberOfSP_pt_barrel->ProjectionX("1",h_NumberOfSP_pt_barrel->GetYaxis()->FindBin(0.9),h_NumberOfSP_pt_barrel->GetYaxis()->FindBin(1.1));
-  TH1D* h_pt_0 = h_NumberOfSP_pt_barrel->ProjectionX("0",h_NumberOfSP_pt_barrel->GetYaxis()->FindBin(-0.9),h_NumberOfSP_pt_barrel->GetYaxis()->FindBin(0.1));
-
-  h_pt_5->Divide(h_pt_all);
-  h_pt_4->Divide(h_pt_all);
-  h_pt_3->Divide(h_pt_all);
-  h_pt_2->Divide(h_pt_all);
-  h_pt_1->Divide(h_pt_all);
-  h_pt_0->Divide(h_pt_all);
-
-
-  THStack *hs_pt = new THStack("hs_pt",";pT [GeV];Fraction of number of SPs");
-  h_pt_5->SetFillColor(kCyan);//あらかじめFillColorをSetしておく
-  h_pt_4->SetFillColor(kMagenta);//あらかじめFillColorをSetしておく
-  h_pt_3->SetFillColor(kRed);//あらかじめFillColorをSetしておく
-  h_pt_2->SetFillColor(kBlue);
-  h_pt_1->SetFillColor(kGreen);
-  h_pt_0->SetFillColor(kYellow);
-  hs_pt->Add(h_pt_5);
-  hs_pt->Add(h_pt_4);
-  hs_pt->Add(h_pt_3);
-  hs_pt->Add(h_pt_2);
-  hs_pt->Add(h_pt_1);
-  hs_pt->Add(h_pt_0);
-
-  hs_pt->Draw();
-
-  TLegend *leg_pt = new TLegend(0.82,0.62,0.9,0.92);
-  leg_pt->AddEntry(h_pt_0," n=0","f");
-  leg_pt->AddEntry(h_pt_1," n=1","f");
-  leg_pt->AddEntry(h_pt_2," n=2","f");
-  leg_pt->AddEntry(h_pt_3," n=3","f");
-  leg_pt->AddEntry(h_pt_4," n=4","f");
-  leg_pt->AddEntry(h_pt_5," n=5","f");
-  leg_pt->Draw();
-  c1 -> Print(pdf, "pdf" );
-  delete leg_pt;
 
   h_NumberOfSP_pass_barrel->Draw("colz");
   c1 -> Print(pdf, "pdf" );
-  TProfile *pf_pass = h_NumberOfSP_pass_barrel->ProfileX();
-  pf_pass->GetYaxis()->SetTitle("Average number of SP");
-  pf_pass->Draw();
-  c1 -> Print(pdf, "pdf" );
 
 
-  TH1D* h_pass_all = h_NumberOfSP_pass_barrel->ProjectionX("_all");
-  TH1D* h_pass_3 = h_NumberOfSP_pass_barrel->ProjectionX("pass_3",h_NumberOfSP_pass_barrel->GetYaxis()->FindBin(2.9),h_NumberOfSP_pass_barrel->GetYaxis()->FindBin(3.1));
-  TH1D* h_pass_2 = h_NumberOfSP_pass_barrel->ProjectionX("pass_2",h_NumberOfSP_pass_barrel->GetYaxis()->FindBin(1.9),h_NumberOfSP_pass_barrel->GetYaxis()->FindBin(2.1));
-  TH1D* h_pass_1 = h_NumberOfSP_pass_barrel->ProjectionX("pass_1",h_NumberOfSP_pass_barrel->GetYaxis()->FindBin(0.9),h_NumberOfSP_pass_barrel->GetYaxis()->FindBin(1.1));
-  TH1D* h_pass_0 = h_NumberOfSP_pass_barrel->ProjectionX("pass_0",h_NumberOfSP_pass_barrel->GetYaxis()->FindBin(-0.9),h_NumberOfSP_pass_barrel->GetYaxis()->FindBin(0.1));
-
-  h_pass_3->Divide(h_pass_all);
-  h_pass_2->Divide(h_pass_all);
-  h_pass_1->Divide(h_pass_all);
-  h_pass_0->Divide(h_pass_all);
-
-  THStack *hs_pass = new THStack("hs_pass",";pass;Fraction of number of SPs");
-  h_pass_3->SetFillColor(kRed);//あらかじめFillColorをSetしておく
-  h_pass_2->SetFillColor(kBlue);
-  h_pass_1->SetFillColor(kGreen);
-  h_pass_0->SetFillColor(kYellow);
-  hs_pass->Add(h_pass_3);
-  hs_pass->Add(h_pass_2);
-  hs_pass->Add(h_pass_1);
-  hs_pass->Add(h_pass_0);
-
-  hs_pass->Draw();
-  c1 -> Print(pdf, "pdf" );
 
   h_superPointRZ_BIL -> Draw("colz");
   c1 -> Print(pdf, "pdf" );
@@ -640,12 +419,64 @@ double Res(double param1, double param2){
 //
 //}
 
+void RPC::DrawFractionOfnSPs(TH2F* h_NumberOfSP, TCanvas* c1, TString pdf){
+  // Begin of a Fraction plot
+  TProfile *pf_SP = h_NumberOfSP->ProfileX();
+  pf_SP->Draw();
+  pf_SP->GetYaxis()->SetTitle("Average number of SP");
+  c1 -> Print(pdf, "pdf" );
+
+  TH1D* h_SP_all = h_NumberOfSP->ProjectionX("_all");
+  TH1D* h_SP_5 = h_NumberOfSP->ProjectionX("5",h_NumberOfSP->GetYaxis()->FindBin(4.9),h_NumberOfSP->GetYaxis()->FindBin(5.1));
+  TH1D* h_SP_4 = h_NumberOfSP->ProjectionX("4",h_NumberOfSP->GetYaxis()->FindBin(3.9),h_NumberOfSP->GetYaxis()->FindBin(4.1));
+  TH1D* h_SP_3 = h_NumberOfSP->ProjectionX("3",h_NumberOfSP->GetYaxis()->FindBin(2.9),h_NumberOfSP->GetYaxis()->FindBin(3.1));
+  TH1D* h_SP_2 = h_NumberOfSP->ProjectionX("2",h_NumberOfSP->GetYaxis()->FindBin(1.9),h_NumberOfSP->GetYaxis()->FindBin(2.1));
+  TH1D* h_SP_1 = h_NumberOfSP->ProjectionX("1",h_NumberOfSP->GetYaxis()->FindBin(0.9),h_NumberOfSP->GetYaxis()->FindBin(1.1));
+  TH1D* h_SP_0 = h_NumberOfSP->ProjectionX("0",h_NumberOfSP->GetYaxis()->FindBin(-0.9),h_NumberOfSP->GetYaxis()->FindBin(0.1));
+
+  h_SP_5->Divide(h_SP_all);
+  h_SP_4->Divide(h_SP_all);
+  h_SP_3->Divide(h_SP_all);
+  h_SP_2->Divide(h_SP_all);
+  h_SP_1->Divide(h_SP_all);
+  h_SP_0->Divide(h_SP_all);
+
+
+  THStack *hs_SP = new THStack("hs_SP",";SP;Fraction of number of SPs");
+  h_SP_5->SetFillColor(kCyan);//あらかじめFillColorをSetしておく
+  h_SP_4->SetFillColor(kMagenta);//あらかじめFillColorをSetしておく
+  h_SP_3->SetFillColor(kRed);//あらかじめFillColorをSetしておく
+  h_SP_2->SetFillColor(kBlue);
+  h_SP_1->SetFillColor(kGreen);
+  h_SP_0->SetFillColor(kYellow);
+  hs_SP->Add(h_SP_5);
+  hs_SP->Add(h_SP_4);
+  hs_SP->Add(h_SP_3);
+  hs_SP->Add(h_SP_2);
+  hs_SP->Add(h_SP_1);
+  hs_SP->Add(h_SP_0);
+
+  hs_SP->Draw();
+
+  TLegend *leg_SP = new TLegend(0.82,0.62,0.9,0.92);
+  leg_SP->AddEntry(h_SP_0," n=0","f");
+  leg_SP->AddEntry(h_SP_1," n=1","f");
+  leg_SP->AddEntry(h_SP_2," n=2","f");
+  leg_SP->AddEntry(h_SP_3," n=3","f");
+  leg_SP->AddEntry(h_SP_4," n=4","f");
+  leg_SP->AddEntry(h_SP_5," n=5","f");
+  leg_SP->Draw();
+  c1 -> Print(pdf, "pdf" );
+  delete hs_SP;
+  delete leg_SP;
+  // End of a Fraction plot
+
+}
 void RPC::FillSPHist(){
   h_NumberOfSP_eta->Fill(probe_eta, NumberOfSP());
   h_NumberOfSP_qeta->Fill(probe_charge*probe_eta, NumberOfSP());
   if (abs(probe_eta) < 1.05){
     //cout << NumberOfSP() << endl;
-    h_NumberOfMdt_LumiBlock->Fill(LumiBlock, (probe_mesSA_mdtHitIsOutlier -> at(14)).size());
     h_NumberOfSP_LumiBlock->Fill(LumiBlock, NumberOfSP());
     h_NumberOfSP_pt_barrel->Fill(probe_pt/1000., NumberOfSP());
     h_NumberOfSP_pass_barrel->Fill(probe_mesSA_pass->at(N50), NumberOfSP());
@@ -770,6 +601,7 @@ void RPC::FillMdtHist(){
   h_NumberOfMdt_eta_BO -> Fill(probe_eta, nMdtBO);
 
   if (abs(probe_eta) < 1.05){
+    h_NumberOfMdt_LumiBlock->Fill(LumiBlock, (probe_mesSA_mdtHitIsOutlier -> at(14)).size());
     h_NumberOfMdt_LumiBlock_BI->Fill(LumiBlock, nMdtBI);
     h_NumberOfMdt_LumiBlock_BM->Fill(LumiBlock, nMdtBM);
     h_NumberOfMdt_LumiBlock_BO->Fill(LumiBlock, nMdtBO);
