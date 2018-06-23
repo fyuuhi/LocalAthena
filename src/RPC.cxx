@@ -623,13 +623,15 @@ void RPC::DrawFractionOfnMDTs(TH2F* h_NumberOfMdt, TCanvas* c1, TString pdf){
   pf_Mdt->GetYaxis()->SetTitle("Average number of Mdt");
   c1 -> Print(pdf, "pdf" );
 
+  const int delta = 0.1;
+
   TH1D* h_all_Mdt = h_NumberOfMdt->ProjectionX("_all");
-  TH1D* h_6_Mdt = h_NumberOfMdt->ProjectionX("6",h_NumberOfMdt->GetYaxis()->FindBin(24.9),h_NumberOfMdt->GetYaxis()->FindBin(30.1));
-  TH1D* h_5_Mdt = h_NumberOfMdt->ProjectionX("5",h_NumberOfMdt->GetYaxis()->FindBin(19.9),h_NumberOfMdt->GetYaxis()->FindBin(25.1));
-  TH1D* h_4_Mdt = h_NumberOfMdt->ProjectionX("4",h_NumberOfMdt->GetYaxis()->FindBin(14.9),h_NumberOfMdt->GetYaxis()->FindBin(19.9));
-  TH1D* h_3_Mdt = h_NumberOfMdt->ProjectionX("3",h_NumberOfMdt->GetYaxis()->FindBin(9.9),h_NumberOfMdt->GetYaxis()->FindBin(14.9));
-  TH1D* h_2_Mdt = h_NumberOfMdt->ProjectionX("2",h_NumberOfMdt->GetYaxis()->FindBin(4.9),h_NumberOfMdt->GetYaxis()->FindBin(9.9));
-  TH1D* h_1_Mdt = h_NumberOfMdt->ProjectionX("1",h_NumberOfMdt->GetYaxis()->FindBin(-0.9),h_NumberOfMdt->GetYaxis()->FindBin(4.9));
+  TH1D* h_1_Mdt = h_NumberOfMdt->ProjectionX("1", h_NumberOfMdt->GetYaxis()->FindBin(0. - delta),  h_NumberOfMdt->GetYaxis()->FindBin(5. + delta));
+  TH1D* h_2_Mdt = h_NumberOfMdt->ProjectionX("2", h_NumberOfMdt->GetYaxis()->FindBin(6. - delta),  h_NumberOfMdt->GetYaxis()->FindBin(10. + delta));
+  TH1D* h_3_Mdt = h_NumberOfMdt->ProjectionX("3", h_NumberOfMdt->GetYaxis()->FindBin(11. - delta), h_NumberOfMdt->GetYaxis()->FindBin(15. + delta));
+  TH1D* h_4_Mdt = h_NumberOfMdt->ProjectionX("4", h_NumberOfMdt->GetYaxis()->FindBin(16. - delta), h_NumberOfMdt->GetYaxis()->FindBin(20. + delta));
+  TH1D* h_5_Mdt = h_NumberOfMdt->ProjectionX("5", h_NumberOfMdt->GetYaxis()->FindBin(21. - delta), h_NumberOfMdt->GetYaxis()->FindBin(25. + delta));
+  TH1D* h_6_Mdt = h_NumberOfMdt->ProjectionX("6", h_NumberOfMdt->GetYaxis()->FindBin(26. - delta), h_NumberOfMdt->GetYaxis()->FindBin(30. + delta));
 
   h_6_Mdt->Divide(h_all_Mdt);
   h_5_Mdt->Divide(h_all_Mdt);
