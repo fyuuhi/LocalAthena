@@ -656,13 +656,13 @@ void RPC::DrawFractionOfnMDTs(TH2F* h_NumberOfMdt, TCanvas* c1, TString pdf){
 
   hs_Mdt->Draw();
 
-  TLegend *leg_Mdt = new TLegend(0.82,0.62,0.95,0.92);
-  leg_Mdt->AddEntry(h_1_Mdt," n=0~5","f");
-  leg_Mdt->AddEntry(h_2_Mdt," n=5~10","f");
-  leg_Mdt->AddEntry(h_3_Mdt," n=10~15","f");
-  leg_Mdt->AddEntry(h_4_Mdt," n=15~20","f");
-  leg_Mdt->AddEntry(h_5_Mdt," n=20~25","f");
-  leg_Mdt->AddEntry(h_6_Mdt," n=25~30","f");
+  TLegend *leg_Mdt = new TLegend(0.81,0.22,0.99,0.95);
+  leg_Mdt->AddEntry(h_1_Mdt," n = 0~5","f");
+  leg_Mdt->AddEntry(h_2_Mdt," n = 5~10","f");
+  leg_Mdt->AddEntry(h_3_Mdt," n = 10~15","f");
+  leg_Mdt->AddEntry(h_4_Mdt," n = 15~20","f");
+  leg_Mdt->AddEntry(h_5_Mdt," n = 20~25","f");
+  leg_Mdt->AddEntry(h_6_Mdt," n = 25~30","f");
   leg_Mdt->Draw();
   c1 -> Print(pdf, "pdf" );
   delete leg_Mdt;
