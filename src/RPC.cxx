@@ -134,10 +134,12 @@ void RPC::Loop( int Nevents, int DisplayNumber )
       //==================================================================
       //Analysis code for a entry
       //==================================================================
+
       // Check GRL
       //if (GRLlist(LumiBlock)){
       //  continue;
       //}
+
       FillProbeHist();
 
       tag_proc = NTagProc;
@@ -185,11 +187,6 @@ void RPC::Loop( int Nevents, int DisplayNumber )
               probe_segmentR_BOL = TMath::Sqrt(probe_segment_x[i]*probe_segment_x[i] + probe_segment_y[i]*probe_segment_y[i])/1000.;
               probe_segmentZ_BOL = probe_segment_z[i]/1000.;
             }
-          }
-
-          // Check GRL
-          if (!GRLlist(LumiBlock)){
-            continue;
           }
 
           //// Check isRpcFailure
