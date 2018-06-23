@@ -292,11 +292,11 @@ void RPC::DrawHist(TString pdf){
   h_NumberOfMdt_LumiBlock->Draw("colz");
   c1 -> Print(pdf, "pdf" );
 
-  FractionOfnMDTs(h_NumberOfMdt_LumiBlock, c1, pdf);
+  DrawFractionOfnMDTs(h_NumberOfMdt_LumiBlock, c1, pdf);
 
-  FractionOfnMDTs(h_NumberOfMdt_eta_BI, c1, pdf);
-  FractionOfnMDTs(h_NumberOfMdt_eta_BM, c1, pdf);
-  FractionOfnMDTs(h_NumberOfMdt_eta_BO, c1, pdf);
+  DrawFractionOfnMDTs(h_NumberOfMdt_eta_BI, c1, pdf);
+  DrawFractionOfnMDTs(h_NumberOfMdt_eta_BM, c1, pdf);
+  DrawFractionOfnMDTs(h_NumberOfMdt_eta_BO, c1, pdf);
 
   h_NumberOfMdt_eta_BI->Draw("colz");
   c1 -> Print(pdf, "pdf" );
@@ -776,7 +776,7 @@ void RPC::FillMdtHist(){
   }
 }
 
-void RPC::FractionOfnMDTs(TH2F* h_NumberOfMdt, TCanvas* c1, TString pdf){
+void RPC::DrawFractionOfnMDTs(TH2F* h_NumberOfMdt, TCanvas* c1, TString pdf){
 
   // Begin of a Fraction plot
   TProfile *pf_Mdt = h_NumberOfMdt->ProfileX();

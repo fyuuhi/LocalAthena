@@ -545,10 +545,11 @@ public :
    // SuperPoints
    virtual void FillSPHist();
    virtual int     NumberOfSP();
+   virtual void DrawFractionOfSPs(TH2F* h_NumberOfSP, TCanvas* c1, TString pdf);
 
    // MDT hits
    virtual void FillMdtHist();
-   virtual void FractionOfnMDTs(TH2F* h_NumberOfMdt, TCanvas* c1, TString pdf);
+   virtual void DrawFractionOfnMDTs(TH2F* h_NumberOfMdt, TCanvas* c1, TString pdf);
 
    // Efficiency
    virtual void     FillProbeHist();
