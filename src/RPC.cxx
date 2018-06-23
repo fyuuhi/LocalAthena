@@ -61,12 +61,12 @@ int main(int argc, char **argv){
   t_349014.DrawHist("../plot/t_349014.pdf");
   cout << "[INFO]: DrawHist SUCCESS" << endl;
 
-  t_349014.CalcEff();
-  cout << "[INFO]: CalcEff SUCCESS" << endl;
+  //t_349014.CalcEff();
+  //cout << "[INFO]: CalcEff SUCCESS" << endl;
 
-  //t_349014.DrawEffHist("../plot/data18_0621_eff.pdf");
-  t_349014.DrawEffHist("../plot/test_eff_all.pdf");
-  cout << "[INFO]: DrawEffHist SUCCESS" << endl;
+  ////t_349014.DrawEffHist("../plot/data18_0621_eff.pdf");
+  //t_349014.DrawEffHist("../plot/test_eff_all.pdf");
+  //cout << "[INFO]: DrawEffHist SUCCESS" << endl;
 
   t_349014.End();
   cout << "[INFO]: End SUCCESS" << endl;
@@ -326,6 +326,7 @@ void RPC::DrawHist(TString pdf){
   h_NumberOfSP_pass_barrel->Draw("colz");
   c1 -> Print(pdf, "pdf" );
 
+  DrawFractionOfnSPs(h_NumberOfSP_LumiBlock, c1, pdf);
 
 
   h_superPointRZ_BIL -> Draw("colz");
@@ -442,7 +443,7 @@ void RPC::DrawFractionOfnSPs(TH2F* h_NumberOfSP, TCanvas* c1, TString pdf){
   h_SP_0->Divide(h_SP_all);
 
 
-  THStack *hs_SP = new THStack("hs_SP",";SP;Fraction of number of SPs");
+  THStack *hs_SP = new THStack("hs_SP",Form(";%s;Fraction of nSPs",h_NumberOfSP->GetXaxis()->GetTitle()));
   h_SP_5->SetFillColor(kCyan);//あらかじめFillColorをSetしておく
   h_SP_4->SetFillColor(kMagenta);//あらかじめFillColorをSetしておく
   h_SP_3->SetFillColor(kRed);//あらかじめFillColorをSetしておく
@@ -455,6 +456,7 @@ void RPC::DrawFractionOfnSPs(TH2F* h_NumberOfSP, TCanvas* c1, TString pdf){
   hs_SP->Add(h_SP_2);
   hs_SP->Add(h_SP_1);
   hs_SP->Add(h_SP_0);
+
 
   hs_SP->Draw();
 
@@ -633,7 +635,7 @@ void RPC::DrawFractionOfnMDTs(TH2F* h_NumberOfMdt, TCanvas* c1, TString pdf){
 
   //TString ytitle = h_NumberOfMdt -> GetYaxis()-> GetTitle();
 
-  THStack *hs_Mdt = new THStack("hs_Mdt",";LumiBlock;Fraction of number of Mdts");
+  THStack *hs_Mdt = new THStack("hs_Mdt",Form(";%s;Fraction of nMDTs",h_NumberOfMdt->GetXaxis()->GetTitle()));
   h_6_Mdt->SetFillColor(kYellow);//あらかじめFillColorをSetしておく
   h_5_Mdt->SetFillColor(kCyan);//あらかじめFillColorをSetしておく
   h_4_Mdt->SetFillColor(kMagenta);//あらかじめFillColorをSetしておく
