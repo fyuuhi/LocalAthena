@@ -1007,15 +1007,15 @@ void RPC::InitHist(){
   h_NumberOfMdt_LumiBlock_BM = new TH2F("h_NumberOfMdt_LumiBlock_BM", "h_NumberOfMdt_LumiBlock_BM;LumiBlock;Number (BM);Counts", 100, 0, 500, 100, 0, 50);
   h_NumberOfMdt_LumiBlock_BO = new TH2F("h_NumberOfMdt_LumiBlock_BO", "h_NumberOfMdt_LumiBlock_BO;LumiBlock;Number (BO);Counts", 100, 0, 500, 100, 0, 50);
 
-  h_NumberOfMdt_eta    = new TH2F("h_NumberOfMdt_eta",                "h_NumberOfMdt_eta;eta;Number;Counts",              100, -1.0, 1.0, 100, 0, 50);
-  h_NumberOfMdt_eta_BI = new TH2F("h_NumberOfMdt_eta_BI",             "h_NumberOfMdt_eta_BI;eta;Number (BI);Counts",      100, -1.0, 1.0, 100, 0, 50);
-  h_NumberOfMdt_eta_BM = new TH2F("h_NumberOfMdt_eta_BM",             "h_NumberOfMdt_eta_BM;eta;Number (BM);Counts",      100, -1.0, 1.0, 100, 0, 50);
-  h_NumberOfMdt_eta_BO = new TH2F("h_NumberOfMdt_eta_BO",             "h_NumberOfMdt_eta_BO;eta;Number (BO);Counts",      100, -1.0, 1.0, 100, 0, 50);
+  h_NumberOfMdt_eta    = new TH2F("h_NumberOfMdt_eta",                "h_NumberOfMdt_eta;eta;Number;Counts",              100, -2.5, 2.5, 100, 0, 50);
+  h_NumberOfMdt_eta_BI = new TH2F("h_NumberOfMdt_eta_BI",             "h_NumberOfMdt_eta_BI;eta;Number (BI);Counts",      100, -1.05, 1.05, 100, 0, 50);
+  h_NumberOfMdt_eta_BM = new TH2F("h_NumberOfMdt_eta_BM",             "h_NumberOfMdt_eta_BM;eta;Number (BM);Counts",      100, -1.05, 1.05, 100, 0, 50);
+  h_NumberOfMdt_eta_BO = new TH2F("h_NumberOfMdt_eta_BO",             "h_NumberOfMdt_eta_BO;eta;Number (BO);Counts",      100, -1.05, 1.05, 100, 0, 50);
 
-  h_NumberOfMdt_qeta    = new TH2F("h_NumberOfMdt_qeta",              "h_NumberOfMdt_qeta;qeta;Number;Counts",            100, -1.0, 1.0, 100, 0, 50);
-  h_NumberOfMdt_qeta_BI = new TH2F("h_NumberOfMdt_qeta_BI",           "h_NumberOfMdt_qeta_BI;qeta;Number (BI);Counts",    100, -1.0, 1.0, 100, 0, 50);
-  h_NumberOfMdt_qeta_BM = new TH2F("h_NumberOfMdt_qeta_BM",           "h_NumberOfMdt_qeta_BM;qeta;Number (BM);Counts",    100, -1.0, 1.0, 100, 0, 50);
-  h_NumberOfMdt_qeta_BO = new TH2F("h_NumberOfMdt_qeta_BO",           "h_NumberOfMdt_qeta_BO;qeta;Number (BO);Counts",    100, -1.0, 1.0, 100, 0, 50);
+  h_NumberOfMdt_qeta    = new TH2F("h_NumberOfMdt_qeta",              "h_NumberOfMdt_qeta;qeta;Number;Counts",            100, -1.05, 1.05, 100, 0, 50);
+  h_NumberOfMdt_qeta_BI = new TH2F("h_NumberOfMdt_qeta_BI",           "h_NumberOfMdt_qeta_BI;qeta;Number (BI);Counts",    100, -1.05, 1.05, 100, 0, 50);
+  h_NumberOfMdt_qeta_BM = new TH2F("h_NumberOfMdt_qeta_BM",           "h_NumberOfMdt_qeta_BM;qeta;Number (BM);Counts",    100, -1.05, 1.05, 100, 0, 50);
+  h_NumberOfMdt_qeta_BO = new TH2F("h_NumberOfMdt_qeta_BO",           "h_NumberOfMdt_qeta_BO;qeta;Number (BO);Counts",    100, -1.05, 1.05, 100, 0, 50);
 
   h_NumberOfMdt_pt_barrel    = new TH2F("h_NumberOfMdt_pt_barrel",    "h_NumberOfMdt_pt_barrel;pT;Number;Counts",         100, 0,    100, 100, 0, 50);
   h_NumberOfMdt_pt_barrel_BI = new TH2F("h_NumberOfMdt_pt_barrel_BI", "h_NumberOfMdt_pt_barrel_BI;pT (BI);Number;Counts", 100, 0,    100, 100, 0, 50);
