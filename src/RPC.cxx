@@ -145,6 +145,10 @@ void RPC::Loop( int Nevents, int DisplayNumber )
       tag_proc = NTagProc;
       switch (tag_proc) {
         case 1: //Jpsi until L2
+          // Check TAP
+          if (!(probe_mesEFTAG_pass -> at(N4) > -1 && probe_mesL1_pass -> at(N4) > 0 && ( sumReqdRL1<tp_extdR && 0.2<tp_extdR ) && ( sumReqdREF<tp_dR ))){
+            continue;
+          }
           break;
         case 2: //Jpsi from L2:
           break;
