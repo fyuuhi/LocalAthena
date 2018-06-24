@@ -518,15 +518,25 @@ public :
    TH2F *h_NumberOfMdt_pt_barrel_BM; //!
    TH2F *h_NumberOfMdt_pt_barrel_BO; //!
 
-   TH2F *h_ResidualMdt_eta; //!
-   TH2F *h_ResidualMdt_eta_BI; //!
-   TH2F *h_ResidualMdt_eta_BM; //!
-   TH2F *h_ResidualMdt_eta_BO; //!
+   TH2F *h_ResidualMdt_Outlier_eta; //!
+   TH2F *h_ResidualMdt_Outlier_eta_BI; //!
+   TH2F *h_ResidualMdt_Outlier_eta_BM; //!
+   TH2F *h_ResidualMdt_Outlier_eta_BO; //!
 
-   TH2F *h_ResidualMdt_pt_barrel; //!
-   TH2F *h_ResidualMdt_pt_barrel_BI; //!
-   TH2F *h_ResidualMdt_pt_barrel_BM; //!
-   TH2F *h_ResidualMdt_pt_barrel_BO; //!
+   TH2F *h_ResidualMdt_Inlier_eta; //!
+   TH2F *h_ResidualMdt_Inlier_eta_BI; //!
+   TH2F *h_ResidualMdt_Inlier_eta_BM; //!
+   TH2F *h_ResidualMdt_Inlier_eta_BO; //!
+
+   TH2F *h_ResidualMdt_Outlier_pt_barrel; //!
+   TH2F *h_ResidualMdt_Outlier_pt_barrel_BI; //!
+   TH2F *h_ResidualMdt_Outlier_pt_barrel_BM; //!
+   TH2F *h_ResidualMdt_Outlier_pt_barrel_BO; //!
+
+   TH2F *h_ResidualMdt_Inlier_pt_barrel; //!
+   TH2F *h_ResidualMdt_Inlier_pt_barrel_BI; //!
+   TH2F *h_ResidualMdt_Inlier_pt_barrel_BM; //!
+   TH2F *h_ResidualMdt_Inlier_pt_barrel_BO; //!
 
    RPC(TChain *tree);
    virtual ~RPC();
@@ -1022,15 +1032,25 @@ void RPC::InitHist(){
   h_NumberOfMdt_pt_barrel_BM = new TH2F("h_NumberOfMdt_pt_barrel_BM", "h_NumberOfMdt_pt_barrel_BM;pT (BM);Number;Counts", 100, 0,    100, 100, 0, 50);
   h_NumberOfMdt_pt_barrel_BO = new TH2F("h_NumberOfMdt_pt_barrel_BO", "h_NumberOfMdt_pt_barrel_BO;pT (BO);Number;Counts", 100, 0,    100, 100, 0, 50);
 
-  h_ResidualMdt_eta    = new TH2F("h_ResidualMdt_eta",    "h_ResidualMdt_eta;eta;Residual;Counts",                      100, -1.0, 1.0, 100, -500, 500);
-  h_ResidualMdt_eta_BI = new TH2F("h_ResidualMdt_eta_BI", "h_ResidualMdt_eta_BI;eta;(BI) MDT hit residual [mm];Counts", 100, -1.0, 1.0, 100, -500, 500);
-  h_ResidualMdt_eta_BM = new TH2F("h_ResidualMdt_eta_BM", "h_ResidualMdt_eta_BM;eta;(BM) MDT hit residual [mm];Counts", 100, -1.0, 1.0, 100, -500, 500);
-  h_ResidualMdt_eta_BO = new TH2F("h_ResidualMdt_eta_BO", "h_ResidualMdt_eta_BO;eta;(BO) MDT hit residual [mm];Counts", 100, -1.0, 1.0, 100, -500, 500);
+  h_ResidualMdt_Outlier_eta    = new TH2F("h_ResidualMdt_Outlier_eta",    "h_ResidualMdt_Outlier_eta;#eta;Residual;Counts",                      100, -1.0, 1.0, 100, -500, 500);
+  h_ResidualMdt_Outlier_eta_BI = new TH2F("h_ResidualMdt_Outlier_eta_BI", "h_ResidualMdt_Outlier_eta_BI;#eta;(BI) MDT hit residual [mm];Counts", 100, -1.0, 1.0, 100, -500, 500);
+  h_ResidualMdt_Outlier_eta_BM = new TH2F("h_ResidualMdt_Outlier_eta_BM", "h_ResidualMdt_Outlier_eta_BM;#eta;(BM) MDT hit residual [mm];Counts", 100, -1.0, 1.0, 100, -500, 500);
+  h_ResidualMdt_Outlier_eta_BO = new TH2F("h_ResidualMdt_Outlier_eta_BO", "h_ResidualMdt_Outlier_eta_BO;#eta;(BO) MDT hit residual [mm];Counts", 100, -1.0, 1.0, 100, -500, 500);
 
-  h_ResidualMdt_pt_barrel    = new TH2F("h_ResidualMdt_pt_barrel",    "h_ResidualMdt_pt_barrel;pT [GeV];Residual;Counts",                      100, -1.0, 1.0, 100, -500, 500);
-  h_ResidualMdt_pt_barrel_BI = new TH2F("h_ResidualMdt_pt_barrel_BI", "h_ResidualMdt_pt_barrel_BI;pT [GeV];(BI) MDT hit residual [mm];Counts", 100, 0, 100, 100, -500, 500);
-  h_ResidualMdt_pt_barrel_BM = new TH2F("h_ResidualMdt_pt_barrel_BM", "h_ResidualMdt_pt_barrel_BM;pT [GeV];(BM) MDT hit residual [mm];Counts", 100, 0, 100, 100, -500, 500);
-  h_ResidualMdt_pt_barrel_BO = new TH2F("h_ResidualMdt_pt_barrel_BO", "h_ResidualMdt_pt_barrel_BO;pT [GeV];(BO) MDT hit residual [mm];Counts", 100, 0, 100, 100, -500, 500);
+  h_ResidualMdt_Inlier_eta    = new TH2F("h_ResidualMdt_Inlier_eta",    "h_ResidualMdt_Inlier_eta;#eta;Residual;Counts",                      100, -1.0, 1.0, 100, -500, 500);
+  h_ResidualMdt_Inlier_eta_BI = new TH2F("h_ResidualMdt_Inlier_eta_BI", "h_ResidualMdt_Inlier_eta_BI;#eta;(BI) MDT hit residual [mm];Counts", 100, -1.0, 1.0, 100, -500, 500);
+  h_ResidualMdt_Inlier_eta_BM = new TH2F("h_ResidualMdt_Inlier_eta_BM", "h_ResidualMdt_Inlier_eta_BM;#eta;(BM) MDT hit residual [mm];Counts", 100, -1.0, 1.0, 100, -500, 500);
+  h_ResidualMdt_Inlier_eta_BO = new TH2F("h_ResidualMdt_Inlier_eta_BO", "h_ResidualMdt_Inlier_eta_BO;#eta;(BO) MDT hit residual [mm];Counts", 100, -1.0, 1.0, 100, -500, 500);
+
+  h_ResidualMdt_Outlier_pt_barrel    = new TH2F("h_ResidualMdt_Outlier_pt_barrel",    "h_ResidualMdt_Outlier_pt_barrel;p_{T}[GeV];MDT hit residual [mm];Counts",         100, 0, 100, 100, -500, 500);
+  h_ResidualMdt_Outlier_pt_barrel_BI = new TH2F("h_ResidualMdt_Outlier_pt_barrel_BI", "h_ResidualMdt_Outlier_pt_barrel_BI;p_{T}[GeV];(BI) MDT hit residual [mm];Counts", 100, 0, 100, 100, -500, 500);
+  h_ResidualMdt_Outlier_pt_barrel_BM = new TH2F("h_ResidualMdt_Outlier_pt_barrel_BM", "h_ResidualMdt_Outlier_pt_barrel_BM;p_{T}[GeV];(BM) MDT hit residual [mm];Counts", 100, 0, 100, 100, -500, 500);
+  h_ResidualMdt_Outlier_pt_barrel_BO = new TH2F("h_ResidualMdt_Outlier_pt_barrel_BO", "h_ResidualMdt_Outlier_pt_barrel_BO;p_{T}[GeV];(BO) MDT hit residual [mm];Counts", 100, 0, 100, 100, -500, 500);
+
+  h_ResidualMdt_Inlier_pt_barrel    = new TH2F("h_ResidualMdt_Inlier_pt_barrel",    "h_ResidualMdt_Inlier_pt_barrel;p_{T}[GeV];MDT hit residual [mm];Counts",         100, 0, 100, 100, -500, 500);
+  h_ResidualMdt_Inlier_pt_barrel_BI = new TH2F("h_ResidualMdt_Inlier_pt_barrel_BI", "h_ResidualMdt_Inlier_pt_barrel_BI;p_{T}[GeV];(BI) MDT hit residual [mm];Counts", 100, 0, 100, 100, -500, 500);
+  h_ResidualMdt_Inlier_pt_barrel_BM = new TH2F("h_ResidualMdt_Inlier_pt_barrel_BM", "h_ResidualMdt_Inlier_pt_barrel_BM;p_{T}[GeV];(BM) MDT hit residual [mm];Counts", 100, 0, 100, 100, -500, 500);
+  h_ResidualMdt_Inlier_pt_barrel_BO = new TH2F("h_ResidualMdt_Inlier_pt_barrel_BO", "h_ResidualMdt_Inlier_pt_barrel_BO;pT [GeV];(BO) MDT hit residual [mm];Counts", 100, 0, 100, 100, -500, 500);
 
 }
 

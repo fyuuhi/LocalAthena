@@ -266,30 +266,48 @@ void RPC::DrawHist(TString pdf){
 
   c1 -> Print( pdf + "[", "pdf" );
 
-  h_ResidualMdt_pt_barrel_BI->Draw("colz");
+  // Inlier
+  h_ResidualMdt_Inlier_pt_barrel_BI->Draw("colz");
   c1 -> Print(pdf, "pdf" );
 
-  h_ResidualMdt_pt_barrel_BM->Draw("colz");
+  h_ResidualMdt_Inlier_pt_barrel_BM->Draw("colz");
   c1 -> Print(pdf, "pdf" );
 
-  h_ResidualMdt_pt_barrel_BO->Draw("colz");
+  h_ResidualMdt_Inlier_pt_barrel_BO->Draw("colz");
   c1 -> Print(pdf, "pdf" );
 
-  h_ResidualMdt_eta_BI->Draw("colz");
+  h_ResidualMdt_Inlier_eta_BI->Draw("colz");
   c1 -> Print(pdf, "pdf" );
 
-  h_ResidualMdt_eta_BM->Draw("colz");
+  h_ResidualMdt_Inlier_eta_BM->Draw("colz");
   c1 -> Print(pdf, "pdf" );
 
-  h_ResidualMdt_eta_BO->Draw("colz");
+  h_ResidualMdt_Inlier_eta_BO->Draw("colz");
+  c1 -> Print(pdf, "pdf" );
+
+
+  // Outlier
+  h_ResidualMdt_Outlier_pt_barrel_BI->Draw("colz");
+  c1 -> Print(pdf, "pdf" );
+
+  h_ResidualMdt_Outlier_pt_barrel_BM->Draw("colz");
+  c1 -> Print(pdf, "pdf" );
+
+  h_ResidualMdt_Outlier_pt_barrel_BO->Draw("colz");
+  c1 -> Print(pdf, "pdf" );
+
+  h_ResidualMdt_Outlier_eta_BI->Draw("colz");
+  c1 -> Print(pdf, "pdf" );
+
+  h_ResidualMdt_Outlier_eta_BM->Draw("colz");
+  c1 -> Print(pdf, "pdf" );
+
+  h_ResidualMdt_Outlier_eta_BO->Draw("colz");
   c1 -> Print(pdf, "pdf" );
 
 
   h_NumberOfMdt_eta->Draw("colz");
   c1 -> Print(pdf, "pdf" );
-
-  //h_NumberOfMdt_LumiBlock->Draw("colz");
-  //c1 -> Print(pdf, "pdf" );
 
   DrawFractionOfnMDTs(h_NumberOfMdt_pt_barrel_BI, c1, pdf);
   DrawFractionOfnMDTs(h_NumberOfMdt_pt_barrel_BM, c1, pdf);
@@ -576,28 +594,56 @@ void RPC::FillMdtHist(){
   int nMdtBO = 0;
   int nMdt = 0;
   for ( uint32_t i = 0; i < (probe_mesSA_mdtHitIsOutlier -> at(N50)).size();i++){
+    // Count each MDT hit regardless of IsOutlier or not
     nMdt += 1;
-    if (probe_mesSA_mdtHitIsOutlier -> at(N50)[i] == 1) {
-      continue;
-    }
-    switch (probe_mesSA_mdtHitChamber -> at(N50)[i]) {
-      case 0:
-        nMdtBI += 1;
-        //cout << "BI" << endl;
-        h_ResidualMdt_eta_BI    -> Fill(probe_eta, probe_mesSA_mdtHitResidual -> at(N50)[i]);
-        if (abs(probe_eta) < 1.05) h_ResidualMdt_pt_barrel_BI -> Fill(probe_pt/1000., probe_mesSA_mdtHitResidual -> at(N50)[i]);
+
+    // Separate histograms between Inlier and Outlier
+    switch (probe_mesSA_mdtHitIsOutlier -> at(N50)[i]) {
+      case 0: // Inlier
+        // Separate each MDT station
+        switch (probe_mesSA_mdtHitChamber -> at(N50)[i]) {
+          case 0:
+            nMdtBI += 1;
+            //cout << "BI" << endl;
+            h_ResidualMdt_Inlier_eta_BI    -> Fill(probe_eta, probe_mesSA_mdtHitResidual -> at(N50)[i]);
+            if (abs(probe_eta) < 1.05) h_ResidualMdt_Inlier_pt_barrel_BI -> Fill(probe_pt/1000., probe_mesSA_mdtHitResidual -> at(N50)[i]);
+            break;
+          case 1:
+            nMdtBM += 1;
+            //cout << "BM" << endl;
+            h_ResidualMdt_Inlier_eta_BM    -> Fill(probe_eta, probe_mesSA_mdtHitResidual -> at(N50)[i]);
+            if (abs(probe_eta) < 1.05) h_ResidualMdt_Inlier_pt_barrel_BM -> Fill(probe_pt/1000., probe_mesSA_mdtHitResidual -> at(N50)[i]);
+            break;
+          case 2:
+            nMdtBO += 1;
+            //cout << "BO" << endl;
+            h_ResidualMdt_Inlier_eta_BO    -> Fill(probe_eta, probe_mesSA_mdtHitResidual -> at(N50)[i]);
+            if (abs(probe_eta) < 1.05) h_ResidualMdt_Inlier_pt_barrel_BO -> Fill(probe_pt/1000., probe_mesSA_mdtHitResidual -> at(N50)[i]);
+            break;
+        }
         break;
-      case 1:
-        nMdtBM += 1;
-        //cout << "BM" << endl;
-        h_ResidualMdt_eta_BM    -> Fill(probe_eta, probe_mesSA_mdtHitResidual -> at(N50)[i]);
-        if (abs(probe_eta) < 1.05) h_ResidualMdt_pt_barrel_BM -> Fill(probe_pt/1000., probe_mesSA_mdtHitResidual -> at(N50)[i]);
-        break;
-      case 2:
-        nMdtBO += 1;
-        //cout << "BO" << endl;
-        h_ResidualMdt_eta_BO    -> Fill(probe_eta, probe_mesSA_mdtHitResidual -> at(N50)[i]);
-        if (abs(probe_eta) < 1.05) h_ResidualMdt_pt_barrel_BO -> Fill(probe_pt/1000., probe_mesSA_mdtHitResidual -> at(N50)[i]);
+      case 1: // Outlier
+        // Separate each MDT station
+        switch (probe_mesSA_mdtHitChamber -> at(N50)[i]) {
+          case 0:
+            nMdtBI += 1;
+            //cout << "BI" << endl;
+            h_ResidualMdt_Outlier_eta_BI    -> Fill(probe_eta, probe_mesSA_mdtHitResidual -> at(N50)[i]);
+            if (abs(probe_eta) < 1.05) h_ResidualMdt_Outlier_pt_barrel_BI -> Fill(probe_pt/1000., probe_mesSA_mdtHitResidual -> at(N50)[i]);
+            break;
+          case 1:
+            nMdtBM += 1;
+            //cout << "BM" << endl;
+            h_ResidualMdt_Outlier_eta_BM    -> Fill(probe_eta, probe_mesSA_mdtHitResidual -> at(N50)[i]);
+            if (abs(probe_eta) < 1.05) h_ResidualMdt_Outlier_pt_barrel_BM -> Fill(probe_pt/1000., probe_mesSA_mdtHitResidual -> at(N50)[i]);
+            break;
+          case 2:
+            nMdtBO += 1;
+            //cout << "BO" << endl;
+            h_ResidualMdt_Outlier_eta_BO    -> Fill(probe_eta, probe_mesSA_mdtHitResidual -> at(N50)[i]);
+            if (abs(probe_eta) < 1.05) h_ResidualMdt_Outlier_pt_barrel_BO -> Fill(probe_pt/1000., probe_mesSA_mdtHitResidual -> at(N50)[i]);
+            break;
+        }
         break;
     }
   }
@@ -607,6 +653,7 @@ void RPC::FillMdtHist(){
   h_NumberOfMdt_eta_BM -> Fill(probe_eta, nMdtBM);
   h_NumberOfMdt_eta_BO -> Fill(probe_eta, nMdtBO);
 
+  // Select barrel region because of pT histograms
   if (abs(probe_eta) < 1.05){
     //h_NumberOfMdt_LumiBlock->Fill(LumiBlock, (probe_mesSA_mdtHitIsOutlier -> at(14)).size());
     h_NumberOfMdt_pt_barrel_BI->Fill(probe_pt/1000., nMdtBI);
