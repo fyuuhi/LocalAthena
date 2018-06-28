@@ -164,37 +164,37 @@ void RPC::Loop( int Nevents, int DisplayNumber )
             continue;
           }
           // Set superpoint and segment for each station
-          double probe_segmentR_BIS = 0;
-          double probe_segmentZ_BIS = 0;
-          double probe_segmentR_BIL = 0;
-          double probe_segmentZ_BIL = 0;
-          double probe_segmentR_BMS = 0;
-          double probe_segmentZ_BMS = 0;
-          double probe_segmentR_BML = 0;
-          double probe_segmentZ_BML = 0;
-          double probe_segmentR_BOS = 0;
-          double probe_segmentZ_BOS = 0;
-          double probe_segmentR_BOL = 0;
-          double probe_segmentZ_BOL = 0;
+          vector < double >  probe_segmentR_BIS;
+          vector < double >  probe_segmentZ_BIS;
+          vector < double >  probe_segmentR_BIL;
+          vector < double >  probe_segmentZ_BIL;
+          vector < double >  probe_segmentR_BMS;
+          vector < double >  probe_segmentZ_BMS;
+          vector < double >  probe_segmentR_BML;
+          vector < double >  probe_segmentZ_BML;
+          vector < double >  probe_segmentR_BOS;
+          vector < double >  probe_segmentZ_BOS;
+          vector < double >  probe_segmentR_BOL;
+          vector < double >  probe_segmentZ_BOL;
           for ( int i = 0; i < probe_segment_n; i++){
             if (probe_segment_chamberIndex[i] == 0) {
-              probe_segmentR_BIS = TMath::Sqrt(probe_segment_x[i]*probe_segment_x[i] + probe_segment_y[i]*probe_segment_y[i])/1000.;
-              probe_segmentZ_BIS = probe_segment_z[i]/1000.;
+              probe_segmentR_BIS.push_back(TMath::Sqrt(probe_segment_x[i]*probe_segment_x[i] + probe_segment_y[i]*probe_segment_y[i])/1000.);
+              probe_segmentZ_BIS.push_back(probe_segment_z[i]/1000.);
             } else if(probe_segment_chamberIndex[i] == 1) {
-              probe_segmentR_BIL = TMath::Sqrt(probe_segment_x[i]*probe_segment_x[i] + probe_segment_y[i]*probe_segment_y[i])/1000.;
-              probe_segmentZ_BIL = probe_segment_z[i]/1000.;
+              probe_segmentR_BIL.push_back(TMath::Sqrt(probe_segment_x[i]*probe_segment_x[i] + probe_segment_y[i]*probe_segment_y[i])/1000.);
+              probe_segmentZ_BIL.push_back(probe_segment_z[i]/1000.);
             } else if(probe_segment_chamberIndex[i] == 2) {
-              probe_segmentR_BMS = TMath::Sqrt(probe_segment_x[i]*probe_segment_x[i] + probe_segment_y[i]*probe_segment_y[i])/1000.;
-              probe_segmentZ_BMS = probe_segment_z[i]/1000.;
+              probe_segmentR_BMS.push_back(TMath::Sqrt(probe_segment_x[i]*probe_segment_x[i] + probe_segment_y[i]*probe_segment_y[i])/1000.);
+              probe_segmentZ_BMS.push_back(probe_segment_z[i]/1000.);
             } else if(probe_segment_chamberIndex[i] == 3) {
-              probe_segmentR_BML = TMath::Sqrt(probe_segment_x[i]*probe_segment_x[i] + probe_segment_y[i]*probe_segment_y[i])/1000.;
-              probe_segmentZ_BML = probe_segment_z[i]/1000.;
+              probe_segmentR_BML.push_back(TMath::Sqrt(probe_segment_x[i]*probe_segment_x[i] + probe_segment_y[i]*probe_segment_y[i])/1000.);
+              probe_segmentZ_BML.push_back(probe_segment_z[i]/1000.);
             } else if(probe_segment_chamberIndex[i] == 4) {
-              probe_segmentR_BOS = TMath::Sqrt(probe_segment_x[i]*probe_segment_x[i] + probe_segment_y[i]*probe_segment_y[i])/1000.;
-              probe_segmentZ_BOS = probe_segment_z[i]/1000.;
+              probe_segmentR_BOS.push_back(TMath::Sqrt(probe_segment_x[i]*probe_segment_x[i] + probe_segment_y[i]*probe_segment_y[i])/1000.);
+              probe_segmentZ_BOS.push_back(probe_segment_z[i]/1000.);
             } else if(probe_segment_chamberIndex[i] == 5) {
-              probe_segmentR_BOL = TMath::Sqrt(probe_segment_x[i]*probe_segment_x[i] + probe_segment_y[i]*probe_segment_y[i])/1000.;
-              probe_segmentZ_BOL = probe_segment_z[i]/1000.;
+              probe_segmentR_BOL.push_back(TMath::Sqrt(probe_segment_x[i]*probe_segment_x[i] + probe_segment_y[i]*probe_segment_y[i])/1000.);
+              probe_segmentZ_BOL.push_back(probe_segment_z[i]/1000.);
             }
           }
 
