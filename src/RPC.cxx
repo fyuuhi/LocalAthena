@@ -594,7 +594,10 @@ void RPC::Display(Long64_t limit_entry, TString pdf)
           if (abs(probe_eta) > 1.05){
             continue;
           }
-          if (NumberOfSP() == 3 && NumberOfSP() == 2){
+          if (NumberOfSP() == 3){
+            continue;
+          }
+          if ((probe_mesSA_mdtHitChamber -> at(N50)).size() == 0){
             continue;
           }
 
@@ -689,10 +692,20 @@ void RPC::Display(Long64_t limit_entry, TString pdf)
               nBO += 1;
             }
           }
-          Zmax_BI = Z_BI/nBI + deltaZ;
-          Zmin_BI = Z_BI/nBI - deltaZ;
-          Rmax_BI = R_BI/nBI + deltaR;
-          Rmin_BI = R_BI/nBI - deltaR;
+          if (nBI != 0) {
+            Zmax_BI = Z_BI/nBI + deltaZ;
+            Zmin_BI = Z_BI/nBI - deltaZ;
+            Rmax_BI = R_BI/nBI + deltaR;
+            Rmin_BI = R_BI/nBI - deltaR;
+          }else{
+            R_BI = 5;
+            deltaR = 1;
+            Z_BI = (R_BI - probe_mesSA_roadBw->at(N50)[0]/1000.) / (probe_mesSA_roadAw->at(N50)[0]);
+            Zmax_BI = Z_BI + deltaZ;
+            Zmin_BI = Z_BI - deltaZ;
+            Rmax_BI = R_BI + deltaR;
+            Rmin_BI = R_BI - deltaR;
+          }
 
           Zmax_BM = Z_BM/nBM + deltaZ;
           Zmin_BM = Z_BM/nBM - deltaZ;
