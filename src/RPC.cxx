@@ -72,6 +72,7 @@ int main(int argc, char **argv){
   ////t_349014.DrawEffHist("../plot/data18_0621_eff.pdf");
   //t_349014.DrawEffHist("../plot/test_eff_all.pdf");
   //cout << "[INFO]: DrawEffHist SUCCESS" << endl;
+  t_349014.Display(8, "../plot/test0628.pdf");
 
   t_349014.End();
   cout << "[INFO]: End SUCCESS" << endl;
@@ -542,50 +543,95 @@ int RPC::NumberOfSP(){
   return number;
 }
 
-void RPC::Display(Long64_t entry)
+void RPC::Display(Long64_t limit_entry, TString pdf)
 {
-  Long64_t tmp_nb;
-  Long64_t ientry = LoadTree(entry);
-  tmp_nb = fChain->GetEntry(entry);
-  
-  //cout << ientry << endl;
-  //cout << tmp_nb << endl;
+   // Prepare Canvas
+   TCanvas *c2 = new TCanvas("c2", "c2", 10, 10, 1020, 700);
+   c2->SetGrid();
+   c2->SetRightMargin(0.20);
+   c2->SetLeftMargin(0.23);
+   c2->SetBottomMargin(0.20);
+   c2->Print(pdf + "[", "pdf");
 
-  TCanvas *c2 = new TCanvas("c2", "c2", 10, 10, 1020, 700);
-  c2->SetGrid();
-  c2->SetRightMargin(0.20);
-  c2->SetLeftMargin(0.23);
-  c2->SetBottomMargin(0.20);
+   TH2F* h_temp = new TH2F("h_temp", "h_temp;Z;R;", 100, 0, 30, 100, 0, 20);  
+   h_temp ->Draw();
 
-  cout << "size: " << (probe_mesSA_rpcHitEta -> at(N50)).size() << endl;
-  cout << "eta: " << (probe_mesSA_eta -> at(N50)) << endl;
-  //cout << probe_mesSA_pt -> at(N50) << endl;
+   // Prepare Loop
+   if (fChain == 0) return;
+   int nLoop = fChain -> GetEntries();
+   //Long64_t nentries = fChain->GetEntriesFast();
+   double entries = fChain->GetEntries();
+   cout << "[INFO]: Nentries:" << entries << endl;
+   Long64_t nbytes = 0, nb = 0;
 
-  //fChain->Show(entry);
+   int current_entry = 0;
+   // Start Loop
+   for (Long64_t jentry=0; jentry<nLoop;jentry++) {
+     int  ientry = LoadTree(jentry);
+     nb = fChain->GetEntry(jentry);   nbytes += nb;
+     if (ientry < 0) break;
+     // Check GRL
+      //if (GRLlist(LumiBlock)){
+      //  continue;
+      //}
 
-  const Int_t n = (probe_mesSA_rpcHitEta -> at(N50)).size();
-  TGraph *gr = new TGraph(n); //各点が(0,0)で初期化される
+      tag_proc = NTagProc;
+      switch (tag_proc) {
+        case 1: //Jpsi until L2
+          // Check TAP
+          if (!(probe_mesEFTAG_pass -> at(N4) > -1 && probe_mesL1_pass -> at(N4) > 0 && ( sumReqdRL1<tp_extdR && 0.2<tp_extdR ) && ( sumReqdREF<tp_dR ))){
+            continue;
+          }
+          break;
+        case 2: //Jpsi from L2:
+          break;
+        case 3: //Z
+          // Check TAP
+          if (!(probe_mesEFTAG_pass -> at(N50) > -1 && probe_mesL1_pass -> at(N50) > 0 && ( sumReqdRL1<tp_extdR && 0.2<tp_extdR ) && ( sumReqdREF<tp_dR ))){
+            continue;
+          }
+          if (abs(probe_eta) > 1.05){
+            continue;
+          }
 
-  for (Int_t i=0;i<n;++i) {
-    gr->SetPoint(i , (probe_mesSA_rpcHitZ -> at(N50))[i] / 1000. , (probe_mesSA_rpcHitR -> at(N50))[i] / 1000.); //SetPoint(点番号,x座標,y座標)
-  }
+          cout << "size: " << (probe_mesSA_mdtHitChamber -> at(N50)).size() << endl;
+          cout << "eta: " << (probe_mesSA_eta -> at(N50)) << endl;
+          //cout << probe_mesSA_pt -> at(N50) << endl;
+          //fChain->Show(entry);
 
-  gr -> GetXaxis()->SetLimits(0,20);
-  gr -> GetYaxis()->SetRangeUser(0,20);
-  gr->Draw("AP");
-  
-  c2->Print("../plot/test0531.pdf");
+          const Int_t n = (probe_mesSA_mdtHitChamber -> at(N50)).size();
+          TGraph gr = TGraph(n); //各点が(0,0)で初期化される
 
-  delete gr;
-  delete c2;
+          for (Int_t i=0;i<n;++i) {
+            cout << probe_mesSA_mdtHitChamber -> at(N50)[i] << endl;
+            cout << "Z: " << probe_mesSA_mdtHitZ -> at(N50)[i]/1000. << ", R: " << probe_mesSA_mdtHitR -> at(N50)[i]/1000. << endl;
+            gr.SetPoint(i , (probe_mesSA_mdtHitZ -> at(N50))[i] / 1000. , (probe_mesSA_mdtHitR -> at(N50))[i] / 1000.); //SetPoint(点番号,x座標,y座標)
+          }
+
+          gr.GetXaxis()->SetLimits(-20,20);
+          gr.GetYaxis()->SetRangeUser(4,12);
+          gr.Draw("AP same");
+
+          c2->Print(pdf, "pdf");
+
+          current_entry += 1;
+          break;
+      }
+
+      if (current_entry == limit_entry) {
+        break;
+      }
+   } // end of each entry
+   c2->Print(pdf + "]", "pdf");
+   delete c2;
 }
 
 bool GRLlist(int LumiBlock){
- bool lb_1 = (LumiBlock > 110 && LumiBlock < 124);
- bool lb_2= (LumiBlock > 126 && LumiBlock < 130);
- bool lb_3= (LumiBlock > 169 && LumiBlock < 239);
+  bool lb_1 = (LumiBlock > 110 && LumiBlock < 124);
+  bool lb_2= (LumiBlock > 126 && LumiBlock < 130);
+  bool lb_3= (LumiBlock > 169 && LumiBlock < 239);
 
- return (lb_1 || lb_2 || lb_3);
+  return (lb_1 || lb_2 || lb_3);
 }
 
 void RPC::FillMdtHist(){
