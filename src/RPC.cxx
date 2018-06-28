@@ -692,6 +692,8 @@ void RPC::Display(Long64_t limit_entry, TString pdf)
               nBO += 1;
             }
           }
+
+          // Avoid nBI==0
           if (nBI != 0) {
             Zmax_BI = Z_BI/nBI + deltaZ;
             Zmin_BI = Z_BI/nBI - deltaZ;
@@ -706,16 +708,36 @@ void RPC::Display(Long64_t limit_entry, TString pdf)
             Rmax_BI = R_BI + deltaR;
             Rmin_BI = R_BI - deltaR;
           }
-
-          Zmax_BM = Z_BM/nBM + deltaZ;
-          Zmin_BM = Z_BM/nBM - deltaZ;
-          Rmax_BM = R_BM/nBM + deltaR;
-          Rmin_BM = R_BM/nBM - deltaR;
-
-          Zmax_BO = Z_BO/nBO + deltaZ;
-          Zmin_BO = Z_BO/nBO - deltaZ;
-          Rmax_BO = R_BO/nBO + deltaR;
-          Rmin_BO = R_BO/nBO - deltaR;
+          // Avoid nBM==0
+          if (nBM != 0) {
+            Zmax_BM = Z_BM/nBM + deltaZ;
+            Zmin_BM = Z_BM/nBM - deltaZ;
+            Rmax_BM = R_BM/nBM + deltaR;
+            Rmin_BM = R_BM/nBM - deltaR;
+          }else{
+            R_BM = 5;
+            deltaR = 1;
+            Z_BM = (R_BM - probe_mesSA_roadBw->at(N50)[0]/1000.) / (probe_mesSA_roadAw->at(N50)[0]);
+            Zmax_BM = Z_BM + deltaZ;
+            Zmin_BM = Z_BM - deltaZ;
+            Rmax_BM = R_BM + deltaR;
+            Rmin_BM = R_BM - deltaR;
+          }
+          // Avoid nBO==0
+          if (nBO != 0) {
+            Zmax_BO = Z_BO/nBO + deltaZ;
+            Zmin_BO = Z_BO/nBO - deltaZ;
+            Rmax_BO = R_BO/nBO + deltaR;
+            Rmin_BO = R_BO/nBO - deltaR;
+          }else{
+            R_BO = 5;
+            deltaR = 1;
+            Z_BO = (R_BO - probe_mesSA_roadBw->at(N50)[0]/1000.) / (probe_mesSA_roadAw->at(N50)[0]);
+            Zmax_BO = Z_BO + deltaZ;
+            Zmin_BO = Z_BO - deltaZ;
+            Rmax_BO = R_BO + deltaR;
+            Rmin_BO = R_BO - deltaR;
+          }
 
           double Zmax = 20;
           double Zmin = -20;
