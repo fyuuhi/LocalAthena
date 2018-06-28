@@ -48,17 +48,22 @@ int main(int argc, char **argv){
   //tree1 -> Add("/gpfs/fs2001/yfukuhar/data/user.yfukuhar.00349533.physics_Main.YFTAP.f929_m1955_jpzYFV4_GRL_F_tree_v1_349533_EXT0/hadd/user.yfukuhar.00349533.physics_Main.YFTAP.f929_m1955_jpzYFV4_GRL_F_tree_v1_349533_EXT0.root");
   //tree1 -> Add("/gpfs/fs2001/yfukuhar/data/user.yfukuhar.00349533.physics_Main.YFTAP.f929_m1955_GRL_False_349533_mdtHit_v1_EXT0/hadd/user.yfukuhar.00349533.physics_Main.YFTAP.f929_m1955_GRL_False_349533_mdtHit_v1_EXT.root");
   //tree1 -> Add("/gpfs/fs2001/yfukuhar/data/user.yfukuhar.00349533.physics_Main.YFTAP.f929_m1955_GRL_False_349533_mdtHit_v2_EXT0/hadd/user.yfukuhar.00349533.physics_Main.YFTAP.f929_m1955_GRL_False_349533_mdtHit_v2_EXT.root");
-  tree1 -> Add("/gpfs/fs2001/yfukuhar/data/data18_0621/data18_0621.root");
+  //tree1 -> Add("/gpfs/fs2001/yfukuhar/data/data18_0621/data18_0621.root");
+  //tree1 -> Add("/gpfs/fs2001/yfukuhar/CalcEffPlotMakerOrigin/data/mc16_youhei_Zmumu_default/mc16_youhei_Zmumu_default.root");
+  //tree1 -> Add("/gpfs/fs2001/yfukuhar/CalcEffPlotMakerOrigin/data/mc16_youhei_Zmumu_noRpcHit/mc16_youhei_Zmumu_noRpcHit.root");
+  tree1 -> Add("/gpfs/fs2001/yfukuhar/CalcEffPlotMakerOrigin/data/mc16_youhei_Zmumu_noRpcHitWide/mc16_youhei_Zmumu_noRpcHitWide.root");
   //tree1 -> Add("/gpfs/home/yfukuhar/work/CalcEffTool/run/Output/");
   //tree1 -> Add("/gpfs/fs2001/yfukuhar/CalcEffPlotMakerOrigin/data/mc16c_Jpsimu6_default/mc16c_Jpsimu6_default.root");
 
   RPC t_349014(tree1); 
 
-  t_349014.Loop(100000, 10000);
+  t_349014.Loop(-1, 10000);
   cout << "[INFO]: Loop SUCCESS" << endl;
 
   //t_349014.DrawHist("../plot/data18_0621.pdf");
-  t_349014.DrawHist("../plot/t_0621.pdf");
+  t_349014.DrawHist("../plot/mc16_youhei_Zmumu_noRpcHitWide.pdf");
+  //t_349014.DrawHist("../plot/mc16_youhei_Zmumu_noRpcHit.pdf");
+  //t_349014.DrawHist("../plot/mc16_youhei_Zmumu_default.pdf");
   cout << "[INFO]: DrawHist SUCCESS" << endl;
 
   //t_349014.CalcEff();
@@ -921,4 +926,15 @@ void RPC::CalcHistToHist( TH2F* h1, TH2F* h2, TH2F* hout ) {
   }
 
   return;
+}
+
+
+double RPC::calc_residual(double aw,double bw,double x,double y)
+{
+  const double ZERO_LIMIT = 1e-4;
+  if( fabs(aw) < ZERO_LIMIT ) return y-bw;
+  double ia  = 1/aw;
+  double iaq = ia*ia;
+  double dz  = x - (y-bw)*ia;
+  return dz/sqrt(1.+iaq);
 }

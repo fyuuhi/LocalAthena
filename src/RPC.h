@@ -551,6 +551,7 @@ public :
    virtual Bool_t   Notify();
    virtual void     Display(Long64_t entry);
    virtual void     Show(Long64_t entry = -1);
+   virtual double   calc_residual(double aw, double bw, double Z, double R);
 
    // SuperPoints
    virtual void FillSPHist();
