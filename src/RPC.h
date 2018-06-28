@@ -214,6 +214,16 @@ public :
    vector<vector<float> > *probe_mesSA_mdtHitZ;
    vector<vector<float> > *probe_mesSA_mdtHitPhi;
    vector<vector<float> > *probe_mesSA_mdtHitResidual;
+
+  vector < vector < float > > *probe_mesSA_roadAw;
+  vector < vector < float > > *probe_mesSA_roadBw;
+  vector < vector < float > > *probe_mesSA_zMin;
+  vector < vector < float > > *probe_mesSA_zMax;
+  vector < vector < float > > *probe_mesSA_rMin;
+  vector < vector < float > > *probe_mesSA_rMax;
+  vector < vector < float > > *probe_mesSA_etaMin;
+  vector < vector < float > > *probe_mesSA_etaMax;
+
    vector<int>     *probe_mesCB_pass;
    vector<double>  *probe_mesCB_dR;
    vector<double>  *probe_mesCB_tpdR;
@@ -401,6 +411,15 @@ public :
    TBranch *b_probe_mesSA_mdtHitZ; //!
    TBranch *b_probe_mesSA_mdtHitPhi; //!
    TBranch *b_probe_mesSA_mdtHitResidual; //!
+   TBranch *b_probe_mesSA_roadAw; //!
+   TBranch *b_probe_mesSA_roadBw; //!
+   TBranch *b_probe_mesSA_zMin; //!
+   TBranch *b_probe_mesSA_zMax; //!
+   TBranch *b_probe_mesSA_rMin; //!
+   TBranch *b_probe_mesSA_rMax; //!
+   TBranch *b_probe_mesSA_etaMin; //!
+   TBranch *b_probe_mesSA_etaMax; //!
+
    TBranch        *b_probe_mesCB_pass;   //!
    TBranch        *b_probe_mesCB_dR;   //!
    TBranch        *b_probe_mesCB_tpdR;   //!
@@ -721,6 +740,15 @@ void RPC::Init(TTree *tree)
    probe_mesSA_mdtHitZ = 0;
    probe_mesSA_mdtHitPhi = 0;
    probe_mesSA_mdtHitResidual = 0;
+   probe_mesSA_roadAw = 0;
+   probe_mesSA_roadBw = 0;
+   probe_mesSA_zMin   = 0;
+   probe_mesSA_zMax   = 0;
+   probe_mesSA_rMin   = 0;
+   probe_mesSA_rMax   = 0;
+   probe_mesSA_etaMin = 0;
+   probe_mesSA_etaMax = 0;
+
    probe_mesCB_pass = 0;
    probe_mesCB_dR = 0;
    probe_mesCB_tpdR = 0;
@@ -911,6 +939,16 @@ void RPC::Init(TTree *tree)
    fChain->SetBranchAddress("probe_mesSA_mdtHitZ",             &probe_mesSA_mdtHitZ,             &b_probe_mesSA_mdtHitZ);
    fChain->SetBranchAddress("probe_mesSA_mdtHitPhi",           &probe_mesSA_mdtHitPhi,           &b_probe_mesSA_mdtHitPhi);
    fChain->SetBranchAddress("probe_mesSA_mdtHitResidual",      &probe_mesSA_mdtHitResidual,      &b_probe_mesSA_mdtHitResidual);
+
+   fChain->SetBranchAddress("probe_mesSA_roadAw", &probe_mesSA_roadAw, &b_probe_mesSA_roadAw );
+   fChain->SetBranchAddress("probe_mesSA_roadBw", &probe_mesSA_roadBw, &b_probe_mesSA_roadBw );
+   fChain->SetBranchAddress("probe_mesSA_zMin",   &probe_mesSA_zMin,   &b_probe_mesSA_zMin   );
+   fChain->SetBranchAddress("probe_mesSA_zMax",   &probe_mesSA_zMax,   &b_probe_mesSA_zMax   );
+   fChain->SetBranchAddress("probe_mesSA_rMin",   &probe_mesSA_rMin,   &b_probe_mesSA_rMin   );
+   fChain->SetBranchAddress("probe_mesSA_rMax",   &probe_mesSA_rMax,   &b_probe_mesSA_rMax   );
+   fChain->SetBranchAddress("probe_mesSA_etaMin", &probe_mesSA_etaMin, &b_probe_mesSA_etaMin );
+   fChain->SetBranchAddress("probe_mesSA_etaMax", &probe_mesSA_etaMax, &b_probe_mesSA_etaMax );
+
    fChain->SetBranchAddress("probe_mesCB_pass", &probe_mesCB_pass, &b_probe_mesCB_pass);
    fChain->SetBranchAddress("probe_mesCB_dR", &probe_mesCB_dR, &b_probe_mesCB_dR);
    fChain->SetBranchAddress("probe_mesCB_tpdR", &probe_mesCB_tpdR, &b_probe_mesCB_tpdR);
