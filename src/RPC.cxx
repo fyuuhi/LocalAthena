@@ -207,53 +207,53 @@ void RPC::Loop( int Nevents, int DisplayNumber )
           FillSPHist();
 
           //BIS
-          if (probe_mesSA_superPointR_BI->at(N50) != 0 &&
-              probe_mesSA_superPointR_BI -> at(N50) / 1000. > -90 &&
-              probe_mesSA_sAddress -> at(N50) == 2 ) {
-            h_superPointRZ_BIS -> Fill( probe_mesSA_superPointZ_BI->at(N50)/1000, probe_mesSA_superPointR_BI->at(N50)/1000); 
-            h_segmentRZ_BIS -> Fill( probe_segmentZ_BIS, probe_segmentR_BIS); 
-            h_residualRZ_BIS -> Fill( Res(probe_mesSA_superPointZ_BI->at(N50)/1000,probe_segmentZ_BIS), Res(probe_mesSA_superPointR_BI->at(N50)/1000,probe_segmentR_BIS)); 
-          }
-          //BIL
-          if (probe_mesSA_superPointR_BI->at(N50) != 0 &&
-              probe_mesSA_superPointR_BI -> at(N50) / 1000. > -90 &&
-              probe_mesSA_sAddress -> at(N50) == 0 ) {
-            h_superPointRZ_BIL -> Fill( probe_mesSA_superPointZ_BI->at(N50)/1000, probe_mesSA_superPointR_BI->at(N50)/1000); 
-            h_segmentRZ_BIL -> Fill( probe_segmentZ_BIL, probe_segmentR_BIL); 
-            h_residualRZ_BIL -> Fill( Res(probe_mesSA_superPointZ_BI->at(N50)/1000,probe_segmentZ_BIL), Res(probe_mesSA_superPointR_BI->at(N50)/1000,probe_segmentR_BIL)); 
-          }
-          //BMS
-          if (probe_mesSA_superPointR_BM->at(N50) != 0 &&
-              probe_mesSA_superPointR_BM -> at(N50) / 1000. > -90 &&
-              probe_mesSA_sAddress -> at(N50) == 2 ) {
-            h_superPointRZ_BMS -> Fill( probe_mesSA_superPointZ_BM->at(N50)/1000, probe_mesSA_superPointR_BM->at(N50)/1000); 
-            h_segmentRZ_BMS -> Fill( probe_segmentZ_BMS, probe_segmentR_BMS); 
-            h_residualRZ_BMS -> Fill( Res(probe_mesSA_superPointZ_BM->at(N50)/1000,probe_segmentZ_BMS), Res(probe_mesSA_superPointR_BM->at(N50)/1000,probe_segmentR_BMS)); 
-          }
-          //BML
-          if (probe_mesSA_superPointR_BM->at(N50) != 0 &&
-              probe_mesSA_superPointR_BM -> at(N50) / 1000. > -90 &&
-              probe_mesSA_sAddress -> at(N50) == 0 ) {
-            h_superPointRZ_BML -> Fill( probe_mesSA_superPointZ_BM->at(N50)/1000, probe_mesSA_superPointR_BM->at(N50)/1000); 
-            h_segmentRZ_BML -> Fill( probe_segmentZ_BML, probe_segmentR_BML); 
-            h_residualRZ_BML -> Fill( Res(probe_mesSA_superPointZ_BM->at(N50)/1000,probe_segmentZ_BML), Res(probe_mesSA_superPointR_BM->at(N50)/1000,probe_segmentR_BML)); 
-          }
-          //BOS
-          if (probe_mesSA_superPointR_BO->at(N50) != 0 &&
-              probe_mesSA_superPointR_BO -> at(N50) / 1000. > -90 &&
-              probe_mesSA_sAddress -> at(N50) == 2 ) {
-            h_superPointRZ_BOS -> Fill( probe_mesSA_superPointZ_BO->at(N50)/1000, probe_mesSA_superPointR_BO->at(N50)/1000); 
-            h_segmentRZ_BOS -> Fill( probe_segmentZ_BOS, probe_segmentR_BOS); 
-            h_residualRZ_BOS -> Fill( Res(probe_mesSA_superPointZ_BO->at(N50)/1000,probe_segmentZ_BOS), Res(probe_mesSA_superPointR_BO->at(N50)/1000,probe_segmentR_BOS)); 
-          }
-          //BOL
-          if (probe_mesSA_superPointR_BO->at(N50) != 0 &&
-              probe_mesSA_superPointR_BO -> at(N50) / 1000. > -90 &&
-              probe_mesSA_sAddress -> at(N50) == 0 ) {
-            h_superPointRZ_BOL -> Fill( probe_mesSA_superPointZ_BO->at(N50)/1000, probe_mesSA_superPointR_BO->at(N50)/1000); 
-            h_segmentRZ_BOL -> Fill( probe_segmentZ_BOL, probe_segmentR_BOL); 
-            h_residualRZ_BOL -> Fill( Res(probe_mesSA_superPointZ_BO->at(N50)/1000,probe_segmentZ_BOL), Res(probe_mesSA_superPointR_BO->at(N50)/1000,probe_segmentR_BOL)); 
-          }
+          //if (probe_mesSA_superPointR_BI->at(N50) != 0 &&
+          //    probe_mesSA_superPointR_BI -> at(N50) / 1000. > -90 &&
+          //    probe_mesSA_sAddress -> at(N50) == 2 ) {
+          //  h_superPointRZ_BIS -> Fill( probe_mesSA_superPointZ_BI->at(N50)/1000, probe_mesSA_superPointR_BI->at(N50)/1000); 
+          //  h_segmentRZ_BIS -> Fill( probe_segmentZ_BIS, probe_segmentR_BIS); 
+          //  h_residualRZ_BIS -> Fill( Res(probe_mesSA_superPointZ_BI->at(N50)/1000,probe_segmentZ_BIS), Res(probe_mesSA_superPointR_BI->at(N50)/1000,probe_segmentR_BIS));
+          //}
+          ////BIL
+          //if (probe_mesSA_superPointR_BI->at(N50) != 0 &&
+          //    probe_mesSA_superPointR_BI -> at(N50) / 1000. > -90 &&
+          //    probe_mesSA_sAddress -> at(N50) == 0 ) {
+          //  h_superPointRZ_BIL -> Fill( probe_mesSA_superPointZ_BI->at(N50)/1000, probe_mesSA_superPointR_BI->at(N50)/1000); 
+          //  h_segmentRZ_BIL -> Fill( probe_segmentZ_BIL, probe_segmentR_BIL); 
+          //  h_residualRZ_BIL -> Fill( Res(probe_mesSA_superPointZ_BI->at(N50)/1000,probe_segmentZ_BIL), Res(probe_mesSA_superPointR_BI->at(N50)/1000,probe_segmentR_BIL));
+          //}
+          ////BMS
+          //if (probe_mesSA_superPointR_BM->at(N50) != 0 &&
+          //    probe_mesSA_superPointR_BM -> at(N50) / 1000. > -90 &&
+          //    probe_mesSA_sAddress -> at(N50) == 2 ) {
+          //  h_superPointRZ_BMS -> Fill( probe_mesSA_superPointZ_BM->at(N50)/1000, probe_mesSA_superPointR_BM->at(N50)/1000); 
+          //  h_segmentRZ_BMS -> Fill( probe_segmentZ_BMS, probe_segmentR_BMS); 
+          //  h_residualRZ_BMS -> Fill( Res(probe_mesSA_superPointZ_BM->at(N50)/1000,probe_segmentZ_BMS), Res(probe_mesSA_superPointR_BM->at(N50)/1000,probe_segmentR_BMS));
+          //}
+          ////BML
+          //if (probe_mesSA_superPointR_BM->at(N50) != 0 &&
+          //    probe_mesSA_superPointR_BM -> at(N50) / 1000. > -90 &&
+          //    probe_mesSA_sAddress -> at(N50) == 0 ) {
+          //  h_superPointRZ_BML -> Fill( probe_mesSA_superPointZ_BM->at(N50)/1000, probe_mesSA_superPointR_BM->at(N50)/1000); 
+          //  h_segmentRZ_BML -> Fill( probe_segmentZ_BML, probe_segmentR_BML); 
+          //  h_residualRZ_BML -> Fill( Res(probe_mesSA_superPointZ_BM->at(N50)/1000,probe_segmentZ_BML), Res(probe_mesSA_superPointR_BM->at(N50)/1000,probe_segmentR_BML));
+          //}
+          ////BOS
+          //if (probe_mesSA_superPointR_BO->at(N50) != 0 &&
+          //    probe_mesSA_superPointR_BO -> at(N50) / 1000. > -90 &&
+          //    probe_mesSA_sAddress -> at(N50) == 2 ) {
+          //  h_superPointRZ_BOS -> Fill( probe_mesSA_superPointZ_BO->at(N50)/1000, probe_mesSA_superPointR_BO->at(N50)/1000); 
+          //  h_segmentRZ_BOS -> Fill( probe_segmentZ_BOS, probe_segmentR_BOS); 
+          //  h_residualRZ_BOS -> Fill( Res(probe_mesSA_superPointZ_BO->at(N50)/1000,probe_segmentZ_BOS), Res(probe_mesSA_superPointR_BO->at(N50)/1000,probe_segmentR_BOS));
+          //}
+          ////BOL
+          //if (probe_mesSA_superPointR_BO->at(N50) != 0 &&
+          //    probe_mesSA_superPointR_BO -> at(N50) / 1000. > -90 &&
+          //    probe_mesSA_sAddress -> at(N50) == 0 ) {
+          //  h_superPointRZ_BOL -> Fill( probe_mesSA_superPointZ_BO->at(N50)/1000, probe_mesSA_superPointR_BO->at(N50)/1000); 
+          //  h_segmentRZ_BOL -> Fill( probe_segmentZ_BOL, probe_segmentR_BOL); 
+          //  h_residualRZ_BOL -> Fill( Res(probe_mesSA_superPointZ_BO->at(N50)/1000,probe_segmentZ_BOL), Res(probe_mesSA_superPointR_BO->at(N50)/1000,probe_segmentR_BOL));
+          //}
           break;
       }
 
