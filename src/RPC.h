@@ -504,6 +504,7 @@ public :
    TH2F *h_segmentRZ_BOS; //!
    TH2F *h_segmentRZ_BOL; //!
 
+
    TH2F *h_residualRZ_BIS; //!
    TH2F *h_residualRZ_BIL; //!
    TH2F *h_residualRZ_BMS; //!
@@ -536,6 +537,11 @@ public :
    TH2F *h_NumberOfMdt_pt_barrel_BI; //!
    TH2F *h_NumberOfMdt_pt_barrel_BM; //!
    TH2F *h_NumberOfMdt_pt_barrel_BO; //!
+
+   TH2F *h_ResidualSegment_eta; //!
+   TH2F *h_ResidualSegment_eta_BI; //!
+   TH2F *h_ResidualSegment_eta_BM; //!
+   TH2F *h_ResidualSegment_eta_BO; //!
 
    TH2F *h_ResidualMdt_Outlier_eta; //!
    TH2F *h_ResidualMdt_Outlier_eta_BI; //!
@@ -1070,6 +1076,11 @@ void RPC::InitHist(){
   h_NumberOfMdt_pt_barrel_BI = new TH2F("h_NumberOfMdt_pt_barrel_BI", "h_NumberOfMdt_pt_barrel_BI;pT (BI);Number;Counts", 100, 0,    100, 100, 0, 50);
   h_NumberOfMdt_pt_barrel_BM = new TH2F("h_NumberOfMdt_pt_barrel_BM", "h_NumberOfMdt_pt_barrel_BM;pT (BM);Number;Counts", 100, 0,    100, 100, 0, 50);
   h_NumberOfMdt_pt_barrel_BO = new TH2F("h_NumberOfMdt_pt_barrel_BO", "h_NumberOfMdt_pt_barrel_BO;pT (BO);Number;Counts", 100, 0,    100, 100, 0, 50);
+
+  h_ResidualSegment_eta    = new TH2F("h_ResidualSegment_eta",    "h_ResidualSegment_eta;#eta;Residual;Counts",                      100, -1.05, 1.05, 100, -500, 500);
+  h_ResidualSegment_eta_BI = new TH2F("h_ResidualSegment_eta_BI", "h_ResidualSegment_eta_BI;#eta;(BI) Segment residual [mm];Counts", 100, -1.05, 1.05, 100, -500, 500);
+  h_ResidualSegment_eta_BM = new TH2F("h_ResidualSegment_eta_BM", "h_ResidualSegment_eta_BM;#eta;(BM) Segment residual [mm];Counts", 100, -1.05, 1.05, 100, -500, 500);
+  h_ResidualSegment_eta_BO = new TH2F("h_ResidualSegment_eta_BO", "h_ResidualSegment_eta_BO;#eta;(BO) Segment residual [mm];Counts", 100, -1.05, 1.05, 100, -500, 500);
 
   h_ResidualMdt_Outlier_eta    = new TH2F("h_ResidualMdt_Outlier_eta",    "h_ResidualMdt_Outlier_eta;#eta;Residual;Counts",                      100, -1.05, 1.05, 100, -500, 500);
   h_ResidualMdt_Outlier_eta_BI = new TH2F("h_ResidualMdt_Outlier_eta_BI", "h_ResidualMdt_Outlier_eta_BI;#eta;(BI) MDT hit residual [mm];Counts", 100, -1.05, 1.05, 100, -500, 500);

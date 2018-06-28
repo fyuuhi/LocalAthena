@@ -164,39 +164,21 @@ void RPC::Loop( int Nevents, int DisplayNumber )
             continue;
           }
           // Set superpoint and segment for each station
-          vector < double >  probe_segmentR_BIS;
-          vector < double >  probe_segmentZ_BIS;
-          vector < double >  probe_segmentR_BIL;
-          vector < double >  probe_segmentZ_BIL;
-          vector < double >  probe_segmentR_BMS;
-          vector < double >  probe_segmentZ_BMS;
-          vector < double >  probe_segmentR_BML;
-          vector < double >  probe_segmentZ_BML;
-          vector < double >  probe_segmentR_BOS;
-          vector < double >  probe_segmentZ_BOS;
-          vector < double >  probe_segmentR_BOL;
-          vector < double >  probe_segmentZ_BOL;
           for ( int i = 0; i < probe_segment_n; i++){
-            if (probe_segment_chamberIndex[i] == 0) {
-              probe_segmentR_BIS.push_back(TMath::Sqrt(probe_segment_x[i]*probe_segment_x[i] + probe_segment_y[i]*probe_segment_y[i])/1000.);
-              probe_segmentZ_BIS.push_back(probe_segment_z[i]/1000.);
-            } else if(probe_segment_chamberIndex[i] == 1) {
-              probe_segmentR_BIL.push_back(TMath::Sqrt(probe_segment_x[i]*probe_segment_x[i] + probe_segment_y[i]*probe_segment_y[i])/1000.);
-              probe_segmentZ_BIL.push_back(probe_segment_z[i]/1000.);
-            } else if(probe_segment_chamberIndex[i] == 2) {
-              probe_segmentR_BMS.push_back(TMath::Sqrt(probe_segment_x[i]*probe_segment_x[i] + probe_segment_y[i]*probe_segment_y[i])/1000.);
-              probe_segmentZ_BMS.push_back(probe_segment_z[i]/1000.);
-            } else if(probe_segment_chamberIndex[i] == 3) {
-              probe_segmentR_BML.push_back(TMath::Sqrt(probe_segment_x[i]*probe_segment_x[i] + probe_segment_y[i]*probe_segment_y[i])/1000.);
-              probe_segmentZ_BML.push_back(probe_segment_z[i]/1000.);
-            } else if(probe_segment_chamberIndex[i] == 4) {
-              probe_segmentR_BOS.push_back(TMath::Sqrt(probe_segment_x[i]*probe_segment_x[i] + probe_segment_y[i]*probe_segment_y[i])/1000.);
-              probe_segmentZ_BOS.push_back(probe_segment_z[i]/1000.);
-            } else if(probe_segment_chamberIndex[i] == 5) {
-              probe_segmentR_BOL.push_back(TMath::Sqrt(probe_segment_x[i]*probe_segment_x[i] + probe_segment_y[i]*probe_segment_y[i])/1000.);
-              probe_segmentZ_BOL.push_back(probe_segment_z[i]/1000.);
+            double R = TMath::Sqrt(probe_segment_x[i]*probe_segment_x[i] + probe_segment_y[i]*probe_segment_y[i]);
+            double Z = probe_segment_z[i];
+            if (probe_segment_chamberIndex[i] == 0 || probe_segment_chamberIndex[i] == 1) {
+              h_ResidualSegment_eta_BI -> Fill(probe_eta, calc_residual(probe_mesSA_roadAw -> at(N50)[0], probe_mesSA_roadBw -> at(N50)[0], Z, R));
+              cout << "BI: " << calc_residual(probe_mesSA_roadAw -> at(N50)[0], probe_mesSA_roadBw -> at(N50)[0], Z, R) << endl;
+            } else if(probe_segment_chamberIndex[i] == 2 || probe_segment_chamberIndex[i] == 3) {
+              h_ResidualSegment_eta_BM -> Fill(probe_eta, calc_residual(probe_mesSA_roadAw -> at(N50)[1], probe_mesSA_roadBw -> at(N50)[1], Z, R));
+              cout <<"BM: " <<  calc_residual(probe_mesSA_roadAw -> at(N50)[0], probe_mesSA_roadBw -> at(N50)[0], Z, R) << endl;
+            } else if(probe_segment_chamberIndex[i] == 4 || probe_segment_chamberIndex[i] == 5) {
+              h_ResidualSegment_eta_BO -> Fill(probe_eta, calc_residual(probe_mesSA_roadAw -> at(N50)[2], probe_mesSA_roadBw -> at(N50)[2], Z, R));
+              cout <<"BO: " <<  calc_residual(probe_mesSA_roadAw -> at(N50)[0], probe_mesSA_roadBw -> at(N50)[0], Z, R) << endl;
             }
           }
+
 
           //// Check isRpcFailure
           //if (probe_mesSA_isRpcFailure -> at(N50) == 1){
@@ -274,6 +256,15 @@ void RPC::DrawHist(TString pdf){
   c1->SetBottomMargin(0.20);
 
   c1 -> Print( pdf + "[", "pdf" );
+
+  h_ResidualSegment_eta_BI -> Draw("colz");
+  c1 -> Print(pdf, "pdf" );
+
+  h_ResidualSegment_eta_BM -> Draw("colz");
+  c1 -> Print(pdf, "pdf" );
+
+  h_ResidualSegment_eta_BO -> Draw("colz");
+  c1 -> Print(pdf, "pdf" );
 
   // Inlier
   h_ResidualMdt_Inlier_pt_barrel_BI->Draw("colz");
