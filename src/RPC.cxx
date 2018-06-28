@@ -5,6 +5,7 @@
 #include <TCanvas.h>
 #include <iostream>
 #include "TH1F.h"
+#include "TF1.h"
 #include "TH2F.h"
 #include "TROOT.h"
 #include "TFile.h"
@@ -587,31 +588,177 @@ void RPC::Display(Long64_t limit_entry, TString pdf)
           break;
         case 3: //Z
           // Check TAP
-          if (!(probe_mesEFTAG_pass -> at(N50) > -1 && probe_mesL1_pass -> at(N50) > 0 && ( sumReqdRL1<tp_extdR && 0.2<tp_extdR ) && ( sumReqdREF<tp_dR ))){
+          if (!(probe_mesEFTAG_pass -> at(N50) > -1 && probe_mesL1_pass -> at(N50) > 0 && probe_mesSA_pass -> at(N50) == -2 && ( sumReqdRL1<tp_extdR && 0.2<tp_extdR ) && ( sumReqdREF<tp_dR ))){
             continue;
           }
           if (abs(probe_eta) > 1.05){
             continue;
           }
+          if (NumberOfSP() == 3 && NumberOfSP() == 2){
+            continue;
+          }
 
           cout << "size: " << (probe_mesSA_mdtHitChamber -> at(N50)).size() << endl;
           cout << "eta: " << (probe_mesSA_eta -> at(N50)) << endl;
-          //cout << probe_mesSA_pt -> at(N50) << endl;
-          //fChain->Show(entry);
 
           const Int_t n = (probe_mesSA_mdtHitChamber -> at(N50)).size();
           TGraph gr = TGraph(n); //各点が(0,0)で初期化される
 
+          // Inlier Mdt Hit
+          TGraph gr_MdtHit_Inlier_BI = TGraph(n); //各点が(0,0)で初期化される
+          TGraph gr_MdtHit_Inlier_BM = TGraph(n); //各点が(0,0)で初期化される
+          TGraph gr_MdtHit_Inlier_BO = TGraph(n); //各点が(0,0)で初期化される
+          // Outlier Mdt Hit
+          TGraph gr_MdtHit_Outlier_BI = TGraph(n); //各点が(0,0)で初期化される
+          TGraph gr_MdtHit_Outlier_BM = TGraph(n); //各点が(0,0)で初期化される
+          TGraph gr_MdtHit_Outlier_BO = TGraph(n); //各点が(0,0)で初期化される
+
+          TF1 f_road_BI = TF1("f_road_BI", "[0]*x+[1]", -20, 20);
+          cout << "road: " << probe_mesSA_roadAw -> at(N50)[0] << ": " << probe_mesSA_roadBw->at(N50)[0] << endl;
+          cout << "road: " << probe_mesSA_roadAw -> at(N50)[1] << ": " << probe_mesSA_roadBw->at(N50)[1] << endl;
+          cout << "road: " << probe_mesSA_roadAw -> at(N50)[2] << ": " << probe_mesSA_roadBw->at(N50)[2] << endl;
+          f_road_BI.SetParameter(0,probe_mesSA_roadAw -> at(N50)[0]);
+          f_road_BI.SetParameter(1,probe_mesSA_roadBw -> at(N50)[0]/1000.);
+          f_road_BI.SetLineColor(15);
+          f_road_BI.SetLineWidth(2);
+          f_road_BI.SetLineStyle(2);
+
+          TF1 f_road_BM = TF1("f_road_BM", "[0]*x+[1]", -20, 20);
+          f_road_BM.SetParameter(0,probe_mesSA_roadAw -> at(N50)[1]);
+          f_road_BM.SetParameter(1,probe_mesSA_roadBw -> at(N50)[1]/1000.);
+          f_road_BM.SetLineColor(15);
+          f_road_BM.SetLineWidth(2);
+          f_road_BM.SetLineStyle(2);
+
+          TF1 f_road_BO = TF1("f_road_BO", "[0]*x+[1]", -20, 20);
+          f_road_BO.SetParameter(0,probe_mesSA_roadAw -> at(N50)[2]);
+          f_road_BO.SetParameter(1,probe_mesSA_roadBw -> at(N50)[2]/1000.);
+          f_road_BO.SetLineColor(15);
+          f_road_BO.SetLineWidth(2);
+          f_road_BO.SetLineStyle(2);
+
+          double Z_BI=0, R_BI=0;
+          double Z_BM=0, R_BM=0;
+          double Z_BO=0, R_BO=0;
+          double Zmin_BI=0, Zmax_BI=0, Rmin_BI=0, Rmax_BI=0;
+          double Zmin_BM=0, Zmax_BM=0, Rmin_BM=0, Rmax_BM=0;
+          double Zmin_BO=0, Zmax_BO=0, Rmin_BO=0, Rmax_BO=0;
+          int nBI=0;
+          int nBM=0;
+          int nBO=0;
+          double deltaZ = 1.;
+          double deltaR = 0.4;
+
           for (Int_t i=0;i<n;++i) {
             cout << probe_mesSA_mdtHitChamber -> at(N50)[i] << endl;
             cout << "Z: " << probe_mesSA_mdtHitZ -> at(N50)[i]/1000. << ", R: " << probe_mesSA_mdtHitR -> at(N50)[i]/1000. << endl;
-            gr.SetPoint(i , (probe_mesSA_mdtHitZ -> at(N50))[i] / 1000. , (probe_mesSA_mdtHitR -> at(N50))[i] / 1000.); //SetPoint(点番号,x座標,y座標)
+            cout << nBI << ":" << nBM << ":" << nBO << endl;
+            gr.SetPoint(i , (probe_mesSA_mdtHitZ -> at(N50))[i] / 1000. , (probe_mesSA_mdtHitR -> at(N50))[i] / 1000.);
+
+            //BI
+            if (probe_mesSA_mdtHitChamber -> at(N50)[i] == 0){
+              if (probe_mesSA_mdtHitIsOutlier -> at(N50)[i] == 1) {
+                gr_MdtHit_Outlier_BI.SetPoint(i , (probe_mesSA_mdtHitZ -> at(N50))[i] / 1000. , (probe_mesSA_mdtHitR -> at(N50))[i] / 1000.);
+              } else{
+                gr_MdtHit_Inlier_BI.SetPoint(i , (probe_mesSA_mdtHitZ -> at(N50))[i] / 1000. , (probe_mesSA_mdtHitR -> at(N50))[i] / 1000.);
+              }
+              Z_BI += probe_mesSA_mdtHitZ -> at(N50)[i]/1000.;
+              R_BI += probe_mesSA_mdtHitR -> at(N50)[i]/1000.;
+              nBI += 1;
+            }
+            //BM
+            if (probe_mesSA_mdtHitChamber -> at(N50)[i] == 1){
+              if (probe_mesSA_mdtHitIsOutlier -> at(N50)[i] == 1) {
+                gr_MdtHit_Outlier_BM.SetPoint(i , (probe_mesSA_mdtHitZ -> at(N50))[i] / 1000. , (probe_mesSA_mdtHitR -> at(N50))[i] / 1000.);
+              } else{
+                gr_MdtHit_Inlier_BM.SetPoint(i , (probe_mesSA_mdtHitZ -> at(N50))[i] / 1000. , (probe_mesSA_mdtHitR -> at(N50))[i] / 1000.);
+              }
+              Z_BM += probe_mesSA_mdtHitZ -> at(N50)[i]/1000.;
+              R_BM += probe_mesSA_mdtHitR -> at(N50)[i]/1000.;
+              nBM += 1;
+            }
+            //BO
+            if (probe_mesSA_mdtHitChamber -> at(N50)[i] == 2){
+              if (probe_mesSA_mdtHitIsOutlier -> at(N50)[i] == 1) {
+                gr_MdtHit_Outlier_BO.SetPoint(i , (probe_mesSA_mdtHitZ -> at(N50))[i] / 1000. , (probe_mesSA_mdtHitR -> at(N50))[i] / 1000.);
+              } else{
+                gr_MdtHit_Inlier_BO.SetPoint(i , (probe_mesSA_mdtHitZ -> at(N50))[i] / 1000. , (probe_mesSA_mdtHitR -> at(N50))[i] / 1000.);
+              }
+              Z_BO += probe_mesSA_mdtHitZ -> at(N50)[i]/1000.;
+              R_BO += probe_mesSA_mdtHitR -> at(N50)[i]/1000.;
+              nBO += 1;
+            }
           }
+          Zmax_BI = Z_BI/nBI + deltaZ;
+          Zmin_BI = Z_BI/nBI - deltaZ;
+          Rmax_BI = R_BI/nBI + deltaR;
+          Rmin_BI = R_BI/nBI - deltaR;
 
-          gr.GetXaxis()->SetLimits(-20,20);
-          gr.GetYaxis()->SetRangeUser(4,12);
-          gr.Draw("AP same");
+          Zmax_BM = Z_BM/nBM + deltaZ;
+          Zmin_BM = Z_BM/nBM - deltaZ;
+          Rmax_BM = R_BM/nBM + deltaR;
+          Rmin_BM = R_BM/nBM - deltaR;
 
+          Zmax_BO = Z_BO/nBO + deltaZ;
+          Zmin_BO = Z_BO/nBO - deltaZ;
+          Rmax_BO = R_BO/nBO + deltaR;
+          Rmin_BO = R_BO/nBO - deltaR;
+
+          double Zmax = 20;
+          double Zmin = -20;
+          gr.GetXaxis()->SetLimits(Zmin,Zmax);
+          gr.GetYaxis()->SetRangeUser(0,12);
+          gr.SetMarkerStyle(8);
+          gr.SetMarkerSize(2);
+          gr.Draw("AP");
+          f_road_BI.Draw("same");
+          f_road_BM.Draw("same");
+          f_road_BO.Draw("same");
+          c2->Print(pdf, "pdf");
+
+          gr_MdtHit_Inlier_BI.SetMarkerColor(kGreen);
+          gr_MdtHit_Inlier_BI.SetMarkerStyle(8);
+          gr_MdtHit_Inlier_BI.SetMarkerSize(2);
+          gr_MdtHit_Inlier_BI.GetXaxis()->SetLimits(Zmin_BI,Zmax_BI);
+          gr_MdtHit_Inlier_BI.GetYaxis()->SetRangeUser(Rmin_BI,Rmax_BI);
+          gr_MdtHit_Inlier_BI.Draw("AP");
+
+          gr_MdtHit_Outlier_BI.SetMarkerColor(kRed);
+          gr_MdtHit_Outlier_BI.SetMarkerStyle(8);
+          gr_MdtHit_Outlier_BI.SetMarkerSize(2);
+          gr_MdtHit_Outlier_BI.GetXaxis()->SetLimits(Zmin_BI,Zmax_BI);
+          gr_MdtHit_Outlier_BI.GetYaxis()->SetRangeUser(Rmin_BI,Rmax_BI);
+          gr_MdtHit_Outlier_BI.Draw("P,same");
+
+          f_road_BI.Draw("same");
+          c2->Print(pdf, "pdf");
+
+          gr_MdtHit_Inlier_BM.SetMarkerColor(kGreen);
+          gr_MdtHit_Inlier_BM.SetMarkerStyle(8);
+          gr_MdtHit_Inlier_BM.SetMarkerSize(2);
+          gr_MdtHit_Inlier_BM.GetXaxis()->SetLimits(Zmin_BM,Zmax_BM);
+          gr_MdtHit_Inlier_BM.GetYaxis()->SetRangeUser(Rmin_BM,Rmax_BM);
+          gr_MdtHit_Inlier_BM.Draw("AP");
+
+          gr_MdtHit_Outlier_BM.SetMarkerColor(kRed);
+          gr_MdtHit_Outlier_BM.SetMarkerStyle(8);
+          gr_MdtHit_Outlier_BM.SetMarkerSize(2);
+          gr_MdtHit_Outlier_BM.Draw("P,same");
+          f_road_BM.Draw("same");
+          c2->Print(pdf, "pdf");
+
+          gr_MdtHit_Inlier_BO.SetMarkerColor(kGreen);
+          gr_MdtHit_Inlier_BO.SetMarkerStyle(8);
+          gr_MdtHit_Inlier_BO.SetMarkerSize(2);
+          gr_MdtHit_Inlier_BO.GetXaxis()->SetLimits(Zmin_BO,Zmax_BO);
+          gr_MdtHit_Inlier_BO.GetYaxis()->SetRangeUser(Rmin_BO,Rmax_BO);
+          gr_MdtHit_Inlier_BO.Draw("AP");
+
+          gr_MdtHit_Outlier_BO.SetMarkerColor(kRed);
+          gr_MdtHit_Outlier_BO.SetMarkerStyle(8);
+          gr_MdtHit_Outlier_BO.SetMarkerSize(2);
+          gr_MdtHit_Outlier_BO.Draw("P,same");
+          f_road_BO.Draw("same");
           c2->Print(pdf, "pdf");
 
           current_entry += 1;
