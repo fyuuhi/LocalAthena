@@ -544,7 +544,7 @@ int RPC::NumberOfSP(){
   return number;
 }
 
-void RPC::Display(Long64_t limit_entry, TString pdf)
+void RPC::Display(Long64_t begin_entry, Long64_t limit_entry, TString pdf)
 {
    // Prepare Canvas
    TCanvas *c2 = new TCanvas("c2", "c2", 10, 10, 1020, 700);
@@ -567,7 +567,7 @@ void RPC::Display(Long64_t limit_entry, TString pdf)
 
    int current_entry = 0;
    // Start Loop
-   for (Long64_t jentry=0; jentry<nLoop;jentry++) {
+   for (Long64_t jentry = begin_entry; jentry<nLoop;jentry++) {
      int  ientry = LoadTree(jentry);
      nb = fChain->GetEntry(jentry);   nbytes += nb;
      if (ientry < 0) break;
