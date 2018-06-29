@@ -224,6 +224,9 @@ public :
   vector < vector < float > > *probe_mesSA_etaMin;
   vector < vector < float > > *probe_mesSA_etaMax;
 
+  vector <float> *probe_mesSA_roiEta;
+  vector <float> *probe_mesSA_roiPhi;
+
    vector<int>     *probe_mesCB_pass;
    vector<double>  *probe_mesCB_dR;
    vector<double>  *probe_mesCB_tpdR;
@@ -419,6 +422,9 @@ public :
    TBranch *b_probe_mesSA_rMax; //!
    TBranch *b_probe_mesSA_etaMin; //!
    TBranch *b_probe_mesSA_etaMax; //!
+
+   TBranch *b_probe_mesSA_roiEta; //!
+   TBranch *b_probe_mesSA_roiPhi; //!
 
    TBranch        *b_probe_mesCB_pass;   //!
    TBranch        *b_probe_mesCB_dR;   //!
@@ -755,6 +761,9 @@ void RPC::Init(TTree *tree)
    probe_mesSA_etaMin = 0;
    probe_mesSA_etaMax = 0;
 
+   probe_mesSA_roiEta = 0;
+   probe_mesSA_roiPhi = 0;
+
    probe_mesCB_pass = 0;
    probe_mesCB_dR = 0;
    probe_mesCB_tpdR = 0;
@@ -954,6 +963,9 @@ void RPC::Init(TTree *tree)
    fChain->SetBranchAddress("probe_mesSA_rMax",   &probe_mesSA_rMax,   &b_probe_mesSA_rMax   );
    fChain->SetBranchAddress("probe_mesSA_etaMin", &probe_mesSA_etaMin, &b_probe_mesSA_etaMin );
    fChain->SetBranchAddress("probe_mesSA_etaMax", &probe_mesSA_etaMax, &b_probe_mesSA_etaMax );
+
+   fChain->SetBranchAddress("probe_mesSA_roiEta", &probe_mesSA_roiEta, &b_probe_mesSA_roiEta );
+   fChain->SetBranchAddress("probe_mesSA_roiPhi", &probe_mesSA_roiPhi, &b_probe_mesSA_roiPhi );
 
    fChain->SetBranchAddress("probe_mesCB_pass", &probe_mesCB_pass, &b_probe_mesCB_pass);
    fChain->SetBranchAddress("probe_mesCB_dR", &probe_mesCB_dR, &b_probe_mesCB_dR);
