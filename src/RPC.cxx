@@ -615,6 +615,17 @@ void RPC::Display(Long64_t begin_entry, Long64_t limit_entry, TString pdf)
           const Int_t nMDT = (probe_mesSA_mdtHitChamber -> at(N50)).size();
           const Int_t nRPC = (probe_mesSA_rpcHitR -> at(N50)).size();
 
+          // Offline segment
+          // Set superpoint and segment for each station
+          TGraph gr_segment = TGraph(probe_segment_n);
+          for ( int i = 0; i < probe_segment_n; i++){
+            if (probe_segment_chamberIndex[i] >= 0 && probe_segment_chamberIndex[i] <= 5) {
+              double R = TMath::Sqrt(probe_segment_x[i]*probe_segment_x[i] + probe_segment_y[i]*probe_segment_y[i]);
+              double Z = probe_segment_z[i];
+              gr_segment.SetPoint(i, Z / 1000., R / 1000.);
+            }
+          }
+          // RPC hits
           TGraph gr_RPC = TGraph((probe_mesSA_rpcHitX ->at(N50)).size());
           for (int i = 0; i< nRPC; i++){
             if (probe_mesSA_rpcHitStationNumber->at(N50)[i] == 1. ||
@@ -792,6 +803,7 @@ void RPC::Display(Long64_t begin_entry, Long64_t limit_entry, TString pdf)
           // Set Legend
           TLegend leg = TLegend(0.805,0.22,0.99,0.95);
           leg.SetTextSize(0.035);
+          leg.AddEntry(&gr_segment,"#splitline{Offline}{segment}","p");
           leg.AddEntry(&gr,Form("MDT hit (%d)",nMDT),"p");
           leg.AddEntry(&gr_RPC,Form("RPC hit (%d)",nRPC),"p");
           leg.AddEntry(&gr_SP,Form("SuperPoint (%d)",NumberOfSP()),"p");
@@ -799,16 +811,20 @@ void RPC::Display(Long64_t begin_entry, Long64_t limit_entry, TString pdf)
           // Draw Display
           double Zmax = 20;
           double Zmin = -20;
-          gr.GetXaxis()->SetLimits(Zmin,Zmax);
-          gr.GetYaxis()->SetRangeUser(0,12);
+          gr_segment.Draw("AP");
+          gr_segment.SetMarkerStyle(21);
+          gr_segment.SetMarkerSize(2);
+          gr_segment.SetMarkerColor(6);
+          gr_segment.GetXaxis()->SetLimits(Zmin,Zmax);
+          gr_segment.GetYaxis()->SetRangeUser(0,12);
           gr.SetMarkerStyle(24);
           gr.SetMarkerSize(1);
           gr.SetMarkerColor(2);
-          gr.Draw("AP");
+          gr.Draw("P");
           leg.Draw();
           gr_RPC.SetMarkerStyle(22);
-          gr_RPC.SetMarkerSize(2);
-          gr_RPC.SetMarkerColor(6);
+          gr_RPC.SetMarkerSize(1);
+          gr_RPC.SetMarkerColor(kCyan-3);
           gr_RPC.Draw("P, same");
           gr_SP.SetMarkerStyle(8);
           gr_SP.SetMarkerSize(2);
@@ -823,6 +839,7 @@ void RPC::Display(Long64_t begin_entry, Long64_t limit_entry, TString pdf)
           TLegend leg_BI = TLegend(0.805,0.22,0.99,0.95);
           leg_BI.SetHeader("BarrelInner","C");
           leg_BI.SetTextSize(0.035);
+          leg_BI.AddEntry(&gr_segment,"#splitline{Offline}{segment}","p");
           leg_BI.AddEntry(&gr_MdtHit_Inlier_BI,  Form("#splitline{Inlier}{MDT hit (%d)}",nBI_Inlier),  "p");
           leg_BI.AddEntry(&gr_MdtHit_Outlier_BI, Form("#splitline{Outlier}{MDT hit (%d)}",nBI_Outlier), "p");
           leg_BI.AddEntry(&gr_RPC,               "RPC hit",         "p");
@@ -834,6 +851,7 @@ void RPC::Display(Long64_t begin_entry, Long64_t limit_entry, TString pdf)
           gr_MdtHit_Inlier_BI.GetXaxis()->SetLimits(Zmin_BI,Zmax_BI);
           gr_MdtHit_Inlier_BI.GetYaxis()->SetRangeUser(Rmin_BI,Rmax_BI);
           gr_MdtHit_Inlier_BI.Draw("AP");
+          gr_segment.Draw("P");
 
           leg_BI.Draw();
 
@@ -850,6 +868,7 @@ void RPC::Display(Long64_t begin_entry, Long64_t limit_entry, TString pdf)
           TLegend leg_BM = TLegend(0.805,0.22,0.99,0.95);
           leg_BM.SetHeader("BarrelMiddle","C");
           leg_BM.SetTextSize(0.035);
+          leg_BM.AddEntry(&gr_segment,"#splitline{Offline}{segment}","p");
           leg_BM.AddEntry(&gr_MdtHit_Inlier_BM,  Form("#splitline{Inlier}{MDT hit (%d)}",nBM_Inlier),  "p");
           leg_BM.AddEntry(&gr_MdtHit_Outlier_BM, Form("#splitline{Outlier}{MDT hit (%d)}",nBM_Outlier), "p");
           leg_BM.AddEntry(&gr_RPC,"RPC hit","p");
@@ -861,12 +880,10 @@ void RPC::Display(Long64_t begin_entry, Long64_t limit_entry, TString pdf)
           gr_MdtHit_Inlier_BM.GetXaxis()->SetLimits(Zmin_BM,Zmax_BM);
           gr_MdtHit_Inlier_BM.GetYaxis()->SetRangeUser(Rmin_BM,Rmax_BM);
           gr_MdtHit_Inlier_BM.Draw("AP");
+          gr_segment.Draw("P");
 
           leg_BM.Draw();
 
-          gr_RPC.SetMarkerStyle(22);
-          gr_RPC.SetMarkerSize(2);
-          gr_RPC.SetMarkerColor(6);
           gr_RPC.Draw("P, same");
 
           gr_MdtHit_Outlier_BM.SetMarkerColor(kRed);
@@ -881,6 +898,7 @@ void RPC::Display(Long64_t begin_entry, Long64_t limit_entry, TString pdf)
           TLegend leg_BO = TLegend(0.81,0.22,0.99,0.95);
           leg_BO.SetHeader("BarrelOuter","C");
           leg_BO.SetTextSize(0.035);
+          leg_BO.AddEntry(&gr_segment,"#splitline{Offline}{segment}","p");
           leg_BO.AddEntry(&gr_MdtHit_Inlier_BO,  Form("#splitline{Inlier}{MDT hit (%d)}",nBO_Inlier),  "p");
           leg_BO.AddEntry(&gr_MdtHit_Outlier_BO, Form("#splitline{Outlier}{MDT hit (%d)}",nBO_Outlier), "p");
           leg_BO.AddEntry(&gr_RPC,"RPC hit","p");
@@ -892,12 +910,10 @@ void RPC::Display(Long64_t begin_entry, Long64_t limit_entry, TString pdf)
           gr_MdtHit_Inlier_BO.GetXaxis()->SetLimits(Zmin_BO,Zmax_BO);
           gr_MdtHit_Inlier_BO.GetYaxis()->SetRangeUser(Rmin_BO,Rmax_BO);
           gr_MdtHit_Inlier_BO.Draw("AP");
+          gr_segment.Draw("P");
 
           leg_BO.Draw();
 
-          gr_RPC.SetMarkerStyle(22);
-          gr_RPC.SetMarkerSize(2);
-          gr_RPC.SetMarkerColor(6);
           gr_RPC.Draw("P, same");
 
           gr_MdtHit_Outlier_BO.SetMarkerColor(kRed);
