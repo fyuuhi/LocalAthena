@@ -668,6 +668,7 @@ void RPC::Display(Long64_t begin_entry, Long64_t limit_entry, TString pdf)
           cout << "road: " << probe_mesSA_roadAw -> at(N50)[0] << ": " << probe_mesSA_roadBw->at(N50)[0] << endl;
           cout << "road: " << probe_mesSA_roadAw -> at(N50)[1] << ": " << probe_mesSA_roadBw->at(N50)[1] << endl;
           cout << "road: " << probe_mesSA_roadAw -> at(N50)[2] << ": " << probe_mesSA_roadBw->at(N50)[2] << endl;
+          f_road_BI.SetTitle(";Z [m];R [m]");
           f_road_BI.SetParameter(0,probe_mesSA_roadAw -> at(N50)[0]);
           f_road_BI.SetParameter(1,probe_mesSA_roadBw -> at(N50)[0]/1000.);
           f_road_BI.SetLineColor(15);
@@ -675,6 +676,7 @@ void RPC::Display(Long64_t begin_entry, Long64_t limit_entry, TString pdf)
           f_road_BI.SetLineStyle(2);
 
           TF1 f_road_BM = TF1("f_road_BM", "[0]*x+[1]", -20, 20);
+          f_road_BM.SetTitle(";Z [m];R [m]");
           f_road_BM.SetParameter(0,probe_mesSA_roadAw -> at(N50)[1]);
           f_road_BM.SetParameter(1,probe_mesSA_roadBw -> at(N50)[1]/1000.);
           f_road_BM.SetLineColor(15);
@@ -682,6 +684,7 @@ void RPC::Display(Long64_t begin_entry, Long64_t limit_entry, TString pdf)
           f_road_BM.SetLineStyle(2);
 
           TF1 f_road_BO = TF1("f_road_BO", "[0]*x+[1]", -20, 20);
+          f_road_BO.SetTitle(";Z [m];R [m]");
           f_road_BO.SetParameter(0,probe_mesSA_roadAw -> at(N50)[2]);
           f_road_BO.SetParameter(1,probe_mesSA_roadBw -> at(N50)[2]/1000.);
           f_road_BO.SetLineColor(15);
@@ -811,7 +814,10 @@ void RPC::Display(Long64_t begin_entry, Long64_t limit_entry, TString pdf)
           // Draw Display
           double Zmax = 20;
           double Zmin = -20;
-          gr_segment.Draw("AP");
+          f_road_BI.Draw("");
+          f_road_BM.Draw("same");
+          f_road_BO.Draw("same");
+          gr_segment.Draw("P");
           gr_segment.SetMarkerStyle(21);
           gr_segment.SetMarkerSize(2);
           gr_segment.SetMarkerColor(6);
@@ -830,9 +836,6 @@ void RPC::Display(Long64_t begin_entry, Long64_t limit_entry, TString pdf)
           gr_SP.SetMarkerSize(2);
           gr_SP.SetMarkerColor(4);
           gr_SP.Draw("P, same");
-          f_road_BI.Draw("same");
-          f_road_BM.Draw("same");
-          f_road_BO.Draw("same");
           c2->Print(pdf, "pdf");
 
           // Set Legend for BI
@@ -845,13 +848,14 @@ void RPC::Display(Long64_t begin_entry, Long64_t limit_entry, TString pdf)
           leg_BI.AddEntry(&gr_RPC,               "RPC hit",         "p");
           leg_BI.AddEntry(&gr_SP,                "SuperPoint",      "p");
           leg_BI.AddEntry(&f_road_BI,            "Road",            "l");
+          f_road_BI.Draw("");
+          f_road_BI.GetXaxis()->SetLimits(Zmin_BI,Zmax_BI);
+          f_road_BI.GetYaxis()->SetRangeUser(Rmin_BI,Rmax_BI);
           gr_MdtHit_Inlier_BI.SetMarkerColor(kGreen);
           gr_MdtHit_Inlier_BI.SetMarkerStyle(24);
           gr_MdtHit_Inlier_BI.SetMarkerSize(1);
-          gr_MdtHit_Inlier_BI.GetXaxis()->SetLimits(Zmin_BI,Zmax_BI);
-          gr_MdtHit_Inlier_BI.GetYaxis()->SetRangeUser(Rmin_BI,Rmax_BI);
-          gr_MdtHit_Inlier_BI.Draw("AP");
-          gr_segment.Draw("P");
+          gr_MdtHit_Inlier_BI.Draw("P, same");
+          gr_segment.Draw("P, same");
 
           leg_BI.Draw();
 
@@ -861,7 +865,6 @@ void RPC::Display(Long64_t begin_entry, Long64_t limit_entry, TString pdf)
           gr_MdtHit_Outlier_BI.Draw("P,same");
 
           gr_SP.Draw("P, same");
-          f_road_BI.Draw("same");
           c2->Print(pdf, "pdf");
 
           // Set Legend for BM
@@ -874,13 +877,14 @@ void RPC::Display(Long64_t begin_entry, Long64_t limit_entry, TString pdf)
           leg_BM.AddEntry(&gr_RPC,"RPC hit","p");
           leg_BM.AddEntry(&gr_SP,"SuperPoint","p");
           leg_BM.AddEntry(&f_road_BM,"Road","l");
+          f_road_BM.Draw("");
+          f_road_BM.GetXaxis()->SetLimits(Zmin_BM,Zmax_BM);
+          f_road_BM.GetYaxis()->SetRangeUser(Rmin_BM,Rmax_BM);
           gr_MdtHit_Inlier_BM.SetMarkerColor(kGreen);
           gr_MdtHit_Inlier_BM.SetMarkerStyle(24);
           gr_MdtHit_Inlier_BM.SetMarkerSize(1);
-          gr_MdtHit_Inlier_BM.GetXaxis()->SetLimits(Zmin_BM,Zmax_BM);
-          gr_MdtHit_Inlier_BM.GetYaxis()->SetRangeUser(Rmin_BM,Rmax_BM);
-          gr_MdtHit_Inlier_BM.Draw("AP");
-          gr_segment.Draw("P");
+          gr_MdtHit_Inlier_BM.Draw("P, same");
+          gr_segment.Draw("P, same");
 
           leg_BM.Draw();
 
@@ -890,7 +894,6 @@ void RPC::Display(Long64_t begin_entry, Long64_t limit_entry, TString pdf)
           gr_MdtHit_Outlier_BM.SetMarkerStyle(24);
           gr_MdtHit_Outlier_BM.SetMarkerSize(1);
           gr_MdtHit_Outlier_BM.Draw("P,same");
-          f_road_BM.Draw("same");
           gr_SP.Draw("P, same");
           c2->Print(pdf, "pdf");
 
@@ -904,13 +907,14 @@ void RPC::Display(Long64_t begin_entry, Long64_t limit_entry, TString pdf)
           leg_BO.AddEntry(&gr_RPC,"RPC hit","p");
           leg_BO.AddEntry(&gr_SP,"SuperPoint","p");
           leg_BO.AddEntry(&f_road_BO,"Road","l");
+          f_road_BO.Draw("");
+          f_road_BO.GetXaxis()->SetLimits(Zmin_BO,Zmax_BO);
+          f_road_BO.GetYaxis()->SetRangeUser(Rmin_BO,Rmax_BO);
           gr_MdtHit_Inlier_BO.SetMarkerColor(kGreen);
           gr_MdtHit_Inlier_BO.SetMarkerStyle(24);
           gr_MdtHit_Inlier_BO.SetMarkerSize(1);
-          gr_MdtHit_Inlier_BO.GetXaxis()->SetLimits(Zmin_BO,Zmax_BO);
-          gr_MdtHit_Inlier_BO.GetYaxis()->SetRangeUser(Rmin_BO,Rmax_BO);
-          gr_MdtHit_Inlier_BO.Draw("AP");
-          gr_segment.Draw("P");
+          gr_MdtHit_Inlier_BO.Draw("P, same");
+          gr_segment.Draw("P, same");
 
           leg_BO.Draw();
 
@@ -920,7 +924,6 @@ void RPC::Display(Long64_t begin_entry, Long64_t limit_entry, TString pdf)
           gr_MdtHit_Outlier_BO.SetMarkerStyle(24);
           gr_MdtHit_Outlier_BO.SetMarkerSize(1);
           gr_MdtHit_Outlier_BO.Draw("P,same");
-          f_road_BO.Draw("same");
           gr_SP.Draw("P, same");
           c2->Print(pdf, "pdf");
 
