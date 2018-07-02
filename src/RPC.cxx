@@ -554,9 +554,6 @@ void RPC::Display(Long64_t begin_entry, Long64_t limit_entry, TString pdf)
    c2->SetBottomMargin(0.20);
    c2->Print(pdf + "[", "pdf");
 
-   TH2F* h_temp = new TH2F("h_temp", "h_temp;Z;R;", 100, 0, 30, 100, 0, 20);  
-   h_temp ->Draw();
-
    // Prepare Loop
    if (fChain == 0) return;
    int nLoop = fChain -> GetEntries();
@@ -662,34 +659,6 @@ void RPC::Display(Long64_t begin_entry, Long64_t limit_entry, TString pdf)
           TGraph gr_MdtHit_Outlier_BI = TGraph(nMDT); //各点が(0,0)で初期化される
           TGraph gr_MdtHit_Outlier_BM = TGraph(nMDT); //各点が(0,0)で初期化される
           TGraph gr_MdtHit_Outlier_BO = TGraph(nMDT); //各点が(0,0)で初期化される
-
-          // Road
-          TF1 f_road_BI = TF1("f_road_BI", "[0]*x+[1]", -20, 20);
-          cout << "road: " << probe_mesSA_roadAw -> at(N50)[0] << ": " << probe_mesSA_roadBw->at(N50)[0] << endl;
-          cout << "road: " << probe_mesSA_roadAw -> at(N50)[1] << ": " << probe_mesSA_roadBw->at(N50)[1] << endl;
-          cout << "road: " << probe_mesSA_roadAw -> at(N50)[2] << ": " << probe_mesSA_roadBw->at(N50)[2] << endl;
-          f_road_BI.SetTitle(";Z [m];R [m]");
-          f_road_BI.SetParameter(0,probe_mesSA_roadAw -> at(N50)[0]);
-          f_road_BI.SetParameter(1,probe_mesSA_roadBw -> at(N50)[0]/1000.);
-          f_road_BI.SetLineColor(15);
-          f_road_BI.SetLineWidth(2);
-          f_road_BI.SetLineStyle(2);
-
-          TF1 f_road_BM = TF1("f_road_BM", "[0]*x+[1]", -20, 20);
-          f_road_BM.SetTitle(";Z [m];R [m]");
-          f_road_BM.SetParameter(0,probe_mesSA_roadAw -> at(N50)[1]);
-          f_road_BM.SetParameter(1,probe_mesSA_roadBw -> at(N50)[1]/1000.);
-          f_road_BM.SetLineColor(15);
-          f_road_BM.SetLineWidth(2);
-          f_road_BM.SetLineStyle(2);
-
-          TF1 f_road_BO = TF1("f_road_BO", "[0]*x+[1]", -20, 20);
-          f_road_BO.SetTitle(";Z [m];R [m]");
-          f_road_BO.SetParameter(0,probe_mesSA_roadAw -> at(N50)[2]);
-          f_road_BO.SetParameter(1,probe_mesSA_roadBw -> at(N50)[2]/1000.);
-          f_road_BO.SetLineColor(15);
-          f_road_BO.SetLineWidth(2);
-          f_road_BO.SetLineStyle(2);
 
           double Z_BI=0, R_BI=0;
           double Z_BM=0, R_BM=0;
@@ -811,18 +780,23 @@ void RPC::Display(Long64_t begin_entry, Long64_t limit_entry, TString pdf)
           leg.AddEntry(&gr_RPC,Form("RPC hit (%d)",nRPC),"p");
           leg.AddEntry(&gr_SP,Form("SuperPoint (%d)",NumberOfSP()),"p");
           leg.AddEntry(&f_road_BI,"Road","l");
+          leg.AddEntry(&f_roi,"RoI center","l");
+
+
           // Draw Display
           double Zmax = 20;
           double Zmin = -20;
-          f_road_BI.Draw("");
-          f_road_BM.Draw("same");
-          f_road_BO.Draw("same");
+          c2->DrawFrame(Zmin,0,Zmax,12);
           gr_segment.Draw("P");
+          f_roi.Draw("same");
           gr_segment.SetMarkerStyle(21);
           gr_segment.SetMarkerSize(2);
           gr_segment.SetMarkerColor(6);
           gr_segment.GetXaxis()->SetLimits(Zmin,Zmax);
           gr_segment.GetYaxis()->SetRangeUser(0,12);
+          f_road_BI.Draw("same");
+          f_road_BM.Draw("same");
+          f_road_BO.Draw("same");
           gr.SetMarkerStyle(24);
           gr.SetMarkerSize(1);
           gr.SetMarkerColor(2);
@@ -837,10 +811,12 @@ void RPC::Display(Long64_t begin_entry, Long64_t limit_entry, TString pdf)
           gr_SP.SetMarkerColor(4);
           gr_SP.Draw("P, same");
           c2->Print(pdf, "pdf");
+          c2->RedrawAxis();
+          //delete frame;
 
           // Set Legend for BI
           TLegend leg_BI = TLegend(0.805,0.22,0.99,0.95);
-          leg_BI.SetHeader("BarrelInner","C");
+          leg_BI.SetHeader("Barrel Inner","C");
           leg_BI.SetTextSize(0.035);
           leg_BI.AddEntry(&gr_segment,"#splitline{Offline}{segment}","p");
           leg_BI.AddEntry(&gr_MdtHit_Inlier_BI,  Form("#splitline{Inlier}{MDT hit (%d)}",nBI_Inlier),  "p");
@@ -848,10 +824,17 @@ void RPC::Display(Long64_t begin_entry, Long64_t limit_entry, TString pdf)
           leg_BI.AddEntry(&gr_RPC,               "RPC hit",         "p");
           leg_BI.AddEntry(&gr_SP,                "SuperPoint",      "p");
           leg_BI.AddEntry(&f_road_BI,            "Road",            "l");
-          f_road_BI.Draw("");
+          leg_BI.AddEntry(&f_roi,"RoI center","l");
+          c2->DrawFrame(Zmin_BI,Rmin_BI,Zmax_BI,Rmax_BI);
+          f_road_BI.Draw("same");
+          f_road_BI_plus.Draw("same");
+          f_road_BI_minus.Draw("same");
+          f_roi.Draw("same");
+          cout << "Zmin_BI: " << Zmin_BI <<endl;
+          cout << "Zmax_BI: " << Zmax_BI <<endl;
           f_road_BI.GetXaxis()->SetLimits(Zmin_BI,Zmax_BI);
           f_road_BI.GetYaxis()->SetRangeUser(Rmin_BI,Rmax_BI);
-          gr_MdtHit_Inlier_BI.SetMarkerColor(kGreen);
+          gr_MdtHit_Inlier_BI.SetMarkerColor(kGreen + 2);
           gr_MdtHit_Inlier_BI.SetMarkerStyle(24);
           gr_MdtHit_Inlier_BI.SetMarkerSize(1);
           gr_MdtHit_Inlier_BI.Draw("P, same");
@@ -866,10 +849,11 @@ void RPC::Display(Long64_t begin_entry, Long64_t limit_entry, TString pdf)
 
           gr_SP.Draw("P, same");
           c2->Print(pdf, "pdf");
+          c2->RedrawAxis();
 
           // Set Legend for BM
           TLegend leg_BM = TLegend(0.805,0.22,0.99,0.95);
-          leg_BM.SetHeader("BarrelMiddle","C");
+          leg_BM.SetHeader("Barrel Middle","C");
           leg_BM.SetTextSize(0.035);
           leg_BM.AddEntry(&gr_segment,"#splitline{Offline}{segment}","p");
           leg_BM.AddEntry(&gr_MdtHit_Inlier_BM,  Form("#splitline{Inlier}{MDT hit (%d)}",nBM_Inlier),  "p");
@@ -877,10 +861,15 @@ void RPC::Display(Long64_t begin_entry, Long64_t limit_entry, TString pdf)
           leg_BM.AddEntry(&gr_RPC,"RPC hit","p");
           leg_BM.AddEntry(&gr_SP,"SuperPoint","p");
           leg_BM.AddEntry(&f_road_BM,"Road","l");
-          f_road_BM.Draw("");
+          leg_BM.AddEntry(&f_roi,"RoI center","l");
+          c2->DrawFrame(Zmin_BM,Rmin_BM,Zmax_BM,Rmax_BM);
+          f_road_BM.Draw("same");
+          f_road_BM_plus.Draw("same");
+          f_road_BM_minus.Draw("same");
+          f_roi.Draw("same");
           f_road_BM.GetXaxis()->SetLimits(Zmin_BM,Zmax_BM);
           f_road_BM.GetYaxis()->SetRangeUser(Rmin_BM,Rmax_BM);
-          gr_MdtHit_Inlier_BM.SetMarkerColor(kGreen);
+          gr_MdtHit_Inlier_BM.SetMarkerColor(kGreen + 2);
           gr_MdtHit_Inlier_BM.SetMarkerStyle(24);
           gr_MdtHit_Inlier_BM.SetMarkerSize(1);
           gr_MdtHit_Inlier_BM.Draw("P, same");
@@ -896,10 +885,11 @@ void RPC::Display(Long64_t begin_entry, Long64_t limit_entry, TString pdf)
           gr_MdtHit_Outlier_BM.Draw("P,same");
           gr_SP.Draw("P, same");
           c2->Print(pdf, "pdf");
+          c2->RedrawAxis();
 
           // Set Legend for BO
           TLegend leg_BO = TLegend(0.81,0.22,0.99,0.95);
-          leg_BO.SetHeader("BarrelOuter","C");
+          leg_BO.SetHeader("Barrel Outer","C");
           leg_BO.SetTextSize(0.035);
           leg_BO.AddEntry(&gr_segment,"#splitline{Offline}{segment}","p");
           leg_BO.AddEntry(&gr_MdtHit_Inlier_BO,  Form("#splitline{Inlier}{MDT hit (%d)}",nBO_Inlier),  "p");
@@ -907,10 +897,15 @@ void RPC::Display(Long64_t begin_entry, Long64_t limit_entry, TString pdf)
           leg_BO.AddEntry(&gr_RPC,"RPC hit","p");
           leg_BO.AddEntry(&gr_SP,"SuperPoint","p");
           leg_BO.AddEntry(&f_road_BO,"Road","l");
-          f_road_BO.Draw("");
+          leg_BO.AddEntry(&f_roi,"RoI center","l");
+          c2->DrawFrame(Zmin_BO,Rmin_BO,Zmax_BO,Rmax_BO);
+          f_road_BO.Draw("same");
+          f_road_BO_plus.Draw("same");
+          f_road_BO_minus.Draw("same");
+          f_roi.Draw("same");
           f_road_BO.GetXaxis()->SetLimits(Zmin_BO,Zmax_BO);
           f_road_BO.GetYaxis()->SetRangeUser(Rmin_BO,Rmax_BO);
-          gr_MdtHit_Inlier_BO.SetMarkerColor(kGreen);
+          gr_MdtHit_Inlier_BO.SetMarkerColor(kGreen + 2);
           gr_MdtHit_Inlier_BO.SetMarkerStyle(24);
           gr_MdtHit_Inlier_BO.SetMarkerSize(1);
           gr_MdtHit_Inlier_BO.Draw("P, same");
@@ -926,6 +921,7 @@ void RPC::Display(Long64_t begin_entry, Long64_t limit_entry, TString pdf)
           gr_MdtHit_Outlier_BO.Draw("P,same");
           gr_SP.Draw("P, same");
           c2->Print(pdf, "pdf");
+          c2->RedrawAxis();
 
           current_entry += 1;
           break;
@@ -934,6 +930,7 @@ void RPC::Display(Long64_t begin_entry, Long64_t limit_entry, TString pdf)
       if (current_entry == limit_entry) {
         break;
       }
+      c2->Clear();
    } // end of each entry
    c2->Print(pdf + "]", "pdf");
    delete c2;
