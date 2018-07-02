@@ -771,6 +771,85 @@ void RPC::Display(Long64_t begin_entry, Long64_t limit_entry, TString pdf)
             Rmax_BO = R_BO + deltaR;
             Rmin_BO = R_BO - deltaR;
           }
+          // Road
+          TF1 f_road_BI = TF1("f_road_BI", "[0]*x+[1]", -20, 20);
+          cout << "road: " << probe_mesSA_roadAw -> at(N50)[0] << ": " << probe_mesSA_roadBw->at(N50)[0] << endl;
+          cout << "road: " << probe_mesSA_roadAw -> at(N50)[1] << ": " << probe_mesSA_roadBw->at(N50)[1] << endl;
+          cout << "road: " << probe_mesSA_roadAw -> at(N50)[2] << ": " << probe_mesSA_roadBw->at(N50)[2] << endl;
+          f_road_BI.SetTitle(";Z [m];R [m]");
+          f_road_BI.SetParameter(0,probe_mesSA_roadAw -> at(N50)[0]);
+          f_road_BI.SetParameter(1,probe_mesSA_roadBw -> at(N50)[0]/1000.);
+          f_road_BI.SetLineColor(15);
+          f_road_BI.SetLineWidth(2);
+          f_road_BI.SetLineStyle(2);
+
+          TF1 f_road_BI_plus = TF1("f_road_BI_plus", "[0]*x+[1]", -20, 20);
+          f_road_BI_plus.SetParameter(0,probe_mesSA_roadAw -> at(N50)[0]);
+          f_road_BI_plus.SetParameter(1,( (probe_mesSA_roadBw -> at(N50)[0]/1000.) + rWidthToBw(probe_mesSA_roadAw->at(N50)[0],0.4)));
+          f_road_BI_plus.SetLineColor(15);
+          f_road_BI_plus.SetLineWidth(2);
+          f_road_BI_plus.SetLineStyle(1);
+
+          TF1 f_road_BI_minus = TF1("f_road_BI_minus", "[0]*x+[1]", -20, 20);
+          f_road_BI_minus.SetParameter(0,probe_mesSA_roadAw -> at(N50)[0]);
+          f_road_BI_minus.SetParameter(1,( (probe_mesSA_roadBw -> at(N50)[0]/1000.) - rWidthToBw(probe_mesSA_roadAw->at(N50)[0],0.4)));
+          f_road_BI_minus.SetLineColor(15);
+          f_road_BI_minus.SetLineWidth(2);
+          f_road_BI_minus.SetLineStyle(1);
+
+
+          TF1 f_road_BM = TF1("f_road_BM", "[0]*x+[1]", -20, 20);
+          f_road_BM.SetTitle(";Z [m];R [m]");
+          f_road_BM.SetParameter(0,probe_mesSA_roadAw -> at(N50)[1]);
+          f_road_BM.SetParameter(1,probe_mesSA_roadBw -> at(N50)[1]/1000.);
+          f_road_BM.SetLineColor(15);
+          f_road_BM.SetLineWidth(2);
+          f_road_BM.SetLineStyle(2);
+
+          TF1 f_road_BM_plus = TF1("f_road_BM_plus", "[0]*x+[1]", -20, 20);
+          f_road_BM_plus.SetParameter(0,probe_mesSA_roadAw -> at(N50)[1]);
+          f_road_BM_plus.SetParameter(1,( (probe_mesSA_roadBw -> at(N50)[1]/1000.) + rWidthToBw(probe_mesSA_roadAw->at(N50)[1],0.2)));
+          f_road_BM_plus.SetLineColor(15);
+          f_road_BM_plus.SetLineWidth(2);
+          f_road_BM_plus.SetLineStyle(1);
+
+          TF1 f_road_BM_minus = TF1("f_road_BM_minus", "[0]*x+[1]", -20, 20);
+          f_road_BM_minus.SetParameter(0,probe_mesSA_roadAw -> at(N50)[1]);
+          f_road_BM_minus.SetParameter(1,( (probe_mesSA_roadBw -> at(N50)[1]/1000.) - rWidthToBw(probe_mesSA_roadAw->at(N50)[1],0.2)));
+          f_road_BM_minus.SetLineColor(15);
+          f_road_BM_minus.SetLineWidth(2);
+          f_road_BM_minus.SetLineStyle(1);
+
+          TF1 f_road_BO = TF1("f_road_BO", "[0]*x+[1]", -20, 20);
+          f_road_BO.SetTitle(";Z [m];R [m]");
+          f_road_BO.SetParameter(0,probe_mesSA_roadAw -> at(N50)[2]);
+          f_road_BO.SetParameter(1,probe_mesSA_roadBw -> at(N50)[2]/1000.);
+          f_road_BO.SetLineColor(15);
+          f_road_BO.SetLineWidth(2);
+          f_road_BO.SetLineStyle(2);
+
+          TF1 f_road_BO_plus = TF1("f_road_BO_plus", "[0]*x+[1]", -20, 20);
+          f_road_BO_plus.SetParameter(0,probe_mesSA_roadAw -> at(N50)[2]);
+          f_road_BO_plus.SetParameter(1,( (probe_mesSA_roadBw -> at(N50)[2]/1000.) + rWidthToBw(probe_mesSA_roadAw->at(N50)[2],0.4)));
+          f_road_BO_plus.SetLineColor(15);
+          f_road_BO_plus.SetLineWidth(2);
+          f_road_BO_plus.SetLineStyle(1);
+
+          TF1 f_road_BO_minus = TF1("f_road_BO_minus", "[0]*x+[1]", -20, 20);
+          f_road_BO_minus.SetParameter(0,probe_mesSA_roadAw -> at(N50)[2]);
+          f_road_BO_minus.SetParameter(1,( (probe_mesSA_roadBw -> at(N50)[2]/1000.) - rWidthToBw(probe_mesSA_roadAw->at(N50)[2],0.4)));
+          f_road_BO_minus.SetLineColor(15);
+          f_road_BO_minus.SetLineWidth(2);
+          f_road_BO_minus.SetLineStyle(1);
+
+
+          // RoI
+          TF1 f_roi = TF1("f_roi", "[0]*x", -20, 20);
+          f_roi.SetTitle(";Z [m];R [m]");
+          f_roi.SetParameter(0, tan((2*atan(exp(-probe_mesSA_roiEta->at(N50))))));
+          f_roi.SetLineColor(kYellow+2);
+          f_roi.SetLineWidth(3);
+          f_roi.SetLineStyle(10);
 
           // Set Legend
           TLegend leg = TLegend(0.805,0.22,0.99,0.95);
@@ -1275,6 +1354,10 @@ void RPC::CalcHistToHist( TH2F* h1, TH2F* h2, TH2F* hout ) {
   return;
 }
 
+double RPC::rWidthToBw(double aw, double rWidth)
+{
+  return rWidth*sqrt(aw*aw+1);
+}
 
 double RPC::calc_residual(double aw,double bw,double x,double y)
 {

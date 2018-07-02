@@ -581,6 +581,7 @@ public :
    virtual void     End();
    virtual Bool_t   Notify();
    virtual void     Display(Long64_t begin_entry, Long64_t limit_entry, TString pdf);
+   virtual double rWidthToBw( double aw, double rwidth);
    virtual void     Show(Long64_t entry = -1);
    virtual double   calc_residual(double aw, double bw, double Z, double R);
 
