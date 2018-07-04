@@ -554,6 +554,8 @@ void RPC::Display(Long64_t begin_entry, Long64_t limit_entry, TString pdf)
    c2->SetBottomMargin(0.20);
    c2->Print(pdf + "[", "pdf");
 
+   c2->Print(pdf, "pdf");
+
    // Prepare Loop
    if (fChain == 0) return;
    int nLoop = fChain -> GetEntries();
@@ -891,7 +893,7 @@ void RPC::Display(Long64_t begin_entry, Long64_t limit_entry, TString pdf)
           gr_SP.Draw("P, same");
           c2->Print(pdf, "pdf");
           c2->RedrawAxis();
-          //delete frame;
+          delete frame;
 
           // Set Legend for BI
           TLegend leg_BI = TLegend(0.805,0.22,0.99,0.95);
@@ -904,7 +906,9 @@ void RPC::Display(Long64_t begin_entry, Long64_t limit_entry, TString pdf)
           leg_BI.AddEntry(&gr_SP,                "SuperPoint",      "p");
           leg_BI.AddEntry(&f_road_BI,            "Road",            "l");
           leg_BI.AddEntry(&f_roi,"RoI center","l");
-          c2->DrawFrame(Zmin_BI,Rmin_BI,Zmax_BI,Rmax_BI);
+          TH1* frame_BI = c2->DrawFrame(Zmin_BI,Rmin_BI,Zmax_BI,Rmax_BI);
+          frame_BI->GetXaxis()->SetTitle("Z [m]");
+          frame_BI->GetYaxis()->SetTitle("R [m]");
           f_road_BI.Draw("same");
           f_road_BI_plus.Draw("same");
           f_road_BI_minus.Draw("same");
@@ -929,6 +933,7 @@ void RPC::Display(Long64_t begin_entry, Long64_t limit_entry, TString pdf)
           gr_SP.Draw("P, same");
           c2->Print(pdf, "pdf");
           c2->RedrawAxis();
+          delete frame_BI;
 
           // Set Legend for BM
           TLegend leg_BM = TLegend(0.805,0.22,0.99,0.95);
@@ -941,7 +946,9 @@ void RPC::Display(Long64_t begin_entry, Long64_t limit_entry, TString pdf)
           leg_BM.AddEntry(&gr_SP,"SuperPoint","p");
           leg_BM.AddEntry(&f_road_BM,"Road","l");
           leg_BM.AddEntry(&f_roi,"RoI center","l");
-          c2->DrawFrame(Zmin_BM,Rmin_BM,Zmax_BM,Rmax_BM);
+          TH1* frame_BM = c2->DrawFrame(Zmin_BM,Rmin_BM,Zmax_BM,Rmax_BM);
+          frame_BM->GetXaxis()->SetTitle("Z [m]");
+          frame_BM->GetYaxis()->SetTitle("R [m]");
           f_road_BM.Draw("same");
           f_road_BM_plus.Draw("same");
           f_road_BM_minus.Draw("same");
@@ -965,6 +972,7 @@ void RPC::Display(Long64_t begin_entry, Long64_t limit_entry, TString pdf)
           gr_SP.Draw("P, same");
           c2->Print(pdf, "pdf");
           c2->RedrawAxis();
+          delete frame_BM;
 
           // Set Legend for BO
           TLegend leg_BO = TLegend(0.81,0.22,0.99,0.95);
@@ -977,7 +985,9 @@ void RPC::Display(Long64_t begin_entry, Long64_t limit_entry, TString pdf)
           leg_BO.AddEntry(&gr_SP,"SuperPoint","p");
           leg_BO.AddEntry(&f_road_BO,"Road","l");
           leg_BO.AddEntry(&f_roi,"RoI center","l");
-          c2->DrawFrame(Zmin_BO,Rmin_BO,Zmax_BO,Rmax_BO);
+          TH1* frame_BO = c2->DrawFrame(Zmin_BO,Rmin_BO,Zmax_BO,Rmax_BO);
+          frame_BO->GetXaxis()->SetTitle("Z [m]");
+          frame_BO->GetYaxis()->SetTitle("R [m]");
           f_road_BO.Draw("same");
           f_road_BO_plus.Draw("same");
           f_road_BO_minus.Draw("same");
@@ -1001,6 +1011,7 @@ void RPC::Display(Long64_t begin_entry, Long64_t limit_entry, TString pdf)
           gr_SP.Draw("P, same");
           c2->Print(pdf, "pdf");
           c2->RedrawAxis();
+          delete frame_BM;
 
           current_entry += 1;
           break;
