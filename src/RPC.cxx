@@ -19,6 +19,7 @@
 #include "TProfile.h"
 #include "TColor.h"
 #include "TLegend.h"
+#include "TLegendEntry.h"
 #include "TPaveText.h"
 #include "TText.h"
 #include "TLatex.h"
@@ -866,13 +867,20 @@ void RPC::Display(Long64_t begin_entry, Long64_t limit_entry, TString pdf)
           // Set Legend
           TLegend leg_left = TLegend(-0.025,0.12,0.10,0.8);
           leg_left.SetTextSize(0.03);
+          TLegendEntry* l_pass;
+          if (probe_mesSA_pass->at(N50) == 1){
+            l_pass = leg_left.AddEntry((TObject*)0,"L2MuonSA Passed","");
+            l_pass -> SetTextColor(kGreen+2);
+          } else{
+            l_pass = leg_left.AddEntry((TObject*)0,"L2MuonSA Failed","");
+            l_pass -> SetTextColor(kRed);
+          }
           leg_left.AddEntry((TObject*)0,Form("#splitline{Offline probe p_{T}}{: %4.3f [GeV]}",probe_pt/1000.),"");
           leg_left.AddEntry((TObject*)0,Form("#splitline{L2MuonSA probe p_{T}}{: %4.3f [GeV]}",abs(probe_mesSA_pt->at(N50))),"");
           leg_left.AddEntry((TObject*)0,Form("#splitline{Offline probe #eta}{: %4.3f}",probe_eta),"");
           leg_left.AddEntry((TObject*)0,Form("#splitline{L2MuonSA probe #eta}{: %4.3f}",probe_mesSA_eta->at(N50)),"");
           leg_left.AddEntry((TObject*)0,Form("#splitline{Offline probe #phi}{: %4.3f}",probe_phi),"");
           leg_left.AddEntry((TObject*)0,Form("#splitline{L2MuonSA probe #phi}{: %4.3f}",probe_mesSA_phi->at(N50)),"");
-          leg_left.AddEntry((TObject*)0,Form("#splitline{L2MuonSA probe #eta}{: %d}",probe_mesSA_pass->at(N50)),"");
 
 
           // Draw Display
