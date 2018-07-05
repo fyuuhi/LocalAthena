@@ -851,8 +851,20 @@ void RPC::Display(Long64_t begin_entry, Long64_t limit_entry, TString pdf)
           f_roi.SetTitle(";Z [m];R [m]");
           f_roi.SetParameter(0, tan((2*atan(exp(-probe_mesSA_roiEta->at(N50))))));
           f_roi.SetLineColor(kYellow+2);
-          f_roi.SetLineWidth(3);
-          f_roi.SetLineStyle(10);
+          f_roi.SetLineWidth(1);
+          f_roi.SetLineStyle(9);
+
+          TF1 f_roi_min = TF1("f_roi_min", "[0]*x", -20, 20);
+          f_roi_min.SetParameter(0, tan((2*atan(exp(-probe_mesSA_roiEta->at(N50)-0.05)))));
+          f_roi_min.SetLineColor(kYellow+2);
+          f_roi_min.SetLineWidth(2);
+          f_roi_min.SetLineStyle(1);
+
+          TF1 f_roi_max = TF1("f_roi_max", "[0]*x", -20, 20);
+          f_roi_max.SetParameter(0, tan((2*atan(exp(-probe_mesSA_roiEta->at(N50)+0.05)))));
+          f_roi_max.SetLineColor(kYellow+2);
+          f_roi_max.SetLineWidth(2);
+          f_roi_max.SetLineStyle(1);
 
           // Set Legend
           TLegend leg = TLegend(0.805,0.22,0.99,0.95);
@@ -862,17 +874,17 @@ void RPC::Display(Long64_t begin_entry, Long64_t limit_entry, TString pdf)
           leg.AddEntry(&gr_RPC,Form("RPC hit (%d)",nRPC),"p");
           leg.AddEntry(&gr_SP,Form("SuperPoint (%d)",NumberOfSP()),"p");
           leg.AddEntry(&f_road_BI,"Road","l");
-          leg.AddEntry(&f_roi,"RoI center","l");
+          leg.AddEntry(&f_roi,"RoI","l");
 
           // Set Legend
-          TLegend leg_left = TLegend(-0.025,0.12,0.10,0.8);
+          TLegend leg_left = TLegend(-0.027,0.12,0.10,0.8);
           leg_left.SetTextSize(0.03);
           TLegendEntry* l_pass;
           if (probe_mesSA_pass->at(N50) == 1){
-            l_pass = leg_left.AddEntry((TObject*)0,"L2MuonSA Passed","");
+            l_pass = leg_left.AddEntry((TObject*)0,"#splitline{Passed}{in L2MuonSA}","");
             l_pass -> SetTextColor(kGreen+2);
           } else{
-            l_pass = leg_left.AddEntry((TObject*)0,"L2MuonSA Failed","");
+            l_pass = leg_left.AddEntry((TObject*)0,"#splitline{NOT Passed}{in L2MuonSA}","");
             l_pass -> SetTextColor(kRed);
           }
           leg_left.AddEntry((TObject*)0,Form("#splitline{Offline probe p_{T}}{: %4.3f [GeV]}",probe_pt/1000.),"");
@@ -928,7 +940,7 @@ void RPC::Display(Long64_t begin_entry, Long64_t limit_entry, TString pdf)
           leg_BI.AddEntry(&gr_RPC,               "RPC hit",         "p");
           leg_BI.AddEntry(&gr_SP,                "SuperPoint",      "p");
           leg_BI.AddEntry(&f_road_BI,            "Road",            "l");
-          leg_BI.AddEntry(&f_roi,"RoI center","l");
+          leg_BI.AddEntry(&f_roi,"RoI","l");
           TH1* frame_BI = c2->DrawFrame(Zmin_BI,Rmin_BI,Zmax_BI,Rmax_BI);
           frame_BI->GetXaxis()->SetTitle("Z [m]");
           frame_BI->GetYaxis()->SetTitle("R [m]");
@@ -936,6 +948,8 @@ void RPC::Display(Long64_t begin_entry, Long64_t limit_entry, TString pdf)
           f_road_BI_plus.Draw("same");
           f_road_BI_minus.Draw("same");
           f_roi.Draw("same");
+          f_roi_min.Draw("same");
+          f_roi_max.Draw("same");
           cout << "Zmin_BI: " << Zmin_BI <<endl;
           cout << "Zmax_BI: " << Zmax_BI <<endl;
           f_road_BI.GetXaxis()->SetLimits(Zmin_BI,Zmax_BI);
@@ -947,6 +961,7 @@ void RPC::Display(Long64_t begin_entry, Long64_t limit_entry, TString pdf)
           gr_segment.Draw("P, same");
 
           leg_BI.Draw();
+          leg_left.Draw();
 
           gr_MdtHit_Outlier_BI.SetMarkerColor(kRed);
           gr_MdtHit_Outlier_BI.SetMarkerStyle(24);
@@ -968,7 +983,7 @@ void RPC::Display(Long64_t begin_entry, Long64_t limit_entry, TString pdf)
           leg_BM.AddEntry(&gr_RPC,"RPC hit","p");
           leg_BM.AddEntry(&gr_SP,"SuperPoint","p");
           leg_BM.AddEntry(&f_road_BM,"Road","l");
-          leg_BM.AddEntry(&f_roi,"RoI center","l");
+          leg_BM.AddEntry(&f_roi,"RoI","l");
           TH1* frame_BM = c2->DrawFrame(Zmin_BM,Rmin_BM,Zmax_BM,Rmax_BM);
           frame_BM->GetXaxis()->SetTitle("Z [m]");
           frame_BM->GetYaxis()->SetTitle("R [m]");
@@ -976,6 +991,8 @@ void RPC::Display(Long64_t begin_entry, Long64_t limit_entry, TString pdf)
           f_road_BM_plus.Draw("same");
           f_road_BM_minus.Draw("same");
           f_roi.Draw("same");
+          f_roi_min.Draw("same");
+          f_roi_max.Draw("same");
           f_road_BM.GetXaxis()->SetLimits(Zmin_BM,Zmax_BM);
           f_road_BM.GetYaxis()->SetRangeUser(Rmin_BM,Rmax_BM);
           gr_MdtHit_Inlier_BM.SetMarkerColor(kGreen + 2);
@@ -1007,7 +1024,7 @@ void RPC::Display(Long64_t begin_entry, Long64_t limit_entry, TString pdf)
           leg_BO.AddEntry(&gr_RPC,"RPC hit","p");
           leg_BO.AddEntry(&gr_SP,"SuperPoint","p");
           leg_BO.AddEntry(&f_road_BO,"Road","l");
-          leg_BO.AddEntry(&f_roi,"RoI center","l");
+          leg_BO.AddEntry(&f_roi,"RoI","l");
           TH1* frame_BO = c2->DrawFrame(Zmin_BO,Rmin_BO,Zmax_BO,Rmax_BO);
           frame_BO->GetXaxis()->SetTitle("Z [m]");
           frame_BO->GetYaxis()->SetTitle("R [m]");
@@ -1015,6 +1032,8 @@ void RPC::Display(Long64_t begin_entry, Long64_t limit_entry, TString pdf)
           f_road_BO_plus.Draw("same");
           f_road_BO_minus.Draw("same");
           f_roi.Draw("same");
+          f_roi_min.Draw("same");
+          f_roi_max.Draw("same");
           f_road_BO.GetXaxis()->SetLimits(Zmin_BO,Zmax_BO);
           f_road_BO.GetYaxis()->SetRangeUser(Rmin_BO,Rmax_BO);
           gr_MdtHit_Inlier_BO.SetMarkerColor(kGreen + 2);
