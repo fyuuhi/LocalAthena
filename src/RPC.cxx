@@ -869,13 +869,13 @@ void RPC::Display(Long64_t begin_entry, Long64_t limit_entry, TString pdf)
           f_roi.SetLineStyle(9);
 
           TF1 f_roi_min = TF1("f_roi_min", "[0]*x", -20, 20);
-          f_roi_min.SetParameter(0, tan((2*atan(exp(-probe_mesSA_roiEta->at(N50)-0.05)))));
+          f_roi_min.SetParameter(0, tan((2*atan(exp(- (probe_mesSA_roiEta->at(N50) - 0.05) )))));
           f_roi_min.SetLineColor(kYellow+2);
           f_roi_min.SetLineWidth(2);
           f_roi_min.SetLineStyle(1);
 
           TF1 f_roi_max = TF1("f_roi_max", "[0]*x", -20, 20);
-          f_roi_max.SetParameter(0, tan((2*atan(exp(-probe_mesSA_roiEta->at(N50)+0.05)))));
+          f_roi_max.SetParameter(0, tan((2*atan(exp(- (probe_mesSA_roiEta->at(N50) + 0.05) )))));
           f_roi_max.SetLineColor(kYellow+2);
           f_roi_max.SetLineWidth(2);
           f_roi_max.SetLineStyle(1);
@@ -883,7 +883,7 @@ void RPC::Display(Long64_t begin_entry, Long64_t limit_entry, TString pdf)
           // Set Legend
           TLegend leg = TLegend(0.805,0.22,0.99,0.95);
           leg.SetTextSize(0.035);
-          leg.SetHeader(Form("#splitline{Barrel All}{%s}", label_for_sector.Data()),"C");
+          leg.SetHeader(Form("#splitline{(1) Barrel All}{%s}", label_for_sector.Data()),"C");
           leg.AddEntry(&gr_segment,"#splitline{Offline}{segment}","p");
           leg.AddEntry(&gr,Form("MDT hit (%d)",nMDT),"p");
           leg.AddEntry(&gr_RPC,Form("RPC hit (%d)",nRPC),"p");
@@ -952,7 +952,7 @@ void RPC::Display(Long64_t begin_entry, Long64_t limit_entry, TString pdf)
 
           // Set Legend for BI
           TLegend leg_BI = TLegend(0.805,0.22,0.99,0.95);
-          leg_BI.SetHeader(Form("#splitline{Barrel Inner}{%s}", label_for_sector.Data()),"C");
+          leg_BI.SetHeader(Form("#splitline{(2) Barrel Inner}{%s}", label_for_sector.Data()),"C");
           leg_BI.SetTextSize(0.035);
           leg_BI.AddEntry(&gr_segment,"#splitline{Offline}{segment}","p");
           leg_BI.AddEntry(&gr_MdtHit_Inlier_BI,  Form("#splitline{Inlier}{MDT hit (%d)}",nBI_Inlier),  "p");
@@ -970,8 +970,8 @@ void RPC::Display(Long64_t begin_entry, Long64_t limit_entry, TString pdf)
           f_roi.Draw("same");
           f_roi_min.Draw("same");
           f_roi_max.Draw("same");
-          cout << "Zmin_BI: " << Zmin_BI <<endl;
-          cout << "Zmax_BI: " << Zmax_BI <<endl;
+          ///cout << "Zmin_BI: " << Zmin_BI <<endl;
+          ///cout << "Zmax_BI: " << Zmax_BI <<endl;
           f_road_BI.GetXaxis()->SetLimits(Zmin_BI,Zmax_BI);
           f_road_BI.GetYaxis()->SetRangeUser(Rmin_BI,Rmax_BI);
           gr_MdtHit_Inlier_BI.SetMarkerColor(kGreen + 2);
@@ -996,7 +996,7 @@ void RPC::Display(Long64_t begin_entry, Long64_t limit_entry, TString pdf)
 
           // Set Legend for BM
           TLegend leg_BM = TLegend(0.805,0.22,0.99,0.95);
-          leg_BM.SetHeader(Form("#splitline{Barrel Middle}{%s}", label_for_sector.Data()),"C");
+          leg_BM.SetHeader(Form("#splitline{(3) Barrel Middle}{%s}", label_for_sector.Data()),"C");
           leg_BM.SetTextSize(0.035);
           leg_BM.AddEntry(&gr_segment,"#splitline{Offline}{segment}","p");
           leg_BM.AddEntry(&gr_MdtHit_Inlier_BM,  Form("#splitline{Inlier}{MDT hit (%d)}",nBM_Inlier),  "p");
@@ -1039,7 +1039,7 @@ void RPC::Display(Long64_t begin_entry, Long64_t limit_entry, TString pdf)
 
           // Set Legend for BO
           TLegend leg_BO = TLegend(0.81,0.22,0.99,0.95);
-          leg_BO.SetHeader(Form("#splitline{Barrel Outter}{%s}", label_for_sector.Data()),"C");
+          leg_BO.SetHeader(Form("#splitline{(4) Barrel Outter}{%s}", label_for_sector.Data()),"C");
           leg_BO.SetTextSize(0.035);
           leg_BO.AddEntry(&gr_segment,"#splitline{Offline}{segment}","p");
           leg_BO.AddEntry(&gr_MdtHit_Inlier_BO,  Form("#splitline{Inlier}{MDT hit (%d)}",nBO_Inlier),  "p");
