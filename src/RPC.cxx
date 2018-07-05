@@ -604,8 +604,22 @@ void RPC::Display(Long64_t begin_entry, Long64_t limit_entry, TString pdf)
             continue;
           }
           // Check sAddress to avoid Spercial sector
-          if (probe_mesSA_sAddress -> at(N50) == 1 || probe_mesSA_sAddress -> at(N50) == 3){
-            continue;
+          //if (probe_mesSA_sAddress -> at(N50) == 1 || probe_mesSA_sAddress -> at(N50) == 3 || probe_mesSA_sAddress -> at(N50) == 0){
+          //  continue;
+          //}
+
+
+          TString label_for_sector;
+          if (probe_mesSA_sAddress->at(N50) == 0){
+            label_for_sector = "Large";
+          } else if (probe_mesSA_sAddress->at(N50) == 1){
+            label_for_sector = "Small";
+          } else if (probe_mesSA_sAddress->at(N50) == 2){
+            label_for_sector = "Large Special";
+          } else if (probe_mesSA_sAddress->at(N50) == 3){
+            label_for_sector = "Small Special";
+          } else if (probe_mesSA_sAddress->at(N50) == 4){
+            label_for_sector = "Endcap";
           }
 
           cout << "size: " << (probe_mesSA_mdtHitChamber -> at(N50)).size() << endl;
@@ -869,6 +883,7 @@ void RPC::Display(Long64_t begin_entry, Long64_t limit_entry, TString pdf)
           // Set Legend
           TLegend leg = TLegend(0.805,0.22,0.99,0.95);
           leg.SetTextSize(0.035);
+          leg.SetHeader(Form("#splitline{Barrel All}{%s}", label_for_sector.Data()),"C");
           leg.AddEntry(&gr_segment,"#splitline{Offline}{segment}","p");
           leg.AddEntry(&gr,Form("MDT hit (%d)",nMDT),"p");
           leg.AddEntry(&gr_RPC,Form("RPC hit (%d)",nRPC),"p");
@@ -937,7 +952,7 @@ void RPC::Display(Long64_t begin_entry, Long64_t limit_entry, TString pdf)
 
           // Set Legend for BI
           TLegend leg_BI = TLegend(0.805,0.22,0.99,0.95);
-          leg_BI.SetHeader("Barrel Inner","C");
+          leg_BI.SetHeader(Form("#splitline{Barrel Inner}{%s}", label_for_sector.Data()),"C");
           leg_BI.SetTextSize(0.035);
           leg_BI.AddEntry(&gr_segment,"#splitline{Offline}{segment}","p");
           leg_BI.AddEntry(&gr_MdtHit_Inlier_BI,  Form("#splitline{Inlier}{MDT hit (%d)}",nBI_Inlier),  "p");
@@ -981,7 +996,7 @@ void RPC::Display(Long64_t begin_entry, Long64_t limit_entry, TString pdf)
 
           // Set Legend for BM
           TLegend leg_BM = TLegend(0.805,0.22,0.99,0.95);
-          leg_BM.SetHeader("Barrel Middle","C");
+          leg_BM.SetHeader(Form("#splitline{Barrel Middle}{%s}", label_for_sector.Data()),"C");
           leg_BM.SetTextSize(0.035);
           leg_BM.AddEntry(&gr_segment,"#splitline{Offline}{segment}","p");
           leg_BM.AddEntry(&gr_MdtHit_Inlier_BM,  Form("#splitline{Inlier}{MDT hit (%d)}",nBM_Inlier),  "p");
@@ -1024,7 +1039,7 @@ void RPC::Display(Long64_t begin_entry, Long64_t limit_entry, TString pdf)
 
           // Set Legend for BO
           TLegend leg_BO = TLegend(0.81,0.22,0.99,0.95);
-          leg_BO.SetHeader("Barrel Outer","C");
+          leg_BO.SetHeader(Form("#splitline{Barrel Outter}{%s}", label_for_sector.Data()),"C");
           leg_BO.SetTextSize(0.035);
           leg_BO.AddEntry(&gr_segment,"#splitline{Offline}{segment}","p");
           leg_BO.AddEntry(&gr_MdtHit_Inlier_BO,  Form("#splitline{Inlier}{MDT hit (%d)}",nBO_Inlier),  "p");
