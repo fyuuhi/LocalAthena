@@ -863,17 +863,31 @@ void RPC::Display(Long64_t begin_entry, Long64_t limit_entry, TString pdf)
           leg.AddEntry(&f_road_BI,"Road","l");
           leg.AddEntry(&f_roi,"RoI center","l");
 
+          // Set Legend
+          TLegend leg_left = TLegend(-0.025,0.12,0.10,0.8);
+          leg_left.SetTextSize(0.03);
+          leg_left.AddEntry((TObject*)0,Form("#splitline{Offline probe p_{T}}{: %4.3f [GeV]}",probe_pt/1000.),"");
+          leg_left.AddEntry((TObject*)0,Form("#splitline{L2MuonSA probe p_{T}}{: %4.3f [GeV]}",abs(probe_mesSA_pt->at(N50))),"");
+          leg_left.AddEntry((TObject*)0,Form("#splitline{Offline probe #eta}{: %4.3f}",probe_eta),"");
+          leg_left.AddEntry((TObject*)0,Form("#splitline{L2MuonSA probe #eta}{: %4.3f}",probe_mesSA_eta->at(N50)),"");
+          leg_left.AddEntry((TObject*)0,Form("#splitline{Offline probe #phi}{: %4.3f}",probe_phi),"");
+          leg_left.AddEntry((TObject*)0,Form("#splitline{L2MuonSA probe #phi}{: %4.3f}",probe_mesSA_phi->at(N50)),"");
+          leg_left.AddEntry((TObject*)0,Form("#splitline{L2MuonSA probe #eta}{: %d}",probe_mesSA_pass->at(N50)),"");
+
 
           // Draw Display
           double Zmax = 20;
           double Zmin = -20;
-          c2->DrawFrame(Zmin,0,Zmax,12);
+          TH1 *frame = c2->DrawFrame(Zmin,0,Zmax,12);
+          frame->GetXaxis()->SetTitle("Z [m]");
+          frame->GetYaxis()->SetTitle("R [m]");
           gr_segment.Draw("P");
           f_roi.Draw("same");
           gr_segment.SetMarkerStyle(21);
           gr_segment.SetMarkerSize(2);
           gr_segment.SetMarkerColor(6);
           gr_segment.GetXaxis()->SetLimits(Zmin,Zmax);
+          gr_segment.SetTitle(";Z [m];R [m]");
           gr_segment.GetYaxis()->SetRangeUser(0,12);
           f_road_BI.Draw("same");
           f_road_BM.Draw("same");
@@ -883,6 +897,7 @@ void RPC::Display(Long64_t begin_entry, Long64_t limit_entry, TString pdf)
           gr.SetMarkerColor(2);
           gr.Draw("P");
           leg.Draw();
+          leg_left.Draw();
           gr_RPC.SetMarkerStyle(22);
           gr_RPC.SetMarkerSize(1);
           gr_RPC.SetMarkerColor(kCyan-3);
@@ -1011,7 +1026,7 @@ void RPC::Display(Long64_t begin_entry, Long64_t limit_entry, TString pdf)
           gr_SP.Draw("P, same");
           c2->Print(pdf, "pdf");
           c2->RedrawAxis();
-          delete frame_BM;
+          delete frame_BO;
 
           current_entry += 1;
           break;
