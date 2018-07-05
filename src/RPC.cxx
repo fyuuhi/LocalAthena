@@ -926,6 +926,11 @@ void RPC::Display(Long64_t begin_entry, Long64_t limit_entry, TString pdf)
           gr_SP.SetMarkerSize(2);
           gr_SP.SetMarkerColor(4);
           gr_SP.Draw("P, same");
+
+          TText eventInfo = TText(0.32,0.03,Form("EventNumber=%d, RunNumber=%d",EventNumber, RunNumber));
+          eventInfo.SetNDC();
+          eventInfo.SetTextSize(0.03);
+          eventInfo.Draw();
           c2->Print(pdf, "pdf");
           c2->RedrawAxis();
           delete frame;
@@ -969,6 +974,7 @@ void RPC::Display(Long64_t begin_entry, Long64_t limit_entry, TString pdf)
           gr_MdtHit_Outlier_BI.Draw("P,same");
 
           gr_SP.Draw("P, same");
+          eventInfo.Draw();
           c2->Print(pdf, "pdf");
           c2->RedrawAxis();
           delete frame_BI;
@@ -1002,6 +1008,7 @@ void RPC::Display(Long64_t begin_entry, Long64_t limit_entry, TString pdf)
           gr_segment.Draw("P, same");
 
           leg_BM.Draw();
+          leg_left.Draw();
 
           gr_RPC.Draw("P, same");
 
@@ -1010,6 +1017,7 @@ void RPC::Display(Long64_t begin_entry, Long64_t limit_entry, TString pdf)
           gr_MdtHit_Outlier_BM.SetMarkerSize(1);
           gr_MdtHit_Outlier_BM.Draw("P,same");
           gr_SP.Draw("P, same");
+          eventInfo.Draw();
           c2->Print(pdf, "pdf");
           c2->RedrawAxis();
           delete frame_BM;
@@ -1043,6 +1051,7 @@ void RPC::Display(Long64_t begin_entry, Long64_t limit_entry, TString pdf)
           gr_segment.Draw("P, same");
 
           leg_BO.Draw();
+          leg_left.Draw();
 
           gr_RPC.Draw("P, same");
 
@@ -1051,6 +1060,7 @@ void RPC::Display(Long64_t begin_entry, Long64_t limit_entry, TString pdf)
           gr_MdtHit_Outlier_BO.SetMarkerSize(1);
           gr_MdtHit_Outlier_BO.Draw("P,same");
           gr_SP.Draw("P, same");
+          eventInfo.Draw();
           c2->Print(pdf, "pdf");
           c2->RedrawAxis();
           delete frame_BO;
