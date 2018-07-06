@@ -894,6 +894,7 @@ void RPC::Display(Long64_t begin_entry, Long64_t limit_entry, TString pdf)
           // Set Legend
           TLegend leg_left = TLegend(-0.027,0.12,0.10,0.8);
           leg_left.SetTextSize(0.03);
+          // Display passe or not
           TLegendEntry* l_pass;
           if (probe_mesSA_pass->at(N50) == 1){
             l_pass = leg_left.AddEntry((TObject*)0,"#splitline{Passed}{in L2MuonSA}","");
@@ -902,6 +903,17 @@ void RPC::Display(Long64_t begin_entry, Long64_t limit_entry, TString pdf)
             l_pass = leg_left.AddEntry((TObject*)0,"#splitline{NOT Passed}{in L2MuonSA}","");
             l_pass -> SetTextColor(kRed);
           }
+          // Display passe or not
+          TLegendEntry* l_rpc;
+          if (probe_mesSA_isRpcFailure->at(N50) == 0){
+            l_rpc = leg_left.AddEntry((TObject*)0,"RPC Fit Success","");
+            l_rpc -> SetTextColor(kGreen+2);
+          } else{
+            l_rpc = leg_left.AddEntry((TObject*)0,"RPC Fit Failure","");
+            l_rpc -> SetTextColor(kRed);
+          }
+
+
           leg_left.AddEntry((TObject*)0,Form("#splitline{Offline probe p_{T}}{: %4.3f [GeV]}",probe_pt/1000.),"");
           leg_left.AddEntry((TObject*)0,Form("#splitline{L2MuonSA probe p_{T}}{: %4.3f [GeV]}",abs(probe_mesSA_pt->at(N50))),"");
           leg_left.AddEntry((TObject*)0,Form("#splitline{Offline probe #eta}{: %4.3f}",probe_eta),"");
@@ -942,7 +954,7 @@ void RPC::Display(Long64_t begin_entry, Long64_t limit_entry, TString pdf)
           gr_SP.SetMarkerColor(4);
           gr_SP.Draw("P, same");
 
-          TText eventInfo = TText(0.32,0.03,Form("EventNumber=%d, RunNumber=%d",EventNumber, RunNumber));
+          TText eventInfo = TText(0.32,0.03,Form("EventNumber=%d, RunNumber=%d, LumiBlock=%d",EventNumber, RunNumber, LumiBlock));
           eventInfo.SetNDC();
           eventInfo.SetTextSize(0.03);
           eventInfo.Draw();
@@ -981,7 +993,35 @@ void RPC::Display(Long64_t begin_entry, Long64_t limit_entry, TString pdf)
           gr_segment.Draw("P, same");
 
           leg_BI.Draw();
-          leg_left.Draw();
+          // Set Legend
+          TLegend leg_left_BI = TLegend(-0.027,0.12,0.10,0.8);
+          leg_left_BI.SetTextSize(0.03);
+          // Display passe or not
+          TLegendEntry* l_pass_BI;
+          if (probe_mesSA_pass->at(N50) == 1){
+            l_pass_BI = leg_left_BI.AddEntry((TObject*)0,"#splitline{Passed}{in L2MuonSA}","");
+            l_pass_BI -> SetTextColor(kGreen+2);
+          } else{
+            l_pass_BI = leg_left_BI.AddEntry((TObject*)0,"#splitline{NOT Passed}{in L2MuonSA}","");
+            l_pass_BI -> SetTextColor(kRed);
+          }
+          // Display passe or not
+          TLegendEntry* l_rpc_BI;
+          if (probe_mesSA_isRpcFailure->at(N50) == 0){
+            l_rpc_BI = leg_left_BI.AddEntry((TObject*)0,"RPC Fit Success","");
+            l_rpc_BI -> SetTextColor(kGreen+2);
+          } else{
+            l_rpc_BI = leg_left_BI.AddEntry((TObject*)0,"RPC Fit Failure","");
+            l_rpc_BI -> SetTextColor(kRed);
+          }
+
+          leg_left_BI.AddEntry((TObject*)0,Form("#splitline{Offline probe p_{T}}{: %4.3f [GeV]}",probe_pt/1000.),"");
+          leg_left_BI.AddEntry((TObject*)0,Form("#splitline{L2MuonSA probe p_{T}}{: %4.3f [GeV]}",abs(probe_mesSA_pt->at(N50))),"");
+          leg_left_BI.AddEntry((TObject*)0,Form("#splitline{RoI #eta}{: %4.3f}",probe_mesSA_roiEta->at(N50)),"");
+          leg_left_BI.AddEntry((TObject*)0,Form("#splitline{Road Slope #eta}{: %4.3f}", -TMath::Log(tan((atan(probe_mesSA_roadAw->at(N50)[0]))/2.))),"");
+          leg_left_BI.AddEntry((TObject*)0,Form("#splitline{Road Slope}{: %4.3f}", probe_mesSA_roadAw->at(N50)[0]),"");
+          leg_left_BI.AddEntry((TObject*)0,Form("#splitline{Road Z-Intercept}{: %4.3f}",probe_mesSA_roadBw->at(N50)[0]),"");
+          leg_left_BI.Draw();
 
           gr_MdtHit_Outlier_BI.SetMarkerColor(kRed);
           gr_MdtHit_Outlier_BI.SetMarkerStyle(24);
@@ -1023,7 +1063,35 @@ void RPC::Display(Long64_t begin_entry, Long64_t limit_entry, TString pdf)
           gr_segment.Draw("P, same");
 
           leg_BM.Draw();
-          leg_left.Draw();
+          // Set Legend
+          TLegend leg_left_BM = TLegend(-0.027,0.12,0.10,0.8);
+          leg_left_BM.SetTextSize(0.03);
+          // Display passe or not
+          TLegendEntry* l_pass_BM;
+          if (probe_mesSA_pass->at(N50) == 1){
+            l_pass_BM = leg_left_BM.AddEntry((TObject*)0,"#splitline{Passed}{in L2MuonSA}","");
+            l_pass_BM -> SetTextColor(kGreen+2);
+          } else{
+            l_pass_BM = leg_left_BM.AddEntry((TObject*)0,"#splitline{NOT Passed}{in L2MuonSA}","");
+            l_pass_BM -> SetTextColor(kRed);
+          }
+          // Display passe or not
+          TLegendEntry* l_rpc_BM;
+          if (probe_mesSA_isRpcFailure->at(N50) == 0){
+            l_rpc_BM = leg_left_BM.AddEntry((TObject*)0,"RPC Fit Success","");
+            l_rpc_BM -> SetTextColor(kGreen+2);
+          } else{
+            l_rpc_BM = leg_left_BM.AddEntry((TObject*)0,"RPC Fit Failure","");
+            l_rpc_BM -> SetTextColor(kRed);
+          }
+
+          leg_left_BM.AddEntry((TObject*)0,Form("#splitline{Offline probe p_{T}}{: %4.3f [GeV]}",probe_pt/1000.),"");
+          leg_left_BM.AddEntry((TObject*)0,Form("#splitline{L2MuonSA probe p_{T}}{: %4.3f [GeV]}",abs(probe_mesSA_pt->at(N50))),"");
+          leg_left_BM.AddEntry((TObject*)0,Form("#splitline{RoI #eta}{: %4.3f}",probe_mesSA_roiEta->at(N50)),"");
+          leg_left_BM.AddEntry((TObject*)0,Form("#splitline{Road Slope}{: %4.3f}", -TMath::Log(tan((atan(probe_mesSA_roadAw->at(N50)[1]))/2.))),"");
+          leg_left_BM.AddEntry((TObject*)0,Form("#splitline{Road Slope}{: %4.3f}", probe_mesSA_roadAw->at(N50)[1]),"");
+          leg_left_BM.AddEntry((TObject*)0,Form("#splitline{Road Z-Intercept}{: %4.3f}",probe_mesSA_roadBw->at(N50)[1]),"");
+          leg_left_BM.Draw();
 
           gr_RPC.Draw("P, same");
 
@@ -1066,7 +1134,35 @@ void RPC::Display(Long64_t begin_entry, Long64_t limit_entry, TString pdf)
           gr_segment.Draw("P, same");
 
           leg_BO.Draw();
-          leg_left.Draw();
+          // Set Legend
+          TLegend leg_left_BO = TLegend(-0.027,0.12,0.10,0.8);
+          leg_left_BO.SetTextSize(0.03);
+          // Display passe or not
+          TLegendEntry* l_pass_BO;
+          if (probe_mesSA_pass->at(N50) == 1){
+            l_pass_BO = leg_left_BO.AddEntry((TObject*)0,"#splitline{Passed}{in L2MuonSA}","");
+            l_pass_BO -> SetTextColor(kGreen+2);
+          } else{
+            l_pass_BO = leg_left_BO.AddEntry((TObject*)0,"#splitline{NOT Passed}{in L2MuonSA}","");
+            l_pass_BO -> SetTextColor(kRed);
+          }
+          // Display passe or not
+          TLegendEntry* l_rpc_BO;
+          if (probe_mesSA_isRpcFailure->at(N50) == 0){
+            l_rpc_BO = leg_left_BO.AddEntry((TObject*)0,"RPC Fit Success","");
+            l_rpc_BO -> SetTextColor(kGreen+2);
+          } else{
+            l_rpc_BO = leg_left_BO.AddEntry((TObject*)0,"RPC Fit Failure","");
+            l_rpc_BO -> SetTextColor(kRed);
+          }
+
+          leg_left_BO.AddEntry((TObject*)0,Form("#splitline{Offline probe p_{T}}{: %4.3f [GeV]}",probe_pt/1000.),"");
+          leg_left_BO.AddEntry((TObject*)0,Form("#splitline{L2MuonSA probe p_{T}}{: %4.3f [GeV]}",abs(probe_mesSA_pt->at(N50))),"");
+          leg_left_BO.AddEntry((TObject*)0,Form("#splitline{RoI #eta}{: %4.3f}",probe_mesSA_roiEta->at(N50)),"");
+          leg_left_BO.AddEntry((TObject*)0,Form("#splitline{Road Slope}{: %4.3f}", -TMath::Log(tan((atan(probe_mesSA_roadAw->at(N50)[2]))/2.))),"");
+          leg_left_BO.AddEntry((TObject*)0,Form("#splitline{Road Slope}{: %4.3f}", probe_mesSA_roadAw->at(N50)[2]),"");
+          leg_left_BO.AddEntry((TObject*)0,Form("#splitline{Road Z-Intercept}{: %4.3f}",probe_mesSA_roadBw->at(N50)[2]),"");
+          leg_left_BO.Draw();
 
           gr_RPC.Draw("P, same");
 
