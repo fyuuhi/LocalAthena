@@ -37,7 +37,6 @@ using namespace std;
 double Res(double param1, double param2);
 bool GRLlist(int LumiBlock);
 
-
 //==================================================================
 //main function
 //==================================================================
@@ -45,6 +44,7 @@ int main(int argc, char **argv){
   rootlogon();
   cout << "---start---" << endl;
   TColor::InvertPalette();
+  gStyle->SetLegendBorderSize(0);
   // tree1
   TChain *tree1 = new TChain("t_tap", "t_tap");
   //tree1 -> Add("/gpfs/fs2001/yfukuhar/data/user.yfukuhar.00349533.physics_Main.YFTAP.f929_m1955_jpzYFV4_GRL_F_tree_v1_349533_EXT0/hadd/user.yfukuhar.00349533.physics_Main.YFTAP.f929_m1955_jpzYFV4_GRL_F_tree_v1_349533_EXT0.root");
@@ -53,28 +53,44 @@ int main(int argc, char **argv){
   //tree1 -> Add("/gpfs/fs2001/yfukuhar/data/data18_0621/data18_0621.root");
   //tree1 -> Add("/gpfs/fs2001/yfukuhar/CalcEffPlotMakerOrigin/data/mc16_youhei_Zmumu_default/mc16_youhei_Zmumu_default.root");
   //tree1 -> Add("/gpfs/fs2001/yfukuhar/CalcEffPlotMakerOrigin/data/mc16_youhei_Zmumu_noRpcHit/mc16_youhei_Zmumu_noRpcHit.root");
-  tree1 -> Add("/gpfs/fs2001/yfukuhar/CalcEffPlotMakerOrigin/data/mc16_youhei_Zmumu_noRpcHitWide/mc16_youhei_Zmumu_noRpcHitWide.root");
+  //tree1 -> Add("/gpfs/fs2001/yfukuhar/CalcEffPlotMakerOrigin/data/mc16_youhei_Zmumu_noRpcHitWide/mc16_youhei_Zmumu_noRpcHitWide.root");
   //tree1 -> Add("/gpfs/home/yfukuhar/work/CalcEffTool/run/Output/");
   //tree1 -> Add("/gpfs/fs2001/yfukuhar/CalcEffPlotMakerOrigin/data/mc16c_Jpsimu6_default/mc16c_Jpsimu6_default.root");
+  //tree1 -> Add("/gpfs/fs2001/yfukuhar/data/user.yfukuhar.00349533.physics_Main.YFTAP.f929_m1955_GRL_False_349533_mdtHit_v3_EXT0/hadd/user.yfukuhar.00349533.physics_Main.YFTAP.f929_m1955_GRL_False_349533_mdtHit_v3_EXT0.root");
+
+  //TString PdfLabel = "youhei_Zmumu_AOD_default";
+  //tree1 -> Add("/gpfs/home/yfukuhar/work/CalcEffTool/run/hadd_youhei_Zmumu_AOD_default.root");
+
+  TString PdfLabel = "youhei_Zmumu_AOD_noRpcHitWide";
+  tree1 -> Add("/gpfs/home/yfukuhar/work/CalcEffTool/run/hadd_youhei_Zmumu_AOD_noRpcHitWide.root");
+
+  //TString PdfLabel = "youhei_Zmumu_AOD_noRpcHit";
+  //tree1 -> Add("/gpfs/home/yfukuhar/work/CalcEffTool/run/hadd_youhei_Zmumu_AOD_noRpcHit.root");
 
   RPC t_349014(tree1); 
 
   t_349014.Loop(-1, 10000);
   cout << "[INFO]: Loop SUCCESS" << endl;
 
+
   //t_349014.DrawHist("../plot/data18_0621.pdf");
-  t_349014.DrawHist("../plot/mc16_youhei_Zmumu_noRpcHitWide.pdf");
+  //t_349014.DrawHist("../plot/DrawHist_youhei_Zmumu_AOD_default.pdf");
+  //t_349014.DrawHist("../plot/DrawHist_youhei_Zmumu_AOD_noRpcHit.pdf");
+  t_349014.DrawHist("../plot/DrawHist_" + PdfLabel + ".pdf");
   //t_349014.DrawHist("../plot/mc16_youhei_Zmumu_noRpcHit.pdf");
   //t_349014.DrawHist("../plot/mc16_youhei_Zmumu_default.pdf");
   cout << "[INFO]: DrawHist SUCCESS" << endl;
 
-  //t_349014.CalcEff();
-  //cout << "[INFO]: CalcEff SUCCESS" << endl;
+  t_349014.CalcEff();
+  cout << "[INFO]: CalcEff SUCCESS" << endl;
 
-  ////t_349014.DrawEffHist("../plot/data18_0621_eff.pdf");
+  //t_349014.DrawEffHist("../plot/DrawEffHist_youhei_Zmumu_AOD_default.pdf");
+  //t_349014.DrawEffHist("../plot/DrawEffHist_youhei_Zmumu_AOD_noRpcHit.pdf");
+  t_349014.DrawEffHist("../plot/DrawEffHist_" + PdfLabel + ".pdf");
   //t_349014.DrawEffHist("../plot/test_eff_all.pdf");
-  //cout << "[INFO]: DrawEffHist SUCCESS" << endl;
-  t_349014.Display(8, "../plot/test0628.pdf");
+  cout << "[INFO]: DrawEffHist SUCCESS" << endl;
+  //t_349014.Display(10000, 100, "../plot/Display_349533.pdf");
+
 
   t_349014.End();
   cout << "[INFO]: End SUCCESS" << endl;
@@ -144,9 +160,11 @@ void RPC::Loop( int Nevents, int DisplayNumber )
       //==================================================================
 
       // Check GRL
-      //if (GRLlist(LumiBlock)){
-      //  continue;
-      //}
+      if (RunNumber == 349533){
+        if (GRLlist(LumiBlock)){
+          continue;
+        }
+      }
 
       FillProbeHist();
 
@@ -172,13 +190,13 @@ void RPC::Loop( int Nevents, int DisplayNumber )
             double Z = probe_segment_z[i];
             if (probe_segment_chamberIndex[i] == 0 || probe_segment_chamberIndex[i] == 1) {
               h_ResidualSegment_eta_BI -> Fill(probe_eta, calc_residual(probe_mesSA_roadAw -> at(N50)[0], probe_mesSA_roadBw -> at(N50)[0], Z, R));
-              cout << "BI: " << calc_residual(probe_mesSA_roadAw -> at(N50)[0], probe_mesSA_roadBw -> at(N50)[0], Z, R) << endl;
+              //cout << "BI: " << calc_residual(probe_mesSA_roadAw -> at(N50)[0], probe_mesSA_roadBw -> at(N50)[0], Z, R) << endl;
             } else if(probe_segment_chamberIndex[i] == 2 || probe_segment_chamberIndex[i] == 3) {
               h_ResidualSegment_eta_BM -> Fill(probe_eta, calc_residual(probe_mesSA_roadAw -> at(N50)[1], probe_mesSA_roadBw -> at(N50)[1], Z, R));
-              cout <<"BM: " <<  calc_residual(probe_mesSA_roadAw -> at(N50)[0], probe_mesSA_roadBw -> at(N50)[0], Z, R) << endl;
+              //cout <<"BM: " <<  calc_residual(probe_mesSA_roadAw -> at(N50)[0], probe_mesSA_roadBw -> at(N50)[0], Z, R) << endl;
             } else if(probe_segment_chamberIndex[i] == 4 || probe_segment_chamberIndex[i] == 5) {
               h_ResidualSegment_eta_BO -> Fill(probe_eta, calc_residual(probe_mesSA_roadAw -> at(N50)[2], probe_mesSA_roadBw -> at(N50)[2], Z, R));
-              cout <<"BO: " <<  calc_residual(probe_mesSA_roadAw -> at(N50)[0], probe_mesSA_roadBw -> at(N50)[0], Z, R) << endl;
+              //cout <<"BO: " <<  calc_residual(probe_mesSA_roadAw -> at(N50)[0], probe_mesSA_roadBw -> at(N50)[0], Z, R) << endl;
             }
           }
 
@@ -338,19 +356,22 @@ void RPC::DrawHist(TString pdf){
 
 
 
-  h_NumberOfSP_eta->Draw("colz");
-  c1 -> Print(pdf, "pdf" );
+  //h_NumberOfSP_eta->Draw("colz");
+  //c1 -> Print(pdf, "pdf" );
 
-  h_NumberOfSP_qeta->Draw("colz");
-  c1 -> Print(pdf, "pdf" );
+  //h_NumberOfSP_qeta->Draw("colz");
+  //c1 -> Print(pdf, "pdf" );
 
-  h_NumberOfSP_pt_barrel->Draw("colz");
-  c1 -> Print(pdf, "pdf" );
+  //h_NumberOfSP_pt_barrel->Draw("colz");
+  //c1 -> Print(pdf, "pdf" );
 
-  h_NumberOfSP_pass_barrel->Draw("colz");
-  c1 -> Print(pdf, "pdf" );
+  //h_NumberOfSP_pass_barrel->Draw("colz");
+  //c1 -> Print(pdf, "pdf" );
 
   DrawFractionOfnSPs(h_NumberOfSP_LumiBlock, c1, pdf);
+  DrawFractionOfnSPs(h_NumberOfSP_pt_barrel, c1, pdf);
+  DrawFractionOfnSPs(h_NumberOfSP_eta, c1, pdf);
+  DrawFractionOfnSPs(h_NumberOfSP_qeta, c1, pdf);
 
 
   h_superPointRZ_BIL -> Draw("colz");
@@ -572,9 +593,11 @@ void RPC::Display(Long64_t begin_entry, Long64_t limit_entry, TString pdf)
      nb = fChain->GetEntry(jentry);   nbytes += nb;
      if (ientry < 0) break;
      // Check GRL
-      //if (GRLlist(LumiBlock)){
-      //  continue;
-      //}
+     if (RunNumber == 349533){
+       if (GRLlist(LumiBlock)){
+         continue;
+       }
+     }
 
       tag_proc = NTagProc;
       switch (tag_proc) {
@@ -1374,6 +1397,7 @@ void RPC::FillProbeHist(){
         hh_probe_qetapt_mu50_L1 -> Fill(probe_charge*probe_eta, probe_pt/1000.);
         // Plateau cut
         if (probe_pt/1000. > 8.0) {
+          h_probe_mu_mu50_L1 -> Fill(AverageInteractionsPerCrossing);
           h_probe_eta_mu50_L1 -> Fill(probe_eta);
           h_probe_phi_mu50_L1 -> Fill(probe_phi);
           hh_probe_etaphi_mu50_L1 -> Fill(probe_eta, probe_phi);
@@ -1385,6 +1409,7 @@ void RPC::FillProbeHist(){
         hh_probe_qetapt_mu50_SA -> Fill(probe_charge*probe_eta, probe_pt/1000.);
         // Plateau cut
         if (probe_pt/1000. > 8.0) {
+          h_probe_mu_mu50_SA -> Fill(AverageInteractionsPerCrossing);
           h_probe_eta_mu50_SA -> Fill(probe_eta);
           h_probe_phi_mu50_SA -> Fill(probe_phi);
           hh_probe_etaphi_mu50_SA -> Fill(probe_eta, probe_phi);
@@ -1398,6 +1423,7 @@ void RPC::FillProbeHist(){
 
 void RPC::CalcEff(){
   // mu4
+  CalcHistToHist( h_probe_mu_mu4_SA,       h_probe_mu_mu4_L1,       h_eff_mu_mu4_L1SA);
   CalcHistToHist( h_probe_pt_mu4_SA,       h_probe_pt_mu4_L1,       h_eff_pt_mu4_L1SA);
   CalcHistToHist( h_probe_eta_mu4_SA,      h_probe_eta_mu4_L1,      h_eff_eta_mu4_L1SA);
   CalcHistToHist( h_probe_phi_mu4_SA,      h_probe_phi_mu4_L1,      h_eff_phi_mu4_L1SA);
@@ -1405,6 +1431,7 @@ void RPC::CalcEff(){
   CalcHistToHist( hh_probe_etaphi_mu4_SA,  hh_probe_etaphi_mu4_L1,  hh_eff_etaphi_mu4_L1SA);
 
   // mu50
+  CalcHistToHist( h_probe_mu_mu50_SA,      h_probe_mu_mu50_L1,      h_eff_mu_mu50_L1SA);
   CalcHistToHist( h_probe_pt_mu50_SA,      h_probe_pt_mu50_L1,      h_eff_pt_mu50_L1SA);
   CalcHistToHist( h_probe_eta_mu50_SA,     h_probe_eta_mu50_L1,     h_eff_eta_mu50_L1SA);
   CalcHistToHist( h_probe_phi_mu50_SA,     h_probe_phi_mu50_L1,     h_eff_phi_mu50_L1SA);
@@ -1423,6 +1450,10 @@ void RPC::DrawEffHist(TString pdf){
   c1->SetBottomMargin(0.20);
 
   c1 -> Print( pdf + "[", "pdf" );
+
+  h_eff_mu_mu4_L1SA->Draw();
+  h_eff_mu_mu4_L1SA->GetYaxis()->SetRangeUser(0,1.1);
+  c1 -> Print( pdf, "pdf" );
 
   h_eff_pt_mu4_L1SA->Draw();
   h_eff_pt_mu4_L1SA->GetYaxis()->SetRangeUser(0,1.1);
@@ -1444,6 +1475,10 @@ void RPC::DrawEffHist(TString pdf){
   hh_eff_qetapt_mu4_L1SA->GetZaxis()->SetRangeUser(0,1.0);
   c1 -> Print( pdf, "pdf" );
 
+
+  h_eff_mu_mu50_L1SA->Draw();
+  h_eff_mu_mu50_L1SA->GetYaxis()->SetRangeUser(0,1.1);
+  c1 -> Print( pdf, "pdf" );
 
   h_eff_pt_mu50_L1SA->Draw();
   h_eff_pt_mu50_L1SA->GetYaxis()->SetRangeUser(0,1.1);

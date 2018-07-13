@@ -49,6 +49,7 @@ public :
    Int_t EventNumber;
    Int_t RunNumber;
    Int_t LumiBlock;
+   Float_t AverageInteractionsPerCrossing;
    Int_t           mes_n;
    vector<string>  *mes_name;
    Double_t        sumReqdRL1;
@@ -249,6 +250,7 @@ public :
    TBranch        *b_EventNumber;   //!
    TBranch        *b_RunNumber;   //!
    TBranch        *b_LumiBlock;   //!
+   TBranch        *b_AverageInteractionsPerCrossing;   //!
    TBranch        *b_mes_n;   //!
    TBranch        *b_mes_name;   //!
    TBranch        *b_sumReqdRL1;   //!
@@ -446,6 +448,11 @@ public :
 
    // Histgrams
 
+   TH1F *h_probe_mu_mu4_L1;       //!
+   TH1F *h_probe_mu_mu4_SA;       //!
+   TH1F *h_eff_mu_mu4_L1;         //!
+   TH1F *h_eff_mu_mu4_L1SA;       //!
+
    TH1F *h_probe_pt_mu4_L1;       //!
    TH1F *h_probe_pt_mu4_SA;       //!
    TH1F *h_eff_pt_mu4_L1;         //!
@@ -470,6 +477,11 @@ public :
    TH2F *hh_probe_qetapt_mu4_SA;  //!
    TH2F *hh_eff_qetapt_mu4_L1;    //!
    TH2F *hh_eff_qetapt_mu4_L1SA;  //!
+
+   TH1F *h_probe_mu_mu50_L1;     //!
+   TH1F *h_probe_mu_mu50_SA;     //!
+   TH1F *h_eff_mu_mu50_L1;       //!
+   TH1F *h_eff_mu_mu50_L1SA;     //!
 
    TH1F *h_probe_pt_mu50_L1;     //!
    TH1F *h_probe_pt_mu50_SA;     //!
@@ -791,6 +803,7 @@ void RPC::Init(TTree *tree)
    fChain->SetBranchAddress("EventNumber", &EventNumber, &b_EventNumber);
    fChain->SetBranchAddress("RunNumber", &RunNumber, &b_RunNumber);
    fChain->SetBranchAddress("LumiBlock", &LumiBlock, &b_LumiBlock);
+   fChain->SetBranchAddress("AverageInteractionsPerCrossing", &AverageInteractionsPerCrossing, &b_AverageInteractionsPerCrossing);
    fChain->SetBranchAddress("mes_n", &mes_n, &b_mes_n);
    fChain->SetBranchAddress("mes_name", &mes_name, &b_mes_name);
    fChain->SetBranchAddress("sumReqdRL1", &sumReqdRL1, &b_sumReqdRL1);
@@ -993,6 +1006,11 @@ void RPC::Init(TTree *tree)
 void RPC::InitHist(){
   // Histgrams
 
+  h_probe_mu_mu4_L1  = new TH1F("h_probemut_mu4_L1", "probe;<#mu>;Entries",  30, 0, 60);
+  h_probe_mu_mu4_SA  = new TH1F("h_probe_mu_mu4_SA", "probe;<#mu>;Entries",  30, 0, 60);
+  h_eff_mu_mu4_L1    = new TH1F("h_eff_mu_mu4_L1",   "eff;<#mu>;Efficiency", 30, 0, 60);
+  h_eff_mu_mu4_L1SA  = new TH1F("h_eff_mu_mu4_L1SA", "eff;<#mu>;Efficiency", 30, 0, 60);
+
   h_probe_pt_mu4_L1  = new TH1F("h_probe_pt_mu4_L1", "probe;Probe p_{T}[GeV];Entries", 50, 0, 14);
   h_probe_pt_mu4_SA  = new TH1F("h_probe_pt_mu4_SA", "probe;Probe p_{T}[GeV];Entries", 50, 0, 14);
   h_eff_pt_mu4_L1    = new TH1F("h_eff_pt_mu4_L1",   "eff;Probe p_{T}[GeV];Efficiency", 50, 0, 14);
@@ -1018,8 +1036,13 @@ void RPC::InitHist(){
   hh_eff_qetapt_mu4_L1   = new TH2F("hh_eff_qetapt_mu4_L1",   "eff;Probe Q#eta;Probe p_{T}[GeV];Efficiency",   30, -2.5, 2.5, 30, 0, 14);
   hh_eff_qetapt_mu4_L1SA = new TH2F("hh_eff_qetapt_mu4_L1SA", "eff;Probe Q#eta;Probe p_{T}[GeV];Efficiency",   30, -2.5, 2.5, 30, 0, 14);
 
-  h_probe_pt_mu50_L1  = new TH1F("h_probe_pt_mu50_L1", "probe;Probe p_{T}[GeV];Entries", 50, 0, 100);
-  h_probe_pt_mu50_SA  = new TH1F("h_probe_pt_mu50_SA", "probe;Probe p_{T}[GeV];Entries", 50, 0, 100);
+  h_probe_mu_mu50_L1  = new TH1F("h_probe_mu_mu50_L1", "probe;<#mu>;Entries",  30, 0, 60);
+  h_probe_mu_mu50_SA  = new TH1F("h_probe_mu_mu50_SA", "probe;<#mu>;Entries",  30, 0, 60);
+  h_eff_mu_mu50_L1    = new TH1F("h_eff_mu_mu50_L1",   "eff;<#mu>;Efficiency", 30, 0, 60);
+  h_eff_mu_mu50_L1SA  = new TH1F("h_eff_mu_mu50_L1SA", "eff;<#mu>;Efficiency", 30, 0, 60);
+
+  h_probe_pt_mu50_L1  = new TH1F("h_probe_pt_mu50_L1", "probe;Probe p_{T}[GeV];Entries",  50, 0, 100);
+  h_probe_pt_mu50_SA  = new TH1F("h_probe_pt_mu50_SA", "probe;Probe p_{T}[GeV];Entries",  50, 0, 100);
   h_eff_pt_mu50_L1    = new TH1F("h_eff_pt_mu50_L1",   "eff;Probe p_{T}[GeV];Efficiency", 50, 0, 100);
   h_eff_pt_mu50_L1SA  = new TH1F("h_eff_pt_mu50_L1SA", "eff;Probe p_{T}[GeV];Efficiency", 50, 0, 100);
 
@@ -1065,10 +1088,10 @@ void RPC::InitHist(){
   h_residualRZ_BOL = new TH2F("h_residualRZ_BOL", "h_residualRZ_BOL;Z;R;Counts", 100, -0.1, 0.1, 100, -0.1, 0.1);
 
   h_NumberOfSP_LumiBlock   = new TH2F("h_NumberOfSP_LumiBlock",   "h_NumberOfSP_LumiBlock;LumiBlock;Number;Counts", 100, 0,    500, 100, 0, 5);
-  h_NumberOfSP_eta         = new TH2F("h_NumberOfSP_eta",         "h_NumberOfSP_eta;eta;Number;Counts",             100, -2.5, 2.5, 100, 0, 5);
-  h_NumberOfSP_qeta        = new TH2F("h_NumberOfSP_qeta",        "h_NumberOfSP_qeta;qeta;Number;Counts",           100, -2.5, 2.5, 100, 0, 5);
-  h_NumberOfSP_pt_barrel   = new TH2F("h_NumberOfSP_pt_barrel",   "h_NumberOfSP_pt_barrel;pT[GeV];Number;Counts",   100, 0,    100, 100, 0, 5);
-  h_NumberOfSP_pass_barrel = new TH2F("h_NumberOfSP_pass_barrel", "h_NumberOfSP_pass_barrel;pass;Number;Counts",    100, -3,   2,   100, 0, 5);
+  h_NumberOfSP_eta         = new TH2F("h_NumberOfSP_eta",         "h_NumberOfSP_eta;eta;Number;Counts",             50, -2.5, 2.5, 100, 0, 5);
+  h_NumberOfSP_qeta        = new TH2F("h_NumberOfSP_qeta",        "h_NumberOfSP_qeta;qeta;Number;Counts",           50, -2.5, 2.5, 100, 0, 5);
+  h_NumberOfSP_pt_barrel   = new TH2F("h_NumberOfSP_pt_barrel",   "h_NumberOfSP_pt_barrel;pT[GeV];Number;Counts",   50, 0,    100, 100, 0, 5);
+  h_NumberOfSP_pass_barrel = new TH2F("h_NumberOfSP_pass_barrel", "h_NumberOfSP_pass_barrel;pass;Number;Counts",    50, -3,   2,   100, 0, 5);
 
   h_NumberOfMdt_LumiBlock    = new TH2F("h_NumberOfMdt_LumiBlock",    "h_NumberOfMdt_LumiBlock;LumiBlock;Number;Counts",    100, 0, 500, 100, 0, 50);
   h_NumberOfMdt_LumiBlock_BI = new TH2F("h_NumberOfMdt_LumiBlock_BI", "h_NumberOfMdt_LumiBlock_BI;LumiBlock;Number (BI);Counts", 100, 0, 500, 100, 0, 50);
