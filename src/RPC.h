@@ -581,13 +581,15 @@ public :
    TH2F *h_ResidualMdt_Inlier_pt_barrel_BM; //!
    TH2F *h_ResidualMdt_Inlier_pt_barrel_BO; //!
 
+   TH2F *h_PtResidual_pt; //!
+   TH2F *h_PtResidual_eta; //!
+
+
    RPC(TChain *tree);
    virtual ~RPC();
    virtual Int_t    Cut(Long64_t entry);
    virtual Int_t    GetEntry(Long64_t entry);
    virtual Long64_t LoadTree(Long64_t entry);
-   virtual void     Init(TTree *tree);
-   virtual void     InitHist();
    virtual void     Loop( int Nevents, int DisplayNumber );
    virtual void     DrawHist(TString pdf);
    virtual void     End();
@@ -597,9 +599,17 @@ public :
    virtual void     Show(Long64_t entry = -1);
    virtual double   calc_residual(double aw, double bw, double Z, double R);
 
+   // Initialize
+   virtual void Init(TTree *tree);
+   virtual void InitHist();
+   virtual void InitEffHist();
+   virtual void InitPtResidualHist();
+   virtual void InitMdtHist();
+   virtual void InitSPHist();
+
    // SuperPoints
    virtual void FillSPHist();
-   virtual int     NumberOfSP();
+   virtual int  NumberOfSP();
    virtual void DrawFractionOfnSPs(TH2F* h_NumberOfSP, TCanvas* c1, TString pdf);
 
    // MDT hits
@@ -607,11 +617,16 @@ public :
    virtual void DrawFractionOfnMDTs(TH2F* h_NumberOfMdt, TCanvas* c1, TString pdf);
 
    // Efficiency
-   virtual void     FillProbeHist();
-   virtual void     CalcEff();
-   virtual void     DrawEffHist(TString pdf);
+   virtual void FillProbeHist();
+   virtual void CalcEff();
+   virtual void DrawEffHist(TString pdf);
    void CalcHistToHist( TH1F* h1, TH1F* h2, TH1F* hout );
    void CalcHistToHist( TH2F* h1, TH2F* h2, TH2F* hout );
+
+   // pT residual
+   virtual double calc_pTresidual( double offline_pt, double trig_pt);
+   virtual void FillPtResidualHist();
+   virtual void DrawPtResidualHist(TCanvas* c1, TString pdf);
 };
 
 #endif
@@ -1003,8 +1018,7 @@ void RPC::Init(TTree *tree)
    Notify();
 }
 
-void RPC::InitHist(){
-  // Histgrams
+void RPC::InitEffHist(){
 
   h_probe_mu_mu4_L1  = new TH1F("h_probemut_mu4_L1", "probe;<#mu>;Entries",  30, 0, 60);
   h_probe_mu_mu4_SA  = new TH1F("h_probe_mu_mu4_SA", "probe;<#mu>;Entries",  30, 0, 60);
@@ -1026,15 +1040,15 @@ void RPC::InitHist(){
   h_eff_eta_mu4_L1    = new TH1F("h_eff_eta_mu4_L1",   "eff;Probe #eta;Efficiency", 50, -2.5, 2.5);
   h_eff_eta_mu4_L1SA  = new TH1F("h_eff_eta_mu4_L1SA", "eff;Probe #eta;Efficiency", 50, -2.5, 2.5);
 
-  hh_probe_etaphi_mu4_L1 = new TH2F("hh_probe_etaphi_mu4_L1", "probe;Probe #eta;Probe #phi;Entries", 30, -2.5, 2.5, 30, -3.5, 3.5);
-  hh_probe_etaphi_mu4_SA = new TH2F("hh_probe_etaphi_mu4_SA", "probe;Probe #eta;Probe #phi;Entries", 30, -2.5, 2.5, 30, -3.5, 3.5);
-  hh_eff_etaphi_mu4_L1   = new TH2F("hh_eff_etaphi_mu4_L1",   "eff;Probe #eta;Probe #phi;Efficiency",   30, -2.5, 2.5, 30, -3.5, 3.5);
-  hh_eff_etaphi_mu4_L1SA = new TH2F("hh_eff_etaphi_mu4_L1SA", "eff;Probe #eta;Probe #phi;Efficiency",   30, -2.5, 2.5, 30, -3.5, 3.5);
+  hh_probe_etaphi_mu4_L1 = new TH2F("hh_probe_etaphi_mu4_L1", "probe;Probe #eta;Probe #phi;Entries",  30, -2.5, 2.5, 30, -3.5, 3.5);
+  hh_probe_etaphi_mu4_SA = new TH2F("hh_probe_etaphi_mu4_SA", "probe;Probe #eta;Probe #phi;Entries",  30, -2.5, 2.5, 30, -3.5, 3.5);
+  hh_eff_etaphi_mu4_L1   = new TH2F("hh_eff_etaphi_mu4_L1",   "eff;Probe #eta;Probe #phi;Efficiency", 30, -2.5, 2.5, 30, -3.5, 3.5);
+  hh_eff_etaphi_mu4_L1SA = new TH2F("hh_eff_etaphi_mu4_L1SA", "eff;Probe #eta;Probe #phi;Efficiency", 30, -2.5, 2.5, 30, -3.5, 3.5);
 
-  hh_probe_qetapt_mu4_L1 = new TH2F("hh_probe_qetapt_mu4_L1", "probe;Probe Q#eta;Probe p_{T}[GeV];Entries", 30, -2.5, 2.5, 30, 0, 14);
-  hh_probe_qetapt_mu4_SA = new TH2F("hh_probe_qetapt_mu4_SA", "probe;Probe Q#eta;Probe p_{T}[GeV];Entries", 30, -2.5, 2.5, 30, 0, 14);
-  hh_eff_qetapt_mu4_L1   = new TH2F("hh_eff_qetapt_mu4_L1",   "eff;Probe Q#eta;Probe p_{T}[GeV];Efficiency",   30, -2.5, 2.5, 30, 0, 14);
-  hh_eff_qetapt_mu4_L1SA = new TH2F("hh_eff_qetapt_mu4_L1SA", "eff;Probe Q#eta;Probe p_{T}[GeV];Efficiency",   30, -2.5, 2.5, 30, 0, 14);
+  hh_probe_qetapt_mu4_L1 = new TH2F("hh_probe_qetapt_mu4_L1", "probe;Probe Q#eta;Probe p_{T}[GeV];Entries",  30, -2.5, 2.5, 30, 0, 14);
+  hh_probe_qetapt_mu4_SA = new TH2F("hh_probe_qetapt_mu4_SA", "probe;Probe Q#eta;Probe p_{T}[GeV];Entries",  30, -2.5, 2.5, 30, 0, 14);
+  hh_eff_qetapt_mu4_L1   = new TH2F("hh_eff_qetapt_mu4_L1",   "eff;Probe Q#eta;Probe p_{T}[GeV];Efficiency", 30, -2.5, 2.5, 30, 0, 14);
+  hh_eff_qetapt_mu4_L1SA = new TH2F("hh_eff_qetapt_mu4_L1SA", "eff;Probe Q#eta;Probe p_{T}[GeV];Efficiency", 30, -2.5, 2.5, 30, 0, 14);
 
   h_probe_mu_mu50_L1  = new TH1F("h_probe_mu_mu50_L1", "probe;<#mu>;Entries",  30, 0, 60);
   h_probe_mu_mu50_SA  = new TH1F("h_probe_mu_mu50_SA", "probe;<#mu>;Entries",  30, 0, 60);
@@ -1066,33 +1080,17 @@ void RPC::InitHist(){
   hh_eff_qetapt_mu50_L1   = new TH2F("hh_eff_qetapt_mu50_L1",   "eff;Probe Q#eta;Probe p_{T}[GeV];Efficiency",   30, -2.5, 2.5, 30, 0, 100);
   hh_eff_qetapt_mu50_L1SA = new TH2F("hh_eff_qetapt_mu50_L1SA", "eff;Probe Q#eta;Probe p_{T}[GeV];Efficiency",   30, -2.5, 2.5, 30, 0, 100);
 
-  h_superPointRZ_BIS = new TH2F("h_superPointRZ_BIS", "h_superPointRZ_BIS;Z;R;Counts", 100, -15, 15, 100, 0, 20);
-  h_superPointRZ_BIL = new TH2F("h_superPointRZ_BIL", "h_superPointRZ_BIL;Z;R;Counts", 100, -15, 15, 100, 0, 20);
-  h_superPointRZ_BMS = new TH2F("h_superPointRZ_BMS", "h_superPointRZ_BMS;Z;R;Counts", 100, -15, 15, 100, 0, 20);
-  h_superPointRZ_BML = new TH2F("h_superPointRZ_BML", "h_superPointRZ_BML;Z;R;Counts", 100, -15, 15, 100, 0, 20);
-  h_superPointRZ_BOS = new TH2F("h_superPointRZ_BOS", "h_superPointRZ_BOS;Z;R;Counts", 100, -15, 15, 100, 0, 20);
-  h_superPointRZ_BOL = new TH2F("h_superPointRZ_BOL", "h_superPointRZ_BOL;Z;R;Counts", 100, -15, 15, 100, 0, 20);
+}
 
-  h_segmentRZ_BIS = new TH2F("h_segmentRZ_BIS", "h_segmentRZ_BIS;Z;R;Counts", 100, -15, 15, 100, 0, 20);
-  h_segmentRZ_BIL = new TH2F("h_segmentRZ_BIL", "h_segmentRZ_BIL;Z;R;Counts", 100, -15, 15, 100, 0, 20);
-  h_segmentRZ_BMS = new TH2F("h_segmentRZ_BMS", "h_segmentRZ_BMS;Z;R;Counts", 100, -15, 15, 100, 0, 20);
-  h_segmentRZ_BML = new TH2F("h_segmentRZ_BML", "h_segmentRZ_BML;Z;R;Counts", 100, -15, 15, 100, 0, 20);
-  h_segmentRZ_BOS = new TH2F("h_segmentRZ_BOS", "h_segmentRZ_BOS;Z;R;Counts", 100, -15, 15, 100, 0, 20);
-  h_segmentRZ_BOL = new TH2F("h_segmentRZ_BOL", "h_segmentRZ_BOL;Z;R;Counts", 100, -15, 15, 100, 0, 20);
-
-  h_residualRZ_BIS = new TH2F("h_residualRZ_BIS", "h_residualRZ_BIS;Z;R;Counts", 100, -0.1, 0.1, 100, -0.1, 0.1);
-  h_residualRZ_BIL = new TH2F("h_residualRZ_BIL", "h_residualRZ_BIL;Z;R;Counts", 100, -0.1, 0.1, 100, -0.1, 0.1);
-  h_residualRZ_BMS = new TH2F("h_residualRZ_BMS", "h_residualRZ_BMS;Z;R;Counts", 100, -0.1, 0.1, 100, -0.1, 0.1);
-  h_residualRZ_BML = new TH2F("h_residualRZ_BML", "h_residualRZ_BML;Z;R;Counts", 100, -0.1, 0.1, 100, -0.1, 0.1);
-  h_residualRZ_BOS = new TH2F("h_residualRZ_BOS", "h_residualRZ_BOS;Z;R;Counts", 100, -0.1, 0.1, 100, -0.1, 0.1);
-  h_residualRZ_BOL = new TH2F("h_residualRZ_BOL", "h_residualRZ_BOL;Z;R;Counts", 100, -0.1, 0.1, 100, -0.1, 0.1);
-
+void RPC::InitSPHist(){
   h_NumberOfSP_LumiBlock   = new TH2F("h_NumberOfSP_LumiBlock",   "h_NumberOfSP_LumiBlock;LumiBlock;Number;Counts", 100, 0,    500, 100, 0, 5);
   h_NumberOfSP_eta         = new TH2F("h_NumberOfSP_eta",         "h_NumberOfSP_eta;eta;Number;Counts",             50, -2.5, 2.5, 100, 0, 5);
   h_NumberOfSP_qeta        = new TH2F("h_NumberOfSP_qeta",        "h_NumberOfSP_qeta;qeta;Number;Counts",           50, -2.5, 2.5, 100, 0, 5);
   h_NumberOfSP_pt_barrel   = new TH2F("h_NumberOfSP_pt_barrel",   "h_NumberOfSP_pt_barrel;pT[GeV];Number;Counts",   50, 0,    100, 100, 0, 5);
   h_NumberOfSP_pass_barrel = new TH2F("h_NumberOfSP_pass_barrel", "h_NumberOfSP_pass_barrel;pass;Number;Counts",    50, -3,   2,   100, 0, 5);
+}
 
+void RPC::InitMdtHist(){
   h_NumberOfMdt_LumiBlock    = new TH2F("h_NumberOfMdt_LumiBlock",    "h_NumberOfMdt_LumiBlock;LumiBlock;Number;Counts",    100, 0, 500, 100, 0, 50);
   h_NumberOfMdt_LumiBlock_BI = new TH2F("h_NumberOfMdt_LumiBlock_BI", "h_NumberOfMdt_LumiBlock_BI;LumiBlock;Number (BI);Counts", 100, 0, 500, 100, 0, 50);
   h_NumberOfMdt_LumiBlock_BM = new TH2F("h_NumberOfMdt_LumiBlock_BM", "h_NumberOfMdt_LumiBlock_BM;LumiBlock;Number (BM);Counts", 100, 0, 500, 100, 0, 50);
@@ -1112,11 +1110,6 @@ void RPC::InitHist(){
   h_NumberOfMdt_pt_barrel_BI = new TH2F("h_NumberOfMdt_pt_barrel_BI", "h_NumberOfMdt_pt_barrel_BI;pT (BI);Number;Counts", 100, 0,    100, 100, 0, 50);
   h_NumberOfMdt_pt_barrel_BM = new TH2F("h_NumberOfMdt_pt_barrel_BM", "h_NumberOfMdt_pt_barrel_BM;pT (BM);Number;Counts", 100, 0,    100, 100, 0, 50);
   h_NumberOfMdt_pt_barrel_BO = new TH2F("h_NumberOfMdt_pt_barrel_BO", "h_NumberOfMdt_pt_barrel_BO;pT (BO);Number;Counts", 100, 0,    100, 100, 0, 50);
-
-  h_ResidualSegment_eta    = new TH2F("h_ResidualSegment_eta",    "h_ResidualSegment_eta;#eta;Residual;Counts",                      100, -1.05, 1.05, 100, -500, 500);
-  h_ResidualSegment_eta_BI = new TH2F("h_ResidualSegment_eta_BI", "h_ResidualSegment_eta_BI;#eta;(BI) Segment residual [mm];Counts", 100, -1.05, 1.05, 100, -500, 500);
-  h_ResidualSegment_eta_BM = new TH2F("h_ResidualSegment_eta_BM", "h_ResidualSegment_eta_BM;#eta;(BM) Segment residual [mm];Counts", 100, -1.05, 1.05, 100, -500, 500);
-  h_ResidualSegment_eta_BO = new TH2F("h_ResidualSegment_eta_BO", "h_ResidualSegment_eta_BO;#eta;(BO) Segment residual [mm];Counts", 100, -1.05, 1.05, 100, -500, 500);
 
   h_ResidualMdt_Outlier_eta    = new TH2F("h_ResidualMdt_Outlier_eta",    "h_ResidualMdt_Outlier_eta;#eta;Residual;Counts",                      100, -1.05, 1.05, 100, -500, 500);
   h_ResidualMdt_Outlier_eta_BI = new TH2F("h_ResidualMdt_Outlier_eta_BI", "h_ResidualMdt_Outlier_eta_BI;#eta;(BI) MDT hit residual [mm];Counts", 100, -1.05, 1.05, 100, -500, 500);
@@ -1138,6 +1131,45 @@ void RPC::InitHist(){
   h_ResidualMdt_Inlier_pt_barrel_BM = new TH2F("h_ResidualMdt_Inlier_pt_barrel_BM", "h_ResidualMdt_Inlier_pt_barrel_BM;p_{T}[GeV];(BM) MDT hit residual [mm];Counts", 100, 0, 100, 100, -500, 500);
   h_ResidualMdt_Inlier_pt_barrel_BO = new TH2F("h_ResidualMdt_Inlier_pt_barrel_BO", "h_ResidualMdt_Inlier_pt_barrel_BO;pT [GeV];(BO) MDT hit residual [mm];Counts", 100, 0, 100, 100, -500, 500);
 
+}
+
+void RPC::InitPtResidualHist(){
+  h_PtResidual_pt = new TH2F("h_PtResidual_pt", "h_PtResidual_pt;Probe p_{T};p_{T} residual;Counts", 100, 0, 100, 50, -20, 20);
+  h_PtResidual_eta = new TH2F("h_PtResidual_eta", "h_PtResidual_eta;Probe #eta;p_{T} residual;Counts", 100, -2.5, 2.5, 50, -20, 20);
+}
+
+void RPC::InitHist(){
+  InitEffHist();
+  InitSPHist();
+  InitMdtHist();
+  InitPtResidualHist();
+
+  // Histgrams
+  h_superPointRZ_BIS = new TH2F("h_superPointRZ_BIS", "h_superPointRZ_BIS;Z;R;Counts", 100, -15, 15, 100, 0, 20);
+  h_superPointRZ_BIL = new TH2F("h_superPointRZ_BIL", "h_superPointRZ_BIL;Z;R;Counts", 100, -15, 15, 100, 0, 20);
+  h_superPointRZ_BMS = new TH2F("h_superPointRZ_BMS", "h_superPointRZ_BMS;Z;R;Counts", 100, -15, 15, 100, 0, 20);
+  h_superPointRZ_BML = new TH2F("h_superPointRZ_BML", "h_superPointRZ_BML;Z;R;Counts", 100, -15, 15, 100, 0, 20);
+  h_superPointRZ_BOS = new TH2F("h_superPointRZ_BOS", "h_superPointRZ_BOS;Z;R;Counts", 100, -15, 15, 100, 0, 20);
+  h_superPointRZ_BOL = new TH2F("h_superPointRZ_BOL", "h_superPointRZ_BOL;Z;R;Counts", 100, -15, 15, 100, 0, 20);
+
+  h_segmentRZ_BIS = new TH2F("h_segmentRZ_BIS", "h_segmentRZ_BIS;Z;R;Counts", 100, -15, 15, 100, 0, 20);
+  h_segmentRZ_BIL = new TH2F("h_segmentRZ_BIL", "h_segmentRZ_BIL;Z;R;Counts", 100, -15, 15, 100, 0, 20);
+  h_segmentRZ_BMS = new TH2F("h_segmentRZ_BMS", "h_segmentRZ_BMS;Z;R;Counts", 100, -15, 15, 100, 0, 20);
+  h_segmentRZ_BML = new TH2F("h_segmentRZ_BML", "h_segmentRZ_BML;Z;R;Counts", 100, -15, 15, 100, 0, 20);
+  h_segmentRZ_BOS = new TH2F("h_segmentRZ_BOS", "h_segmentRZ_BOS;Z;R;Counts", 100, -15, 15, 100, 0, 20);
+  h_segmentRZ_BOL = new TH2F("h_segmentRZ_BOL", "h_segmentRZ_BOL;Z;R;Counts", 100, -15, 15, 100, 0, 20);
+
+  h_residualRZ_BIS = new TH2F("h_residualRZ_BIS", "h_residualRZ_BIS;Z;R;Counts", 100, -0.1, 0.1, 100, -0.1, 0.1);
+  h_residualRZ_BIL = new TH2F("h_residualRZ_BIL", "h_residualRZ_BIL;Z;R;Counts", 100, -0.1, 0.1, 100, -0.1, 0.1);
+  h_residualRZ_BMS = new TH2F("h_residualRZ_BMS", "h_residualRZ_BMS;Z;R;Counts", 100, -0.1, 0.1, 100, -0.1, 0.1);
+  h_residualRZ_BML = new TH2F("h_residualRZ_BML", "h_residualRZ_BML;Z;R;Counts", 100, -0.1, 0.1, 100, -0.1, 0.1);
+  h_residualRZ_BOS = new TH2F("h_residualRZ_BOS", "h_residualRZ_BOS;Z;R;Counts", 100, -0.1, 0.1, 100, -0.1, 0.1);
+  h_residualRZ_BOL = new TH2F("h_residualRZ_BOL", "h_residualRZ_BOL;Z;R;Counts", 100, -0.1, 0.1, 100, -0.1, 0.1);
+
+  h_ResidualSegment_eta    = new TH2F("h_ResidualSegment_eta",    "h_ResidualSegment_eta;#eta;Residual;Counts",                      100, -1.05, 1.05, 100, -500, 500);
+  h_ResidualSegment_eta_BI = new TH2F("h_ResidualSegment_eta_BI", "h_ResidualSegment_eta_BI;#eta;(BI) Segment residual [mm];Counts", 100, -1.05, 1.05, 100, -500, 500);
+  h_ResidualSegment_eta_BM = new TH2F("h_ResidualSegment_eta_BM", "h_ResidualSegment_eta_BM;#eta;(BM) Segment residual [mm];Counts", 100, -1.05, 1.05, 100, -500, 500);
+  h_ResidualSegment_eta_BO = new TH2F("h_ResidualSegment_eta_BO", "h_ResidualSegment_eta_BO;#eta;(BO) Segment residual [mm];Counts", 100, -1.05, 1.05, 100, -500, 500);
 }
 
 void RPC::End(){

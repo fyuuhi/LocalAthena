@@ -31,7 +31,6 @@
 using namespace std;
 //declare functions
 
-
 #include "/gpfs/home/yfukuhar/RootUtils/rootlogon.C"
 
 double Res(double param1, double param2);
@@ -67,6 +66,9 @@ int main(int argc, char **argv){
   //TString PdfLabel = "youhei_Zmumu_AOD_noRpcHit";
   //tree1 -> Add("/gpfs/home/yfukuhar/work/CalcEffTool/run/hadd_youhei_Zmumu_AOD_noRpcHit.root");
 
+  //TString PdfLabel = "youhei_Zmumu_AOD_outlier2";
+  //tree1 -> Add("/gpfs/home/yfukuhar/work/CalcEffTool/run/Output/_home_yfukuhar_gpfs_data_youhei_Zmumu_AOD_Zmumu_outlier2_AOD.pool.root/test0605_01.root");
+
   RPC t_349014(tree1); 
 
   t_349014.Loop(-1, 10000);
@@ -76,20 +78,20 @@ int main(int argc, char **argv){
   //t_349014.DrawHist("../plot/data18_0621.pdf");
   //t_349014.DrawHist("../plot/DrawHist_youhei_Zmumu_AOD_default.pdf");
   //t_349014.DrawHist("../plot/DrawHist_youhei_Zmumu_AOD_noRpcHit.pdf");
-  t_349014.DrawHist("../plot/DrawHist_" + PdfLabel + ".pdf");
-  //t_349014.DrawHist("../plot/mc16_youhei_Zmumu_noRpcHit.pdf");
-  //t_349014.DrawHist("../plot/mc16_youhei_Zmumu_default.pdf");
-  cout << "[INFO]: DrawHist SUCCESS" << endl;
+  //t_349014.DrawHist("../plot/DrawHist_" + PdfLabel + ".pdf");
+  ////t_349014.DrawHist("../plot/mc16_youhei_Zmumu_noRpcHit.pdf");
+  ////t_349014.DrawHist("../plot/mc16_youhei_Zmumu_default.pdf");
+  //cout << "[INFO]: DrawHist SUCCESS" << endl;
 
-  t_349014.CalcEff();
-  cout << "[INFO]: CalcEff SUCCESS" << endl;
+  //t_349014.CalcEff();
+  //cout << "[INFO]: CalcEff SUCCESS" << endl;
 
-  //t_349014.DrawEffHist("../plot/DrawEffHist_youhei_Zmumu_AOD_default.pdf");
-  //t_349014.DrawEffHist("../plot/DrawEffHist_youhei_Zmumu_AOD_noRpcHit.pdf");
-  t_349014.DrawEffHist("../plot/DrawEffHist_" + PdfLabel + ".pdf");
-  //t_349014.DrawEffHist("../plot/test_eff_all.pdf");
-  cout << "[INFO]: DrawEffHist SUCCESS" << endl;
-  //t_349014.Display(10000, 100, "../plot/Display_349533.pdf");
+  ////t_349014.DrawEffHist("../plot/DrawEffHist_youhei_Zmumu_AOD_default.pdf");
+  ////t_349014.DrawEffHist("../plot/DrawEffHist_youhei_Zmumu_AOD_noRpcHit.pdf");
+  //t_349014.DrawEffHist("../plot/DrawEffHist_" + PdfLabel + ".pdf");
+  ////t_349014.DrawEffHist("../plot/test_eff_all.pdf");
+  //cout << "[INFO]: DrawEffHist SUCCESS" << endl;
+  t_349014.Display(1, 100, "../plot/Display_" + PdfLabel + ".pdf");
 
 
   t_349014.End();
@@ -208,6 +210,7 @@ void RPC::Loop( int Nevents, int DisplayNumber )
 
           FillMdtHist();
           FillSPHist();
+          FillPtResidualHist();
 
           //BIS
           //if (probe_mesSA_superPointR_BI->at(N50) != 0 &&
@@ -277,6 +280,8 @@ void RPC::DrawHist(TString pdf){
   c1->SetBottomMargin(0.20);
 
   c1 -> Print( pdf + "[", "pdf" );
+
+  DrawPtResidualHist(c1, pdf);
 
   h_ResidualSegment_eta_BI -> Draw("colz");
   c1 -> Print(pdf, "pdf" );
@@ -619,9 +624,9 @@ void RPC::Display(Long64_t begin_entry, Long64_t limit_entry, TString pdf)
             continue;
           }
           // Check NumberOfSP
-          if (NumberOfSP() != 3){
-            continue;
-          }
+          //if (NumberOfSP() != 3){
+          //  continue;
+          //}
           // Check size of mdtHits
           if ((probe_mesSA_mdtHitChamber -> at(N50)).size() == 0){
             continue;
@@ -699,6 +704,11 @@ void RPC::Display(Long64_t begin_entry, Long64_t limit_entry, TString pdf)
           TGraph gr_MdtHit_Outlier_BI = TGraph(nMDT); //各点が(0,0)で初期化される
           TGraph gr_MdtHit_Outlier_BM = TGraph(nMDT); //各点が(0,0)で初期化される
           TGraph gr_MdtHit_Outlier_BO = TGraph(nMDT); //各点が(0,0)で初期化される
+          // Outlier2 Mdt Hit
+          TGraph gr_MdtHit_Outlier2_BI = TGraph(nMDT); //各点が(0,0)で初期化される
+          TGraph gr_MdtHit_Outlier2_BM = TGraph(nMDT); //各点が(0,0)で初期化される
+          TGraph gr_MdtHit_Outlier2_BO = TGraph(nMDT); //各点が(0,0)で初期化される
+
 
           double Z_BI=0, R_BI=0;
           double Z_BM=0, R_BM=0;
@@ -730,9 +740,11 @@ void RPC::Display(Long64_t begin_entry, Long64_t limit_entry, TString pdf)
               if (probe_mesSA_mdtHitIsOutlier -> at(N50)[i] == 1) {
                 gr_MdtHit_Outlier_BI.SetPoint(i , (probe_mesSA_mdtHitZ -> at(N50))[i] / 1000. , (probe_mesSA_mdtHitR -> at(N50))[i] / 1000.);
                 nBI_Outlier += 1;
-              } else{
+              } else if (probe_mesSA_mdtHitIsOutlier->at(N50)[i] == 0){
                 gr_MdtHit_Inlier_BI.SetPoint(i , (probe_mesSA_mdtHitZ -> at(N50))[i] / 1000. , (probe_mesSA_mdtHitR -> at(N50))[i] / 1000.);
                 nBI_Inlier += 1;
+              } else if (probe_mesSA_mdtHitIsOutlier->at(N50)[i] == 2){
+                gr_MdtHit_Outlier2_BI.SetPoint(i , (probe_mesSA_mdtHitZ -> at(N50))[i] / 1000. , (probe_mesSA_mdtHitR -> at(N50))[i] / 1000.);
               }
               Z_BI += probe_mesSA_mdtHitZ -> at(N50)[i]/1000.;
               R_BI += probe_mesSA_mdtHitR -> at(N50)[i]/1000.;
@@ -743,9 +755,11 @@ void RPC::Display(Long64_t begin_entry, Long64_t limit_entry, TString pdf)
               if (probe_mesSA_mdtHitIsOutlier -> at(N50)[i] == 1) {
                 gr_MdtHit_Outlier_BM.SetPoint(i , (probe_mesSA_mdtHitZ -> at(N50))[i] / 1000. , (probe_mesSA_mdtHitR -> at(N50))[i] / 1000.);
                 nBM_Outlier += 1;
-              } else{
+              } else if (probe_mesSA_mdtHitIsOutlier->at(N50)[i] == 0){
                 gr_MdtHit_Inlier_BM.SetPoint(i , (probe_mesSA_mdtHitZ -> at(N50))[i] / 1000. , (probe_mesSA_mdtHitR -> at(N50))[i] / 1000.);
                 nBM_Inlier += 1;
+              } else if (probe_mesSA_mdtHitIsOutlier->at(N50)[i] == 2){
+                gr_MdtHit_Outlier2_BM.SetPoint(i , (probe_mesSA_mdtHitZ -> at(N50))[i] / 1000. , (probe_mesSA_mdtHitR -> at(N50))[i] / 1000.);
               }
               Z_BM += probe_mesSA_mdtHitZ -> at(N50)[i]/1000.;
               R_BM += probe_mesSA_mdtHitR -> at(N50)[i]/1000.;
@@ -756,9 +770,11 @@ void RPC::Display(Long64_t begin_entry, Long64_t limit_entry, TString pdf)
               if (probe_mesSA_mdtHitIsOutlier -> at(N50)[i] == 1) {
                 gr_MdtHit_Outlier_BO.SetPoint(i , (probe_mesSA_mdtHitZ -> at(N50))[i] / 1000. , (probe_mesSA_mdtHitR -> at(N50))[i] / 1000.);
                 nBO_Outlier += 1;
-              } else{
+              } else if (probe_mesSA_mdtHitIsOutlier->at(N50)[i] == 0){
                 gr_MdtHit_Inlier_BO.SetPoint(i , (probe_mesSA_mdtHitZ -> at(N50))[i] / 1000. , (probe_mesSA_mdtHitR -> at(N50))[i] / 1000.);
                 nBO_Inlier += 1;
+              } else if (probe_mesSA_mdtHitIsOutlier->at(N50)[i] == 2){
+                gr_MdtHit_Outlier2_BO.SetPoint(i , (probe_mesSA_mdtHitZ -> at(N50))[i] / 1000. , (probe_mesSA_mdtHitR -> at(N50))[i] / 1000.);
               }
               Z_BO += probe_mesSA_mdtHitZ -> at(N50)[i]/1000.;
               R_BO += probe_mesSA_mdtHitR -> at(N50)[i]/1000.;
@@ -1051,6 +1067,11 @@ void RPC::Display(Long64_t begin_entry, Long64_t limit_entry, TString pdf)
           gr_MdtHit_Outlier_BI.SetMarkerSize(1);
           gr_MdtHit_Outlier_BI.Draw("P,same");
 
+          gr_MdtHit_Outlier2_BI.SetMarkerColor(12);
+          gr_MdtHit_Outlier2_BI.SetMarkerStyle(24);
+          gr_MdtHit_Outlier2_BI.SetMarkerSize(1);
+          gr_MdtHit_Outlier2_BI.Draw("P,same");
+
           gr_SP.Draw("P, same");
           eventInfo.Draw();
           c2->Print(pdf, "pdf");
@@ -1122,6 +1143,11 @@ void RPC::Display(Long64_t begin_entry, Long64_t limit_entry, TString pdf)
           gr_MdtHit_Outlier_BM.SetMarkerStyle(24);
           gr_MdtHit_Outlier_BM.SetMarkerSize(1);
           gr_MdtHit_Outlier_BM.Draw("P,same");
+
+          gr_MdtHit_Outlier2_BM.SetMarkerColor(12);
+          gr_MdtHit_Outlier2_BM.SetMarkerStyle(24);
+          gr_MdtHit_Outlier2_BM.SetMarkerSize(1);
+          gr_MdtHit_Outlier2_BM.Draw("P,same");
           gr_SP.Draw("P, same");
           eventInfo.Draw();
           c2->Print(pdf, "pdf");
@@ -1193,6 +1219,12 @@ void RPC::Display(Long64_t begin_entry, Long64_t limit_entry, TString pdf)
           gr_MdtHit_Outlier_BO.SetMarkerStyle(24);
           gr_MdtHit_Outlier_BO.SetMarkerSize(1);
           gr_MdtHit_Outlier_BO.Draw("P,same");
+
+          gr_MdtHit_Outlier2_BO.SetMarkerColor(12);
+          gr_MdtHit_Outlier2_BO.SetMarkerStyle(24);
+          gr_MdtHit_Outlier2_BO.SetMarkerSize(1);
+          gr_MdtHit_Outlier2_BO.Draw("P,same");
+
           gr_SP.Draw("P, same");
           eventInfo.Draw();
           c2->Print(pdf, "pdf");
@@ -1220,7 +1252,7 @@ bool GRLlist(int LumiBlock){
   return (lb_1 || lb_2 || lb_3);
 }
 
-void RPC::FillMdtHist(){
+void RPC::FillMdtHist(){ // Only eta region is applied in this function, not tag_proc, pass, ....
   int nMdtBI = 0;
   int nMdtBM = 0;
   int nMdtBO = 0;
@@ -1576,4 +1608,29 @@ double RPC::calc_residual(double aw,double bw,double x,double y)
   double iaq = ia*ia;
   double dz  = x - (y-bw)*ia;
   return dz/sqrt(1.+iaq);
+}
+
+double RPC::calc_pTresidual( double offline_pt, double trig_pt){
+  return ( 1. - (offline_pt) / (trig_pt));
+}
+
+void RPC::FillPtResidualHist(){ // Only eta region cut here
+  if ( ((probe_mesSA_pt -> at(N50)) == 0) && ((probe_mesSA_pt -> at(N50)) > -9999) ){ return;}
+
+  double pTresidual = calc_pTresidual(probe_pt/1000., abs(probe_mesSA_pt -> at(N50)));
+  cout << probe_mesSA_pass -> at(N50) << ": " << probe_pt/1000. << ": " << abs(probe_mesSA_pt->at(N50)) << ": "  << pTresidual << endl;
+
+
+  if (abs(probe_eta) < 1.05){
+    h_PtResidual_pt -> Fill(probe_pt/1000., pTresidual);
+  }
+  h_PtResidual_eta -> Fill(probe_eta, pTresidual);
+}
+
+void RPC::DrawPtResidualHist(TCanvas* c1, TString pdf){
+  h_PtResidual_pt -> Draw("colz");
+  c1 -> Print(pdf, "pdf");
+
+  h_PtResidual_eta -> Draw("colz");
+  c1 -> Print(pdf, "pdf");
 }
