@@ -583,6 +583,7 @@ public :
 
    TH2F *h_PtResidual_pt; //!
    TH2F *h_PtResidual_eta; //!
+   TH2F *h_pt_vs_pt; //!
 
 
    RPC(TChain *tree);
@@ -1134,8 +1135,9 @@ void RPC::InitMdtHist(){
 }
 
 void RPC::InitPtResidualHist(){
-  h_PtResidual_pt = new TH2F("h_PtResidual_pt", "h_PtResidual_pt;Probe p_{T};p_{T} residual;Counts", 100, 0, 100, 50, -20, 20);
-  h_PtResidual_eta = new TH2F("h_PtResidual_eta", "h_PtResidual_eta;Probe #eta;p_{T} residual;Counts", 100, -2.5, 2.5, 50, -20, 20);
+  h_PtResidual_pt  = new TH2F("h_PtResidual_pt",  "h_PtResidual_pt;Probe p_{T} [GeV];p_{T} residual;Counts",  100, 0,    100, 50,  -20, 20);
+  h_PtResidual_eta = new TH2F("h_PtResidual_eta", "h_PtResidual_eta;Probe #eta;p_{T} residual;Counts",        100, -2.5, 2.5, 50,  -20, 20);
+  h_pt_vs_pt       = new TH2F("h_pt_vs_pt",       "h_pt_vs_pt;Probe p_{T} [GeV];L2MuonSA p_{T} [GeV];Counts", 100, 0,    100, 100, 0,   100);
 }
 
 void RPC::InitHist(){
