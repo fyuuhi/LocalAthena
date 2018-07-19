@@ -58,20 +58,34 @@ int main(int argc, char **argv){
   //tree1 -> Add("/gpfs/fs2001/yfukuhar/data/user.yfukuhar.00349533.physics_Main.YFTAP.f929_m1955_GRL_False_349533_mdtHit_v3_EXT0/hadd/user.yfukuhar.00349533.physics_Main.YFTAP.f929_m1955_GRL_False_349533_mdtHit_v3_EXT0.root");
 
   // youhei_Zmumu_AOD_default
-  //TString PdfLabel = "youhei_Zmumu_AOD_default";
-  //tree1 -> Add("/gpfs/home/yfukuhar/work/CalcEffTool/run/hadd_youhei_Zmumu_AOD_default.root");
+  // TString PdfLabel = "youhei_Zmumu_AOD_default";
+  // tree1 -> Add("/gpfs/home/yfukuhar/work/CalcEffTool/run/hadd_youhei_Zmumu_AOD_default.root");
 
   // youhei_Zmumu_AOD_noRpcHit
-  //TString PdfLabel = "youhei_Zmumu_AOD_noRpcHit";
-  //tree1 -> Add("/gpfs/home/yfukuhar/work/CalcEffTool/run/hadd_youhei_Zmumu_AOD_noRpcHit.root");
+  // TString PdfLabel = "youhei_Zmumu_AOD_noRpcHit";
+  // tree1 -> Add("/gpfs/home/yfukuhar/work/CalcEffTool/run/hadd_youhei_Zmumu_AOD_noRpcHit.root");
 
   // youhei_Zmumu_AOD_noRpcHitWide
-  TString PdfLabel = "youhei_Zmumu_AOD_noRpcHitWide";
-  tree1 -> Add("/gpfs/home/yfukuhar/work/CalcEffTool/run/hadd_youhei_Zmumu_AOD_noRpcHitWide.root");
+  // TString PdfLabel = "youhei_Zmumu_AOD_noRpcHitWide";
+  // tree1 -> Add("/gpfs/home/yfukuhar/work/CalcEffTool/run/hadd_youhei_Zmumu_AOD_noRpcHitWide.root");
 
   //TString PdfLabel = "youhei_Zmumu_AOD_outlier2";
   //tree1 -> Add("/gpfs/home/yfukuhar/work/CalcEffTool/run/Output/_home_yfukuhar_gpfs_data_youhei_Zmumu_AOD_Zmumu_outlier2_AOD.pool.root/test0605_01.root");
 
+  //TString PdfLabel = "youhei_Zmumu_AOD_noRpcHitWideRoI";
+  //tree1 -> Add("/gpfs/home/yfukuhar/work/CalcEffTool/run/Output/_home_youhei_L2MuonSA_dataset_aod_test.noRpcHitWideRoI.pool.root/test0605_01.root");
+
+  //TString PdfLabel = "yfukuhar_Zmumu_AOD_noRpcHitWide";
+  //tree1 -> Add("/gpfs/home/yfukuhar/work/CalcEffTool/run/hadd_yfukuhar_Zmumu_AOD_noRpcHitWide.root");
+
+  TString PdfLabel = "yfukuhar_Zmumu_AOD_noRpcHitWide1";
+  tree1 -> Add("/gpfs/home/yfukuhar/work/CalcEffTool/run/hadd_yfukuhar_Zmumu_AOD_noRpcHitWide1.root");
+
+  //TString PdfLabel = "yfukuhar_Zmumu_AOD_noRpcHitWide2";
+  //tree1 -> Add("/gpfs/home/yfukuhar/work/CalcEffTool/run/hadd_yfukuhar_Zmumu_AOD_noRpcHitWide2.root");
+
+
+  // == Core Begin ==
   RPC t_349014(tree1); 
 
   t_349014.Loop(-1, 10000);
@@ -80,14 +94,15 @@ int main(int argc, char **argv){
   t_349014.DrawHist("../plot/DrawHist_" + PdfLabel + ".pdf");
   cout << "[INFO]: DrawHist SUCCESS" << endl;
 
-  // t_349014.CalcEff();
-  // cout << "[INFO]: CalcEff SUCCESS" << endl;
+  t_349014.CalcEff();
+  cout << "[INFO]: CalcEff SUCCESS" << endl;
 
-  // t_349014.DrawEffHist("../plot/DrawEffHist_" + PdfLabel + ".pdf");
-  // cout << "[INFO]: DrawEffHist SUCCESS" << endl;
+  t_349014.DrawEffHist("../plot/DrawEffHist_" + PdfLabel + ".pdf");
+  cout << "[INFO]: DrawEffHist SUCCESS" << endl;
 
-  // t_349014.Display(1, 100, "../plot/Display_" + PdfLabel + ".pdf");
-  // cout << "[INFO]: Display SUCCESS" << endl;
+  t_349014.Display(1, 100, "../plot/Display_" + PdfLabel + ".pdf");
+  cout << "[INFO]: Display SUCCESS" << endl;
+  // == Core End ==
 
   //t_349014.DrawHist("../plot/data18_0621.pdf");
   //t_349014.DrawHist("../plot/DrawHist_youhei_Zmumu_AOD_default.pdf");
