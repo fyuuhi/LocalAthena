@@ -1,3 +1,5 @@
 *.pdf
 *.o
 src/log/
+*.root
+src/outroot/

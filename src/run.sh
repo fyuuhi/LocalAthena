@@ -1,7 +1,7 @@
 #!/bin/sh
 
-#PDF_LABEL="youhei_Zmumu_AOD_default"
-#INPUT_NTUPLE="/gpfs/home/yfukuhar/work/CalcEffTool/run/hadd_youhei_Zmumu_AOD_default.root"
+PDF_LABEL="youhei_Zmumu_AOD_default"
+INPUT_NTUPLE="/gpfs/home/yfukuhar/work/CalcEffTool/run/hadd_youhei_Zmumu_AOD_default.root"
 
 #PDF_LABEL="youhei_Zmumu_AOD_noRpcHit"
 #INPUT_NTUPLE="/gpfs/home/yfukuhar/work/CalcEffTool/run/hadd_youhei_Zmumu_AOD_noRpcHit.root"
@@ -27,11 +27,11 @@
 #PDF_LABEL="yfukuhar_Zmumu_AOD_noRpcHitWide2"
 #INPUT_NTUPLE="/gpfs/home/yfukuhar/work/CalcEffTool/run/hadd_yfukuhar_Zmumu_AOD_noRpcHitWide2.root"
 
-PDF_LABEL="youhei_Zmumu_AOD_MdtRegion"
-INPUT_NTUPLE="/gpfs/home/yfukuhar/work/CalcEffTool/run/hadd_yfukuhar_Zmumu_AOD_MdtRegion.root"
+#PDF_LABEL="youhei_Zmumu_AOD_MdtRegion"
+#INPUT_NTUPLE="/gpfs/home/yfukuhar/work/CalcEffTool/run/hadd_yfukuhar_Zmumu_AOD_MdtRegion.root"
 
 IS_DRAW="true"
-IS_EVENTDISPLAY="true"
+IS_EVENTDISPLAY="false"
 BEGIN_ENTRY=1
 LIMIT_ENTRY=-1
 #LIMIT_ENTRY=10
@@ -42,3 +42,15 @@ LOG="log/log_"${PDF_LABEL}
 eval ${COMMAND} 2>&1 | tee ${LOG}
 
 #eof
+
+
+  #tree1 -> Add("/gpfs/fs2001/yfukuhar/data/user.yfukuhar.00349533.physics_Main.YFTAP.f929_m1955_jpzYFV4_GRL_F_tree_v1_349533_EXT0/hadd/user.yfukuhar.00349533.physics_Main.YFTAP.f929_m1955_jpzYFV4_GRL_F_tree_v1_349533_EXT0.root");
+  #tree1 -> Add("/gpfs/fs2001/yfukuhar/data/user.yfukuhar.00349533.physics_Main.YFTAP.f929_m1955_GRL_False_349533_mdtHit_v1_EXT0/hadd/user.yfukuhar.00349533.physics_Main.YFTAP.f929_m1955_GRL_False_349533_mdtHit_v1_EXT.root");
+  #tree1 -> Add("/gpfs/fs2001/yfukuhar/data/user.yfukuhar.00349533.physics_Main.YFTAP.f929_m1955_GRL_False_349533_mdtHit_v2_EXT0/hadd/user.yfukuhar.00349533.physics_Main.YFTAP.f929_m1955_GRL_False_349533_mdtHit_v2_EXT.root");
+  #tree1 -> Add("/gpfs/fs2001/yfukuhar/data/data18_0621/data18_0621.root");
+  #tree1 -> Add("/gpfs/fs2001/yfukuhar/CalcEffPlotMakerOrigin/data/mc16_youhei_Zmumu_default/mc16_youhei_Zmumu_default.root");
+  #tree1 -> Add("/gpfs/fs2001/yfukuhar/CalcEffPlotMakerOrigin/data/mc16_youhei_Zmumu_noRpcHit/mc16_youhei_Zmumu_noRpcHit.root");
+  #tree1 -> Add("/gpfs/fs2001/yfukuhar/CalcEffPlotMakerOrigin/data/mc16_youhei_Zmumu_noRpcHitWide/mc16_youhei_Zmumu_noRpcHitWide.root");
+  #tree1 -> Add("/gpfs/home/yfukuhar/work/CalcEffTool/run/Output/");
+  #tree1 -> Add("/gpfs/fs2001/yfukuhar/CalcEffPlotMakerOrigin/data/mc16c_Jpsimu6_default/mc16c_Jpsimu6_default.root");
+  #tree1 -> Add("/gpfs/fs2001/yfukuhar/data/user.yfukuhar.00349533.physics_Main.YFTAP.f929_m1955_GRL_False_349533_mdtHit_v3_EXT0/hadd/user.yfukuhar.00349533.physics_Main.YFTAP.f929_m1955_GRL_False_349533_mdtHit_v3_EXT0.root");
