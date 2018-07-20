@@ -15,8 +15,11 @@
 #PDF_LABEL="youhei_Zmumu_AOD_noRpcHitWideRoI"
 #INPUT_NTUPLE="/gpfs/home/yfukuhar/work/CalcEffTool/run/Output/_home_youhei_L2MuonSA_dataset_aod_test.noRpcHitWideRoI.pool.root/test0605_01.root"
 
-PDF_LABEL="yfukuhar_Zmumu_AOD_noRpcHitWide"
-INPUT_NTUPLE="/gpfs/home/yfukuhar/work/CalcEffTool/run/hadd_yfukuhar_Zmumu_AOD_noRpcHitWide.root"
+#PDF_LABEL="youhei_Zmumu_AOD_noRpcHitWideRoI2"
+#INPUT_NTUPLE="/gpfs/home/yfukuhar/work/CalcEffTool/run/Output/_home_youhei_L2MuonSA_dataset_aod_test.noRpcHitWideRoI.pool.root.2/test0605_01.root"
+
+#PDF_LABEL="yfukuhar_Zmumu_AOD_noRpcHitWide"
+#INPUT_NTUPLE="/gpfs/home/yfukuhar/work/CalcEffTool/run/hadd_yfukuhar_Zmumu_AOD_noRpcHitWide.root"
 
 #PDF_LABEL="yfukuhar_Zmumu_AOD_noRpcHitWide1"
 #INPUT_NTUPLE="/gpfs/home/yfukuhar/work/CalcEffTool/run/hadd_yfukuhar_Zmumu_AOD_noRpcHitWide1.root"
@@ -24,10 +27,16 @@ INPUT_NTUPLE="/gpfs/home/yfukuhar/work/CalcEffTool/run/hadd_yfukuhar_Zmumu_AOD_n
 #PDF_LABEL="yfukuhar_Zmumu_AOD_noRpcHitWide2"
 #INPUT_NTUPLE="/gpfs/home/yfukuhar/work/CalcEffTool/run/hadd_yfukuhar_Zmumu_AOD_noRpcHitWide2.root"
 
-IS_DRAW="true"
-IS_EVENTDISPLAY="false"
+PDF_LABEL="youhei_Zmumu_AOD_MdtRegion"
+INPUT_NTUPLE="/gpfs/home/yfukuhar/work/CalcEffTool/run/hadd_yfukuhar_Zmumu_AOD_MdtRegion.root"
 
-COMMAND="./RPC ${PDF_LABEL} ${INPUT_NTUPLE} ${IS_DRAW} ${IS_EVENTDISPLAY}"
+IS_DRAW="true"
+IS_EVENTDISPLAY="true"
+BEGIN_ENTRY=1
+LIMIT_ENTRY=-1
+#LIMIT_ENTRY=10
+
+COMMAND="./RPC ${PDF_LABEL} ${INPUT_NTUPLE} ${IS_DRAW} ${IS_EVENTDISPLAY} ${BEGIN_ENTRY} ${LIMIT_ENTRY}"
 LOG="log/log_"${PDF_LABEL}
 
 eval ${COMMAND} 2>&1 | tee ${LOG}

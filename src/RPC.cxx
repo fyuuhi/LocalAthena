@@ -27,6 +27,7 @@
 #include "TApplication.h"
 #include <vector>
 #include <iostream>
+#include <stdlib.h>
 
 using namespace std;
 //declare functions
@@ -61,6 +62,9 @@ int main(int argc, char *argv[]){
   tree1 -> Add(argv[2]);
   TString isDraw = argv[3];
   TString isEventDisplay = argv[4];
+  Int_t begin_entry = atoi(argv[5]);
+  Int_t limit_entry = atoi(argv[6]);
+  cout << begin_entry << "," << limit_entry << endl;
 
   // youhei_Zmumu_AOD_default
   //TString PdfLabel = "youhei_Zmumu_AOD_default";
@@ -109,7 +113,7 @@ int main(int argc, char *argv[]){
   }
 
   if (isEventDisplay == "true"){
-    t_349014.Display(1, 100, "../plot/Display_" + PdfLabel + ".pdf");
+    t_349014.Display(begin_entry, limit_entry, "../plot/Display_" + PdfLabel + ".pdf");
     cout << "[INFO]: Display SUCCESS" << endl;
   }
   // == Core End ==
@@ -616,6 +620,11 @@ void RPC::Display(Long64_t begin_entry, Long64_t limit_entry, TString pdf)
 
    c2->Print(pdf, "pdf");
 
+   if (limit_entry == -1) {
+     begin_entry = 0;
+     limit_entry = fChain -> GetEntries();
+     cout << "-------" << endl;
+   }
    // Prepare Loop
    if (fChain == 0) return;
    int nLoop = fChain -> GetEntries();
@@ -1264,11 +1273,13 @@ void RPC::Display(Long64_t begin_entry, Long64_t limit_entry, TString pdf)
           c2->RedrawAxis();
           delete frame_BO;
 
-          current_entry += 1;
           break;
       }
 
-      if (current_entry == limit_entry) {
+      current_entry += 1;
+      cout << "===" << begin_entry << ": " << current_entry << ": " << limit_entry << endl;
+      if (current_entry > limit_entry) {
+        cout << "=================" << endl;
         break;
       }
       c2->Clear();
