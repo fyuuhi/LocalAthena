@@ -1,7 +1,7 @@
 #!/bin/sh
 
-PDF_LABEL="youhei_Zmumu_AOD_default"
-INPUT_NTUPLE="/gpfs/home/yfukuhar/work/CalcEffTool/run/hadd_youhei_Zmumu_AOD_default.root"
+#PDF_LABEL="youhei_Zmumu_AOD_default"
+#INPUT_NTUPLE="/gpfs/home/yfukuhar/work/CalcEffTool/run/hadd_youhei_Zmumu_AOD_default.root"
 
 #PDF_LABEL="youhei_Zmumu_AOD_noRpcHit"
 #INPUT_NTUPLE="/gpfs/home/yfukuhar/work/CalcEffTool/run/hadd_youhei_Zmumu_AOD_noRpcHit.root"
@@ -30,10 +30,22 @@ INPUT_NTUPLE="/gpfs/home/yfukuhar/work/CalcEffTool/run/hadd_youhei_Zmumu_AOD_def
 #PDF_LABEL="youhei_Zmumu_AOD_MdtRegion"
 #INPUT_NTUPLE="/gpfs/home/yfukuhar/work/CalcEffTool/run/hadd_yfukuhar_Zmumu_AOD_MdtRegion.root"
 
+#PDF_LABEL="yfukuhar_Zmumu_AOD_noRpcHitCommentOut"
+#INPUT_NTUPLE="/gpfs/home/yfukuhar/work/CalcEffTool/run/hadd_yfukuhara_Zmumu_AOD_noRpcHitCommentOut.root"
+
+#PDF_LABEL="yfukuhar_Zmumu_AOD_noRpcHitCommentOutEta"
+#INPUT_NTUPLE="/gpfs/home/yfukuhar/work/CalcEffTool/run/hadd_yfukuhar_Zmumu_AOD_noRpcHitCommentOutEta.root"
+
+#PDF_LABEL="youhei_Zmumu_noRpcHitRoiSvc"
+#INPUT_NTUPLE="/gpfs/home/yfukuhar/work/CalcEffTool/run/hadd_youhei_Zmumu_noRpcHitRoiSvc.root"
+
+PDF_LABEL="yfukuhara_Zmumu_defaultGridTest"
+INPUT_NTUPLE="/home/yfukuhar/gpfs/data/yfukuhara_Zmumu_Ntuple/defaultGridTest/hadd_yfukuhar_Zmumu_AOD_defaultGridTest.root"
+
 IS_DRAW="true"
-IS_EVENTDISPLAY="false"
+IS_EVENTDISPLAY="true"
 BEGIN_ENTRY=1
-LIMIT_ENTRY=-1
+LIMIT_ENTRY=100
 #LIMIT_ENTRY=10
 
 COMMAND="./RPC ${PDF_LABEL} ${INPUT_NTUPLE} ${IS_DRAW} ${IS_EVENTDISPLAY} ${BEGIN_ENTRY} ${LIMIT_ENTRY}"

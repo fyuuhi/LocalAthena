@@ -38,7 +38,7 @@ double Res(double param1, double param2);
 bool GRLlist(int LumiBlock);
 
 //==================================================================
-//main function (argv[1]: PDF_LABEL, argv[2]: INPUT_NTUPLE, argv[3]: IS_DRAW, arg[4]: IS_EVENTDISPLAY)
+//main function (argv[1]: PDF_LABEL, argv[2]: INPUT_NTUPLE, argv[3]: IS_DRAW, arg[4]: IS_EVENTDISPLAY, arg[5]: BEGIN_ENTRY, arg[6]: LIMIT_ENTRY)
 //==================================================================
 int main(int argc, char *argv[]){
   rootlogon();
@@ -81,12 +81,12 @@ int main(int argc, char *argv[]){
   }
   // == Core End ==
 
+
+  // Output root file
   fout -> Write();
 
   t_349014.End();
   cout << "[INFO]: End SUCCESS" << endl;
-
-
 
   //delete tree1;
   //delete tree2;
