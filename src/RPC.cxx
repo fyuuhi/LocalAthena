@@ -64,7 +64,7 @@ int main(int argc, char *argv[]){
   RPC t_349014(tree1); 
 
   if (isDraw == "true"){
-    t_349014.Loop(-1, 10000);
+    t_349014.Loop(limit_entry, 10000);
     cout << "[INFO]: Loop SUCCESS" << endl;
 
     t_349014.DrawHist("../plot/DrawHist_" + PdfLabel + ".pdf");
@@ -75,6 +75,9 @@ int main(int argc, char *argv[]){
 
     t_349014.DrawEffHist("../plot/DrawEffHist_" + PdfLabel + ".pdf");
     cout << "[INFO]: DrawEffHist SUCCESS" << endl;
+
+    t_349014.DrawInEffHist("../plot/DrawInEffHist_" + PdfLabel + ".pdf");
+    cout << "[INFO]: DrawInEffHist SUCCESS" << endl;
   }
 
   if (isEventDisplay == "true"){
@@ -119,7 +122,6 @@ void RPC::Loop( int Nevents, int DisplayNumber )
         cout << "now event number -->> " << ientry << "/" << nLoop << " : " << ((double) ientry)/nLoop * 100. << "%" << endl;
       }
 
-
       //==================================================================
       //Analysis code for a entry
       //==================================================================
@@ -132,7 +134,9 @@ void RPC::Loop( int Nevents, int DisplayNumber )
       }
 
       FillProbeHist();
+      FillInEffHist(3, 0);
 
+      /*
       tag_proc = NTagProc;
       switch (tag_proc) {
         case 1: //Jpsi until L2
@@ -225,6 +229,7 @@ void RPC::Loop( int Nevents, int DisplayNumber )
           //}
           break;
       }
+   */
 
    } // end of each entry
 
@@ -433,12 +438,288 @@ double Res(double param1, double param2){
 //
 //}
 
-void RPC::FillInEffHist(){
+void RPC::FillInEffHist(int tap_type, int NTrigChain ){
+    const double ZERO_LIMIT = 1e-5;
+
+  // Check TAP
+  if (tag_proc != tap_type){ return;}
+  if (!(probe_mesEFTAG_pass -> at(NTrigChain) > -1 && ( sumReqdRL1<tp_extdR && 0.2<tp_extdR ) && ( sumReqdREF<tp_dR ))){
+    return;
+  }
+
+  bool isBarrel = (abs(probe_eta) < 1.05);
+
+  // Check L1 pass and SA not pass
+  if (probe_mesL1_pass -> at(NTrigChain) <= -1) {return;}
+  //if (probe_mesSA_pass -> at(NTrigChain) > 0) {return;}
+
+
+  // pT
+  if(isBarrel) {
+    if (probe_mesSA_pass -> at(NTrigChain) > 0) { // pass
+      h_InEff_pt -> Fill(probe_pt/1000., 1.);
+    } else { // not pass
+      if(abs(probe_mesSA_pt -> at(NTrigChain)) > ZERO_LIMIT){ // pT was calculated
+        h_InEff_pt -> Fill(probe_pt/1000., -1.);
+      } else { // p was not calculated
+        h_InEff_pt -> Fill(probe_pt/1000., -2.);
+      }
+    }
+  }
+
+  // eta and qeta
+  if (probe_pt/1000. > 4. &&  probe_pt/1000. < 6.){
+    if (probe_mesSA_pass -> at(NTrigChain) > 0) { // pass
+      h_InEff_eta -> Fill(probe_eta, 1.);
+      h_InEff_qeta -> Fill(probe_eta*probe_charge, 1.);
+    } else { // not pass
+      if(abs(probe_mesSA_pt -> at(NTrigChain)) > ZERO_LIMIT){ // pT was calculated
+        h_InEff_eta -> Fill(probe_eta, -1.);
+        h_InEff_qeta -> Fill(probe_eta*probe_charge, -1.);
+      } else { // pT was not calculated
+        h_InEff_eta -> Fill(probe_eta, -2.);
+        h_InEff_qeta -> Fill(probe_eta*probe_charge, -2.);
+      }
+    }
+  }
+
+
+  // Plateau cut
+  //if (probe_pt/1000. > 8.0) {
+  //  if(isBarrel) h_probe_mu_mu4_SA -> Fill(AverageInteractionsPerCrossing);
+  //  h_probe_eta_mu4_SA -> Fill(probe_eta);
+  //  if(isBarrel) h_probe_phi_mu4_SA -> Fill(probe_phi);
+  //  hh_probe_etaphi_mu4_SA -> Fill(probe_eta, probe_phi);
+  //}
+
   return;
 }
 
-void RPC::DrawInEffHist(TCanvas* c1, TString pdf){
-  return;
+void RPC::DrawInEffHist(TString pdf){
+  //==================================================================
+  //Set Canvas
+  //==================================================================
+  TCanvas *c1 = new TCanvas("c1", "c1", 10, 10, 1020, 700);
+  c1->SetGrid();
+  c1->SetRightMargin(0.20);
+  c1->SetLeftMargin(0.23);
+  c1->SetBottomMargin(0.20);
+
+  c1 -> Print( pdf + "[", "pdf" );
+
+
+  // pT
+  h_InEff_pt->GetXaxis()->SetRangeUser(0,14);
+  h_InEff_pt->GetYaxis()->SetRangeUser(-2,2);
+  h_InEff_pt->Draw("colz");
+  c1 -> Print( pdf, "pdf" );
+
+  // eta
+  h_InEff_eta->Draw("colz");
+  h_InEff_eta->GetYaxis()->SetRangeUser(-2,2);
+  c1 -> Print( pdf, "pdf" );
+
+  // qeta
+  h_InEff_qeta->Draw("colz");
+  h_InEff_qeta->GetYaxis()->SetRangeUser(-2,2);
+  c1 -> Print( pdf, "pdf" );
+
+  // fraction of pt
+  TH1D* h_pt_all            = h_InEff_pt->ProjectionX("_all");
+  TH1D* h_pt_pass           = h_InEff_pt->ProjectionX("pass", h_InEff_pt->GetYaxis()->FindBin(0.9),  h_InEff_pt->GetYaxis()->FindBin(1.1));
+  TH1D* h_pt_notpass        = h_InEff_pt->ProjectionX("notpass", h_InEff_pt->GetYaxis()->FindBin(-2.1),  h_InEff_pt->GetYaxis()->FindBin(-0.9));
+  TH1D* h_pt_notpass_cal    = h_InEff_pt->ProjectionX("notpass_cal", h_InEff_pt->GetYaxis()->FindBin(-1.1),  h_InEff_pt->GetYaxis()->FindBin(-0.9));
+  TH1D* h_pt_notpass_notcal = h_InEff_pt->ProjectionX("notpass_notcal", h_InEff_pt->GetYaxis()->FindBin(-2.1),  h_InEff_pt->GetYaxis()->FindBin(-1.9));
+
+  h_pt_pass -> Draw();
+  c1 -> Print( pdf, "pdf" );
+
+  h_pt_notpass -> Draw();
+  c1 -> Print( pdf, "pdf" );
+
+  h_pt_notpass_cal -> Draw();
+  c1 -> Print( pdf, "pdf" );
+
+  h_pt_notpass_notcal -> Draw();
+  c1 -> Print( pdf, "pdf" );
+
+  TH1D *tmp_h_pt_pass           = (TH1D*)h_pt_pass -> Clone();
+  TH1D *tmp_h_pt_notpass        = (TH1D*)h_pt_notpass -> Clone();
+  TH1D *tmp_h_pt_notpass_cal    = (TH1D*)h_pt_notpass_cal -> Clone();
+  TH1D *tmp_h_pt_notpass_notcal = (TH1D*)h_pt_notpass_notcal -> Clone();
+
+  // divided by pass-hist and not-pass-hist
+  h_pt_pass->Divide(h_pt_all);
+  h_pt_notpass_cal->Divide(h_pt_all);
+  h_pt_notpass_notcal->Divide(h_pt_all);
+
+  THStack *hs_pt = new THStack("hs_pt",Form(";%s;Fraction",h_InEff_pt->GetXaxis()->GetTitle()));
+  h_pt_pass->SetFillColor(kGreen);
+  h_pt_notpass_cal->SetFillColor(kBlue);
+  h_pt_notpass_notcal->SetFillColor(kRed);
+  hs_pt->Add(h_pt_pass);
+  hs_pt->Add(h_pt_notpass_cal);
+  hs_pt->Add(h_pt_notpass_notcal);
+
+  gStyle->SetHistTopMargin(0);
+  hs_pt->Draw();
+  hs_pt->SetMaximum(1.1);
+  hs_pt->Draw();
+
+  TLegend *leg_pt = new TLegend(0.00,0.00,0.57,0.15);
+  leg_pt->AddEntry(h_pt_pass,"p_{T} was calculated and passed in L2MuonSA","f");
+  leg_pt->AddEntry(h_pt_notpass_cal,"p_{T} was calculated and not passed in L2MuonSA","f");
+  leg_pt->AddEntry(h_pt_notpass_notcal,"p_{T} was not calculated and not passed in L2MuonSA","f");
+  leg_pt->Draw();
+
+  c1 -> Print(pdf, "pdf" );
+
+  // divided by not-pass-hist
+  tmp_h_pt_notpass_cal->Divide(tmp_h_pt_notpass);
+  tmp_h_pt_notpass_notcal->Divide(tmp_h_pt_notpass);
+
+  THStack *tmp_hs_pt = new THStack("tmp_hs_pt",Form(";%s;Fraction",h_InEff_pt->GetXaxis()->GetTitle()));
+  tmp_h_pt_notpass_cal->SetFillColor(kBlue);
+  tmp_h_pt_notpass_notcal->SetFillColor(kRed);
+  tmp_hs_pt->Add(tmp_h_pt_notpass_cal);
+  tmp_hs_pt->Add(tmp_h_pt_notpass_notcal);
+
+  gStyle->SetHistTopMargin(0);
+  tmp_hs_pt->Draw();
+  tmp_hs_pt->SetMaximum(1.1);
+  tmp_hs_pt->Draw();
+
+  TLegend *tmp_leg_pt = new TLegend(0.00,0.00,0.57,0.15);
+  tmp_leg_pt->AddEntry(h_pt_notpass_cal,"p_{T} was calculated and not passed in L2MuonSA","f");
+  tmp_leg_pt->AddEntry(h_pt_notpass_notcal,"p_{T} was not calculated and not passed in L2MuonSA","f");
+  tmp_leg_pt->Draw();
+
+
+  c1 -> Print(pdf, "pdf" );
+  delete hs_pt;
+
+  // fraction of eta
+  TH1D* h_eta_all = h_InEff_eta->ProjectionX("_all");
+  TH1D* h_eta_pass = h_InEff_eta->ProjectionX("pass", h_InEff_eta->GetYaxis()->FindBin(0.9),  h_InEff_eta->GetYaxis()->FindBin(1.1));
+  TH1D* h_eta_notpass = h_InEff_eta->ProjectionX("notpass", h_InEff_eta->GetYaxis()->FindBin(-2.1),  h_InEff_eta->GetYaxis()->FindBin(-0.9));
+  TH1D* h_eta_notpass_cal = h_InEff_eta->ProjectionX("notpass_cal", h_InEff_eta->GetYaxis()->FindBin(-1.1),  h_InEff_eta->GetYaxis()->FindBin(-0.9));
+  TH1D* h_eta_notpass_notcal = h_InEff_eta->ProjectionX("notpass_notcal", h_InEff_eta->GetYaxis()->FindBin(-2.1),  h_InEff_eta->GetYaxis()->FindBin(-1.9));
+
+  TH1D *tmp_h_eta_pass           = (TH1D*)h_eta_pass -> Clone();
+  TH1D *tmp_h_eta_notpass        = (TH1D*)h_eta_notpass -> Clone();
+  TH1D *tmp_h_eta_notpass_cal    = (TH1D*)h_eta_notpass_cal -> Clone();
+  TH1D *tmp_h_eta_notpass_notcal = (TH1D*)h_eta_notpass_notcal -> Clone();
+
+  h_eta_pass->Divide(h_eta_all);
+  h_eta_notpass_cal->Divide(h_eta_all);
+  h_eta_notpass_notcal->Divide(h_eta_all);
+
+  THStack *hs_eta = new THStack("hs_eta",Form(";%s;Fraction",h_InEff_eta->GetXaxis()->GetTitle()));
+  h_eta_pass->SetFillColor(kGreen);
+  h_eta_notpass_cal->SetFillColor(kBlue);
+  h_eta_notpass_notcal->SetFillColor(kRed);
+  hs_eta->Add(h_eta_pass);
+  hs_eta->Add(h_eta_notpass_cal);
+  hs_eta->Add(h_eta_notpass_notcal);
+
+  gStyle->SetHistTopMargin(0);
+  hs_eta->Draw();
+  hs_eta->SetMaximum(1.1);
+  hs_eta->Draw();
+
+  leg_pt->Draw();
+
+  c1 -> Print(pdf, "pdf" );
+
+  // divided by not-pass-hist
+  tmp_h_eta_notpass_cal->Divide(tmp_h_eta_notpass);
+  tmp_h_eta_notpass_notcal->Divide(tmp_h_eta_notpass);
+
+  THStack *tmp_hs_eta = new THStack("tmp_hs_eta",Form(";%s;Fraction",h_InEff_eta->GetXaxis()->GetTitle()));
+  tmp_h_eta_notpass_cal->SetFillColor(kBlue);
+  tmp_h_eta_notpass_notcal->SetFillColor(kRed);
+  tmp_hs_eta->Add(tmp_h_eta_notpass_cal);
+  tmp_hs_eta->Add(tmp_h_eta_notpass_notcal);
+
+  gStyle->SetHistTopMargin(0);
+  tmp_hs_eta->Draw();
+  tmp_hs_eta->SetMaximum(1.1);
+  tmp_hs_eta->Draw();
+
+  tmp_leg_pt->Draw();
+
+  c1 -> Print(pdf, "pdf" );
+  delete hs_eta;
+
+
+  // fraction of qeta
+  TH1D* h_qeta_all = h_InEff_qeta->ProjectionX("_all");
+  TH1D* h_qeta_pass = h_InEff_qeta->ProjectionX("pass", h_InEff_qeta->GetYaxis()->FindBin(0.9),  h_InEff_qeta->GetYaxis()->FindBin(1.1));
+  TH1D* h_qeta_notpass = h_InEff_qeta->ProjectionX("notpass", h_InEff_qeta->GetYaxis()->FindBin(-2.1),  h_InEff_qeta->GetYaxis()->FindBin(-0.9));
+  TH1D* h_qeta_notpass_cal = h_InEff_qeta->ProjectionX("notpass_cal", h_InEff_qeta->GetYaxis()->FindBin(-1.1),  h_InEff_qeta->GetYaxis()->FindBin(-0.9));
+  TH1D* h_qeta_notpass_notcal = h_InEff_qeta->ProjectionX("notpass_notcal", h_InEff_qeta->GetYaxis()->FindBin(-2.1),  h_InEff_qeta->GetYaxis()->FindBin(-1.9));
+
+  //h_qeta_pass -> Draw();
+  //c1 -> Print( pdf, "pdf" );
+
+  //h_qeta_notpass -> Draw();
+  //c1 -> Print( pdf, "pdf" );
+  //leg_pt->Draw();
+
+  //h_qeta_notpass_cal -> Draw();
+  //c1 -> Print( pdf, "pdf" );
+
+  //h_qeta_notpass_notcal -> Draw();
+  //c1 -> Print( pdf, "pdf" );
+
+  TH1D *tmp_h_qeta_pass           = (TH1D*)h_qeta_pass -> Clone();
+  TH1D *tmp_h_qeta_notpass        = (TH1D*)h_qeta_notpass -> Clone();
+  TH1D *tmp_h_qeta_notpass_cal    = (TH1D*)h_qeta_notpass_cal -> Clone();
+  TH1D *tmp_h_qeta_notpass_notcal = (TH1D*)h_qeta_notpass_notcal -> Clone();
+
+  h_qeta_pass->Divide(h_qeta_all);
+  h_qeta_notpass_cal->Divide(h_qeta_all);
+  h_qeta_notpass_notcal->Divide(h_qeta_all);
+
+  THStack *hs_qeta = new THStack("hs_qeta",Form(";%s;Fraction",h_InEff_qeta->GetXaxis()->GetTitle()));
+  h_qeta_pass->SetFillColor(kGreen);
+  h_qeta_notpass_cal->SetFillColor(kBlue);
+  h_qeta_notpass_notcal->SetFillColor(kRed);
+  hs_qeta->Add(h_qeta_pass);
+  hs_qeta->Add(h_qeta_notpass_cal);
+  hs_qeta->Add(h_qeta_notpass_notcal);
+
+  gStyle->SetHistTopMargin(0);
+  hs_qeta->Draw();
+  hs_qeta->SetMaximum(1.1);
+  hs_qeta->Draw();
+
+  leg_pt->Draw();
+
+  c1 -> Print(pdf, "pdf" );
+
+  // divided by not-pass-hist
+  tmp_h_qeta_notpass_cal->Divide(tmp_h_qeta_notpass);
+  tmp_h_qeta_notpass_notcal->Divide(tmp_h_qeta_notpass);
+
+  THStack *tmp_hs_qeta = new THStack("tmp_hs_qeta",Form(";%s;Fraction",h_InEff_qeta->GetXaxis()->GetTitle()));
+  tmp_h_qeta_notpass_cal->SetFillColor(kBlue);
+  tmp_h_qeta_notpass_notcal->SetFillColor(kRed);
+  tmp_hs_qeta->Add(tmp_h_qeta_notpass_cal);
+  tmp_hs_qeta->Add(tmp_h_qeta_notpass_notcal);
+
+  gStyle->SetHistTopMargin(0);
+  tmp_hs_qeta->Draw();
+  tmp_hs_qeta->SetMaximum(1.1);
+  tmp_hs_qeta->Draw();
+
+  tmp_leg_pt->Draw();
+
+  c1 -> Print(pdf, "pdf" );
+  delete hs_qeta;
+
+  delete leg_pt;
+  c1 -> Print( pdf + "]", "pdf" );
 }
 
 void RPC::DrawFractionOfnSPs(TH2F* h_NumberOfSP, TCanvas* c1, TString pdf){
@@ -590,6 +871,8 @@ void RPC::Display(int tap_type, int trig_chain, Long64_t begin_entry, Long64_t l
 
   c2->Print(pdf, "pdf");
 
+  const double ZERO_LIMIT = 1e-5;
+
   if (limit_entry == -1) {
     begin_entry = 0;
     limit_entry = fChain -> GetEntries();
@@ -631,18 +914,39 @@ void RPC::Display(int tap_type, int trig_chain, Long64_t begin_entry, Long64_t l
     }
 
     // Check sAddress to avoid Special sector
-    if (probe_mesSA_sAddress -> at(NTrigChain) == 2 || probe_mesSA_sAddress -> at(NTrigChain) == 3 || probe_mesSA_sAddress -> at(NTrigChain) == -1){
+    //if (probe_mesSA_sAddress -> at(NTrigChain) == 2 || probe_mesSA_sAddress -> at(NTrigChain) == 3 || probe_mesSA_sAddress -> at(NTrigChain) == -1){
+    //  continue;
+    //}
+
+    //if ( EventNumber != 162940171){
+    //  continue;
+    //}
+
+    //offline pT cut
+    if ( !((probe_pt/1000. > 4.0) && (probe_pt/1000. < 6.0)) ){
       continue;
     }
 
-    if ( probe_pt/1000. < 4.0 ){
-      continue;
-    }
+    // L2MuonSA pT cut
+    //if ( abs(probe_mesSA_pt->at(NTrigChain)) > ZERO_LIMIT ){
+    //  continue;
+    //}
 
     // Check Barrel
-    if (abs(probe_eta) > 1.05){
+    //if (abs(probe_eta) > 1.05){
+    //  continue;
+    //}
+
+    //if (!(abs(probe_mesSA_superPointR_BM -> at(NTrigChain)) > 0. && probe_mesSA_superPointR_EI -> at(NTrigChain) > 0.)){
+    // continue;
+    //}
+
+    double qeta = probe_eta*probe_charge;
+    if ( !(qeta > -1.3 && qeta < -0.9)){
       continue;
     }
+
+
     // Check NumberOfSP
     //if (NumberOfSP() != 3){
     //  continue;
@@ -665,7 +969,8 @@ void RPC::Display(int tap_type, int trig_chain, Long64_t begin_entry, Long64_t l
     double SmallSpecialR[3] = {4.55, 7.95, 10.45};
     double deltaR = 0.3;
     double deltaZ = 0.3;
-    const double ZERO_LIMIT = 1e-5;
+
+    cout << "EventNumber = " << EventNumber << endl;;
 
     cout << "NumberOfSP(): " << NumberOfSP(NTrigChain) << endl;
 
@@ -691,11 +996,15 @@ void RPC::Display(int tap_type, int trig_chain, Long64_t begin_entry, Long64_t l
 
     //Offline segment for all station
     const Int_t nOffSeg = probe_segment_n;
-    TGraph gr_segment = TGraph(probe_segment_n);
+    TGraph gr_segment = TGraph(0);
+    TGraph gr_segment_EI = TGraph(0);
     for ( int i = 0; i < nOffSeg; i++){
       double R = TMath::Sqrt(probe_segment_x[i]*probe_segment_x[i] + probe_segment_y[i]*probe_segment_y[i]) / 1000.;
       double Z = probe_segment_z[i] / 1000.;
       gr_segment.SetPoint(i, Z, R);
+      if ( probe_segment_chamberIndex[i] == 7 || probe_segment_chamberIndex[i] == 8){
+        gr_segment_EI.SetPoint(i, Z, R);
+      }
     }
 
     // RPC hits
@@ -709,6 +1018,8 @@ void RPC::Display(int tap_type, int trig_chain, Long64_t begin_entry, Long64_t l
 
     // SuperPoint
     TGraph gr_SP = TGraph(NumberOfSP(NTrigChain));
+    TGraph gr_SP_EI = TGraph(NumberOfSP(NTrigChain));
+    TGraph gr_SP_BI = TGraph(NumberOfSP(NTrigChain));
     int iSP = 0;
     if (abs(probe_mesSA_superPointR_BI -> at(NTrigChain)) > 0. && probe_mesSA_superPointR_BI -> at(NTrigChain) > -99990.){
       gr_SP.SetPoint(iSP , (probe_mesSA_superPointZ_BI -> at(NTrigChain)) / 1000. , (probe_mesSA_superPointR_BI -> at(NTrigChain)) / 1000.);
@@ -749,6 +1060,14 @@ void RPC::Display(int tap_type, int trig_chain, Long64_t begin_entry, Long64_t l
     if (abs(probe_mesSA_superPointR_BME -> at(NTrigChain)) > 0. && probe_mesSA_superPointR_BME -> at(NTrigChain) > -99990.){
       gr_SP.SetPoint(iSP , (probe_mesSA_superPointZ_BME -> at(NTrigChain)) / 1000. , (probe_mesSA_superPointR_BME -> at(NTrigChain)) / 1000.);
       iSP += 1;
+    }
+    // special EI
+    if (abs(probe_mesSA_superPointR_EI -> at(NTrigChain)) > 0. && probe_mesSA_superPointR_EI -> at(NTrigChain) > -99990.){
+      gr_SP_EI.SetPoint(0 , (probe_mesSA_superPointZ_EI -> at(NTrigChain)) / 1000. , (probe_mesSA_superPointR_EI -> at(NTrigChain)) / 1000.);
+    }
+    // special BI
+    if (abs(probe_mesSA_superPointR_BI -> at(NTrigChain)) > 0. && probe_mesSA_superPointR_BI -> at(NTrigChain) > -99990.){
+      gr_SP_BI.SetPoint(0 , (probe_mesSA_superPointZ_BI -> at(NTrigChain)) / 1000. , (probe_mesSA_superPointR_BI -> at(NTrigChain)) / 1000.);
     }
 
     // MDT HITs
@@ -816,7 +1135,7 @@ void RPC::Display(int tap_type, int trig_chain, Long64_t begin_entry, Long64_t l
     cout << "DEBUG2: " << nOffSeg << ": " << nRPC << ": " << nMDT << endl;
 
     // road
-    TF1 f_road_BI = TF1("f_road_BI", "[0]*x+[1]", -200, 200);
+    TF1 f_road_BI = TF1("f_road_BI", "[0]*x+[1]", -9999, 9999);
     cout << "road: " << probe_mesSA_roadAw -> at(NTrigChain)[0] << ": " << probe_mesSA_roadBw->at(NTrigChain)[0] << endl;
     cout << "road: " << probe_mesSA_roadAw -> at(NTrigChain)[1] << ": " << probe_mesSA_roadBw->at(NTrigChain)[1] << endl;
     cout << "road: " << probe_mesSA_roadAw -> at(NTrigChain)[2] << ": " << probe_mesSA_roadBw->at(NTrigChain)[2] << endl;
@@ -827,14 +1146,14 @@ void RPC::Display(int tap_type, int trig_chain, Long64_t begin_entry, Long64_t l
     f_road_BI.SetLineWidth(2);
     f_road_BI.SetLineStyle(2);
 
-    TF1 f_road_BI_plus = TF1("f_road_BI_plus", "[0]*x+[1]", -200, 200);
+    TF1 f_road_BI_plus = TF1("f_road_BI_plus", "[0]*x+[1]", -9999, 9999);
     f_road_BI_plus.SetParameter(0,probe_mesSA_roadAw -> at(NTrigChain)[0]);
     f_road_BI_plus.SetParameter(1,( (probe_mesSA_roadBw -> at(NTrigChain)[0]/1000.) + rWidthToBw(probe_mesSA_roadAw->at(NTrigChain)[0],0.4)));
     f_road_BI_plus.SetLineColor(30);
     f_road_BI_plus.SetLineWidth(2);
     f_road_BI_plus.SetLineStyle(1);
 
-    TF1 f_road_BI_minus = TF1("f_road_BI_minus", "[0]*x+[1]", -200, 200);
+    TF1 f_road_BI_minus = TF1("f_road_BI_minus", "[0]*x+[1]", -9999, 9999);
     f_road_BI_minus.SetParameter(0,probe_mesSA_roadAw -> at(NTrigChain)[0]);
     f_road_BI_minus.SetParameter(1,( (probe_mesSA_roadBw -> at(NTrigChain)[0]/1000.) - rWidthToBw(probe_mesSA_roadAw->at(NTrigChain)[0],0.4)));
     f_road_BI_minus.SetLineColor(30);
@@ -842,7 +1161,7 @@ void RPC::Display(int tap_type, int trig_chain, Long64_t begin_entry, Long64_t l
     f_road_BI_minus.SetLineStyle(1);
 
 
-    TF1 f_road_BM = TF1("f_road_BM", "[0]*x+[1]", -200, 200);
+    TF1 f_road_BM = TF1("f_road_BM", "[0]*x+[1]", -9999, 9999);
     f_road_BM.SetTitle(";Z [m];R [m]");
     f_road_BM.SetParameter(0,probe_mesSA_roadAw -> at(NTrigChain)[1]);
     f_road_BM.SetParameter(1,probe_mesSA_roadBw -> at(NTrigChain)[1]/1000.);
@@ -850,21 +1169,21 @@ void RPC::Display(int tap_type, int trig_chain, Long64_t begin_entry, Long64_t l
     f_road_BM.SetLineWidth(2);
     f_road_BM.SetLineStyle(2);
 
-    TF1 f_road_BM_plus = TF1("f_road_BM_plus", "[0]*x+[1]", -200, 200);
+    TF1 f_road_BM_plus = TF1("f_road_BM_plus", "[0]*x+[1]", -9999, 9999);
     f_road_BM_plus.SetParameter(0,probe_mesSA_roadAw -> at(NTrigChain)[1]);
     f_road_BM_plus.SetParameter(1,( (probe_mesSA_roadBw -> at(NTrigChain)[1]/1000.) + rWidthToBw(probe_mesSA_roadAw->at(NTrigChain)[1],0.2)));
     f_road_BM_plus.SetLineColor(30);
     f_road_BM_plus.SetLineWidth(2);
     f_road_BM_plus.SetLineStyle(1);
 
-    TF1 f_road_BM_minus = TF1("f_road_BM_minus", "[0]*x+[1]", -200, 200);
+    TF1 f_road_BM_minus = TF1("f_road_BM_minus", "[0]*x+[1]", -9999, 9999);
     f_road_BM_minus.SetParameter(0,probe_mesSA_roadAw -> at(NTrigChain)[1]);
     f_road_BM_minus.SetParameter(1,( (probe_mesSA_roadBw -> at(NTrigChain)[1]/1000.) - rWidthToBw(probe_mesSA_roadAw->at(NTrigChain)[1],0.2)));
     f_road_BM_minus.SetLineColor(30);
     f_road_BM_minus.SetLineWidth(2);
     f_road_BM_minus.SetLineStyle(1);
 
-    TF1 f_road_BO = TF1("f_road_BO", "[0]*x+[1]", -200, 200);
+    TF1 f_road_BO = TF1("f_road_BO", "[0]*x+[1]", -9999, 9999);
     f_road_BO.SetTitle(";Z [m];R [m]");
     f_road_BO.SetParameter(0,probe_mesSA_roadAw -> at(NTrigChain)[2]);
     f_road_BO.SetParameter(1,probe_mesSA_roadBw -> at(NTrigChain)[2]/1000.);
@@ -872,20 +1191,41 @@ void RPC::Display(int tap_type, int trig_chain, Long64_t begin_entry, Long64_t l
     f_road_BO.SetLineWidth(2);
     f_road_BO.SetLineStyle(2);
 
-    TF1 f_road_BO_plus = TF1("f_road_BO_plus", "[0]*x+[1]", -200, 200);
+    TF1 f_road_BO_plus = TF1("f_road_BO_plus", "[0]*x+[1]", -9999, 9999);
     f_road_BO_plus.SetParameter(0,probe_mesSA_roadAw -> at(NTrigChain)[2]);
     f_road_BO_plus.SetParameter(1,( (probe_mesSA_roadBw -> at(NTrigChain)[2]/1000.) + rWidthToBw(probe_mesSA_roadAw->at(NTrigChain)[2],0.4)));
     f_road_BO_plus.SetLineColor(30);
     f_road_BO_plus.SetLineWidth(2);
     f_road_BO_plus.SetLineStyle(1);
 
-    TF1 f_road_BO_minus = TF1("f_road_BO_minus", "[0]*x+[1]", -200, 200);
+    TF1 f_road_BO_minus = TF1("f_road_BO_minus", "[0]*x+[1]", -9999, 9999);
     f_road_BO_minus.SetParameter(0,probe_mesSA_roadAw -> at(NTrigChain)[2]);
     f_road_BO_minus.SetParameter(1,( (probe_mesSA_roadBw -> at(NTrigChain)[2]/1000.) - rWidthToBw(probe_mesSA_roadAw->at(NTrigChain)[2],0.4)));
     f_road_BO_minus.SetLineColor(30);
     f_road_BO_minus.SetLineWidth(2);
     f_road_BO_minus.SetLineStyle(1);
 
+    TF1 f_road_EI = TF1("f_road_EI", "[0]*x+[1]", -9999, 9999);
+    f_road_EI.SetTitle(";Z [m];R [m]");
+    f_road_EI.SetParameter(0,probe_mesSA_roadAw -> at(NTrigChain)[3]);
+    f_road_EI.SetParameter(1,probe_mesSA_roadBw -> at(NTrigChain)[3]/1000.);
+    f_road_EI.SetLineColor(30);
+    f_road_EI.SetLineWidth(2);
+    f_road_EI.SetLineStyle(2);
+
+    TF1 f_road_EI_plus = TF1("f_road_EI_plus", "[0]*x+[1]", -9999, 9999);
+    f_road_EI_plus.SetParameter(0,probe_mesSA_roadAw -> at(NTrigChain)[3]);
+    f_road_EI_plus.SetParameter(1,( (probe_mesSA_roadBw -> at(NTrigChain)[3]/1000.) + rWidthToBw(probe_mesSA_roadAw->at(NTrigChain)[3],0.4)));
+    f_road_EI_plus.SetLineColor(30);
+    f_road_EI_plus.SetLineWidth(2);
+    f_road_EI_plus.SetLineStyle(1);
+
+    TF1 f_road_EI_minus = TF1("f_road_EI_minus", "[0]*x+[1]", -9999, 9999);
+    f_road_EI_minus.SetParameter(0,probe_mesSA_roadAw -> at(NTrigChain)[3]);
+    f_road_EI_minus.SetParameter(1,( (probe_mesSA_roadBw -> at(NTrigChain)[3]/1000.) - rWidthToBw(probe_mesSA_roadAw->at(NTrigChain)[3],0.4)));
+    f_road_EI_minus.SetLineColor(30);
+    f_road_EI_minus.SetLineWidth(2);
+    f_road_EI_minus.SetLineStyle(1);
 
     // RoI
     TF1 f_roi = TF1("f_roi", "[0]*x", -20, 20);
@@ -989,33 +1329,32 @@ void RPC::Display(int tap_type, int trig_chain, Long64_t begin_entry, Long64_t l
     double Rmin_BO = *std::min_element(vecR_BO.begin(), vecR_BO.end());
     double Rmax_BO = *std::max_element(vecR_BO.begin(), vecR_BO.end());
 
-    //cout << "Zmin_BI: " << Zmin_BI << ", Zmax_BI: " <<  Zmax_BI << ", Rmin_BI: " << Rmin_BI << ", Rmax_BI: " << Rmax_BI << endl; 
-    //cout << "Zmin_BM: " << Zmin_BM << ", Zmax_BM: " <<  Zmax_BM << ", Rmin_BM: " << Rmin_BM << ", Rmax_BM: " << Rmax_BM << endl; 
-    //cout << "Zmin_BO: " << Zmin_BO << ", Zmax_BO: " <<  Zmax_BO << ", Rmin_BO: " << Rmin_BO << ", Rmax_BO: " << Rmax_BO << endl; 
+    cout << "Zmin: " << Zmin << ", Zmax: " <<  Zmax << ", Rmin: " << Rmin << ", Rmax: " << Rmax << endl; 
+    cout << "Zmin_BI: " << Zmin_BI << ", Zmax_BI: " <<  Zmax_BI << ", Rmin_BI: " << Rmin_BI << ", Rmax_BI: " << Rmax_BI << endl; 
+    cout << "Zmin_BM: " << Zmin_BM << ", Zmax_BM: " <<  Zmax_BM << ", Rmin_BM: " << Rmin_BM << ", Rmax_BM: " << Rmax_BM << endl; 
+    cout << "Zmin_BO: " << Zmin_BO << ", Zmax_BO: " <<  Zmax_BO << ", Rmin_BO: " << Rmin_BO << ", Rmax_BO: " << Rmax_BO << endl; 
 
-    Zmin -= (Zmin >= ZERO_LIMIT) ? abs(Zmin / 20.) : deltaZ;
-    Zmax += (Zmax >= ZERO_LIMIT) ? abs(Zmax / 20.) : deltaZ;
-    Rmin -= (Rmin >= ZERO_LIMIT) ? abs(Rmin / 20.) : deltaR;
-    Rmax += (Rmax >= ZERO_LIMIT) ? abs(Rmax / 20.) : deltaR;
+    Zmin -= (abs(Zmin) >= ZERO_LIMIT) ? abs(Zmax - Zmin) / 2. : deltaZ;
+    Zmax += (abs(Zmax) >= ZERO_LIMIT) ? abs(Zmax - Zmin) / 2. : deltaZ;
+    Rmin -= (abs(Rmin) >= ZERO_LIMIT) ? abs(Rmax - Rmin) / 2. : deltaR;
+    Rmax += (abs(Rmax) >= ZERO_LIMIT) ? abs(Rmax - Rmin) / 2. : deltaR;
 
-    Zmin_BI -= (Zmin_BI >= ZERO_LIMIT) ? abs(Zmin_BI / 20.) : deltaZ;
-    Zmax_BI += (Zmax_BI >= ZERO_LIMIT) ? abs(Zmax_BI / 20.) : deltaZ;
-    Rmin_BI -= (Rmin_BI >= ZERO_LIMIT) ? abs(Rmin_BI / 20.) : deltaR;
-    Rmax_BI += (Rmax_BI >= ZERO_LIMIT) ? abs(Rmax_BI / 20.) : deltaR;
+    Zmin_BI -= (abs(Zmin_BI) >= ZERO_LIMIT) ? abs(Zmax_BI - Zmin_BI) / 2. : deltaZ;
+    Zmax_BI += (abs(Zmax_BI) >= ZERO_LIMIT) ? abs(Zmax_BI - Zmin_BI) / 2. : deltaZ;
+    Rmin_BI -= (abs(Rmin_BI) >= ZERO_LIMIT) ? abs(Rmax_BI - Rmin_BI) / 2. : deltaR;
+    Rmax_BI += (abs(Rmax_BI) >= ZERO_LIMIT) ? abs(Rmax_BI - Rmin_BI) / 2. : deltaR;
 
-    Zmin_BM -= (Zmin_BM >= ZERO_LIMIT) ? abs(Zmin_BM / 20.) : deltaZ;
-    Zmax_BM += (Zmax_BM >= ZERO_LIMIT) ? abs(Zmax_BM / 20.) : deltaZ;
-    Rmin_BM -= (Rmin_BM >= ZERO_LIMIT) ? abs(Rmin_BM / 20.) : deltaR;
-    Rmax_BM += (Rmax_BM >= ZERO_LIMIT) ? abs(Rmax_BM / 20.) : deltaR;
+    Zmin_BM -= (abs(Zmin_BM) >= ZERO_LIMIT) ? abs(Zmax_BM - Zmin_BM) / 2. : deltaZ;
+    Zmax_BM += (abs(Zmax_BM) >= ZERO_LIMIT) ? abs(Zmax_BM - Zmin_BM) / 2. : deltaZ;
+    Rmin_BM -= (abs(Rmin_BM) >= ZERO_LIMIT) ? abs(Rmax_BM - Rmin_BM) / 2. : deltaR;
+    Rmax_BM += (abs(Rmax_BM) >= ZERO_LIMIT) ? abs(Rmax_BM - Rmin_BM) / 2. : deltaR;
 
-    Zmin_BO -= (Zmin_BO >= ZERO_LIMIT) ? abs(Zmin_BO / 20.) : deltaZ;
-    Zmax_BO += (Zmax_BO >= ZERO_LIMIT) ? abs(Zmax_BO / 20.) : deltaZ;
-    Rmin_BO -= (Rmin_BO >= ZERO_LIMIT) ? abs(Rmin_BO / 20.) : deltaR;
-    Rmax_BO += (Rmax_BO >= ZERO_LIMIT) ? abs(Rmax_BO / 20.) : deltaR;
+    Zmin_BO -= (abs(Zmin_BO) >= ZERO_LIMIT) ? abs(Zmax_BO - Zmin_BO) / 2. : deltaZ;
+    Zmax_BO += (abs(Zmax_BO) >= ZERO_LIMIT) ? abs(Zmax_BO - Zmin_BO) / 2. : deltaZ;
+    Rmin_BO -= (abs(Rmin_BO) >= ZERO_LIMIT) ? abs(Rmax_BO - Rmin_BO) / 2. : deltaR;
+    Rmax_BO += (abs(Rmax_BO) >= ZERO_LIMIT) ? abs(Rmax_BO - Rmin_BO) / 2. : deltaR;
 
-
-
-
+    cout << "Zmin: " << Zmin << ", Zmax: " <<  Zmax << ", Rmin: " << Rmin << ", Rmax: " << Rmax << endl; 
     cout << "Zmin_BI: " << Zmin_BI << ", Zmax_BI: " <<  Zmax_BI << ", Rmin_BI: " << Rmin_BI << ", Rmax_BI: " << Rmax_BI << endl; 
     cout << "Zmin_BM: " << Zmin_BM << ", Zmax_BM: " <<  Zmax_BM << ", Rmin_BM: " << Rmin_BM << ", Rmax_BM: " << Rmax_BM << endl; 
     cout << "Zmin_BO: " << Zmin_BO << ", Zmax_BO: " <<  Zmax_BO << ", Rmin_BO: " << Rmin_BO << ", Rmax_BO: " << Rmax_BO << endl; 
@@ -1085,9 +1424,15 @@ void RPC::Display(int tap_type, int trig_chain, Long64_t begin_entry, Long64_t l
     MdtRegion_BI.Draw("f, same");
     MdtRegion_BM.Draw("f, same");
     MdtRegion_BO.Draw("f, same");
+    f_road_BI.Draw("f, same");
+    f_road_BM.Draw("f, same");
+    f_road_BO.Draw("f, same");
     gr_segment.SetMarkerStyle(21);
     gr_segment.SetMarkerSize(2);
     gr_segment.SetMarkerColor(6);
+    gr_segment_EI.SetMarkerStyle(21);
+    gr_segment_EI.SetMarkerSize(2);
+    gr_segment_EI.SetMarkerColor(kBlack);
     gr_segment.GetXaxis()->SetLimits(Zmin,Zmax);
     gr_segment.SetTitle(";Z [m];R [m]");
     gr_MdtHit_Inlier.SetMarkerStyle(24);
@@ -1113,9 +1458,19 @@ void RPC::Display(int tap_type, int trig_chain, Long64_t begin_entry, Long64_t l
     gr_RPC.SetMarkerColor(kCyan-3);
     gr_RPC.Draw("P, same");
     gr_SP.SetMarkerStyle(8);
-    gr_SP.SetMarkerSize(2);
+    gr_SP.SetMarkerSize(4);
     gr_SP.SetMarkerColor(4);
     gr_SP.Draw("P, same");
+    gr_SP_EI.SetMarkerStyle(8);
+    gr_SP_EI.SetMarkerSize(4);
+    gr_SP_EI.SetMarkerColor(kGreen+2);
+    gr_SP_EI.Draw("P, same");
+    gr_SP_BI.SetMarkerStyle(8);
+    gr_SP_BI.SetMarkerSize(4);
+    gr_SP_BI.SetMarkerColor(kRed+2);
+    gr_SP_BI.Draw("P, same");
+    gr_segment.Draw("P, same");
+    gr_segment_EI.Draw("P, same");
 
     TText eventInfo = TText(0.05,0.02,Form("EventNumber = %d, RunNumber = %d, LumiBlock = %d, AverageInteractionsPerCrossing = %5.3f",EventNumber, RunNumber, LumiBlock, AverageInteractionsPerCrossing));
     eventInfo.SetNDC();
@@ -1125,6 +1480,7 @@ void RPC::Display(int tap_type, int trig_chain, Long64_t begin_entry, Long64_t l
     c2->RedrawAxis();
     delete frame;
 
+    /*
     // Set Legend for BI
     TLegend leg_BI = TLegend(0.805,0.22,0.99,0.95);
     leg_BI.SetHeader(Form("#splitline{(2) Barrel Inner}{%s}", label_for_sector.Data()),"C");
@@ -1144,10 +1500,10 @@ void RPC::Display(int tap_type, int trig_chain, Long64_t begin_entry, Long64_t l
     f_road_BI_minus.Draw("same");
     MdtRegion_BI.Draw("f, same");
     f_roi.Draw("same");
-    gr_MdtHit_Inlier.Draw("P, same");
-    gr_MdtHit_Outlier_1.Draw("P, same");
-    gr_MdtHit_Outlier_2.Draw("P, same");
     gr_MdtHit_Outlier_3.Draw("P, same");
+    gr_MdtHit_Outlier_2.Draw("P, same");
+    gr_MdtHit_Outlier_1.Draw("P, same");
+    gr_MdtHit_Inlier.Draw("P, same");
     gr_segment.Draw("P, same");
 
     leg_BI.Draw();
@@ -1205,10 +1561,10 @@ void RPC::Display(int tap_type, int trig_chain, Long64_t begin_entry, Long64_t l
     f_road_BM_minus.Draw("same");
     MdtRegion_BM.Draw("f, same");
     f_roi.Draw("same");
-    gr_MdtHit_Inlier.Draw("P, same");
-    gr_MdtHit_Outlier_1.Draw("P,same");
-    gr_MdtHit_Outlier_2.Draw("P,same");
     gr_MdtHit_Outlier_3.Draw("P,same");
+    gr_MdtHit_Outlier_2.Draw("P,same");
+    gr_MdtHit_Outlier_1.Draw("P,same");
+    gr_MdtHit_Inlier.Draw("P, same");
     gr_segment.Draw("P, same");
 
     leg_BM.Draw();
@@ -1250,7 +1606,7 @@ void RPC::Display(int tap_type, int trig_chain, Long64_t begin_entry, Long64_t l
 
     // Set Legend for BO
     TLegend leg_BO = TLegend(0.81,0.22,0.99,0.95);
-    leg_BO.SetHeader(Form("#splitline{(4) Barrel Outter}{%s}", label_for_sector.Data()),"C");
+    leg_BO.SetHeader(Form("#splitline{(4) Barrel Outer}{%s}", label_for_sector.Data()),"C");
     leg_BO.SetTextSize(0.035);
     leg_BO.AddEntry(&gr_segment,"#splitline{Offline}{segment}","p");
     leg_BO.AddEntry(&gr_SP,Form("#splitline{SuperPoint}{(%4.3f, %4.3f)}",(probe_mesSA_superPointZ_BO -> at(NTrigChain))/1000., (probe_mesSA_superPointR_BO -> at(NTrigChain))/1000.),      "p");
@@ -1268,10 +1624,10 @@ void RPC::Display(int tap_type, int trig_chain, Long64_t begin_entry, Long64_t l
     f_road_BO_minus.Draw("same");
     MdtRegion_BO.Draw("f, same");
     f_roi.Draw("same");
-    gr_MdtHit_Inlier.Draw("P, same");
-    gr_MdtHit_Outlier_1.Draw("P,same");
-    gr_MdtHit_Outlier_2.Draw("P,same");
     gr_MdtHit_Outlier_3.Draw("P,same");
+    gr_MdtHit_Outlier_2.Draw("P,same");
+    gr_MdtHit_Outlier_1.Draw("P,same");
+    gr_MdtHit_Inlier.Draw("P, same");
     gr_segment.Draw("P, same");
 
     leg_BO.Draw();
@@ -1311,6 +1667,7 @@ void RPC::Display(int tap_type, int trig_chain, Long64_t begin_entry, Long64_t l
     c2->RedrawAxis();
 
     delete frame_BO;
+    */
 
     current_entry += 1;
     cout << "===" << begin_entry << ": " << current_entry << ": " << limit_entry << endl;
@@ -1828,7 +2185,7 @@ void RPC::Display(int tap_type, int trig_chain, Long64_t begin_entry, Long64_t l
 //
 //// Set Legend for BO
 //TLegend leg_BO = TLegend(0.81,0.22,0.99,0.95);
-//leg_BO.SetHeader(Form("#splitline{(4) Barrel Outter}{%s}", label_for_sector.Data()),"C");
+//leg_BO.SetHeader(Form("#splitline{(4) Barrel Outer}{%s}", label_for_sector.Data()),"C");
 //leg_BO.SetTextSize(0.035);
 //leg_BO.AddEntry(&gr_segment,"#splitline{Offline}{segment}","p");
 //leg_BO.AddEntry(&gr_MdtHit_Inlier_BO,  Form("#splitline{Inlier}{MDT hit (%d)}",nBO_Inlier),  "p");
@@ -2056,20 +2413,32 @@ void RPC::DrawFractionOfnMDTs(TH2F* h_NumberOfMdt, TCanvas* c1, TString pdf){
 
 
 void RPC::FillProbeHist(){
-  bool isBarrel = (abs(probe_eta) < 1.05);
-  //if (abs(probe_eta) > 1.05){ return;}
+
+  double qeta = probe_eta*probe_charge;
+  bool isBarrel = true;
+  //bool isQetaCut = ((qeta > -0.4) && (qeta < -0.0));
+  //bool isBarrel = (abs(probe_eta) < 1.05) && (isQetaCut);
+  //bool isBarrel = (abs(probe_eta) < 1.05);
+
+
+  // mu cut
+  //if (AverageInteractionsPerCrossing < 30){return;}
+
   switch (tag_proc) {
     case 1: //Jpsi until L2
       // Check TAP
       if (!(probe_mesEFTAG_pass -> at(N4) > -1 && ( sumReqdRL1<tp_extdR && 0.2<tp_extdR ) && ( sumReqdREF<tp_dR ))){
         return;
       }
+
+      // offline distribution
+      if(isBarrel) h_probe_pt_mu4_PROBE -> Fill(probe_pt/1000.);
       // Fill L1 probe hists
       if (probe_mesL1_pass -> at(N4) > -1){
         if(isBarrel) h_probe_pt_mu4_L1 -> Fill(probe_pt/1000.);
         hh_probe_qetapt_mu4_L1 -> Fill(probe_charge*probe_eta, probe_pt/1000.);
         // Plateau cut
-        if (probe_pt/1000. > 8.0) {
+        if (probe_pt/1000. > 3.38) {
           if(isBarrel) h_probe_mu_mu4_L1 -> Fill(AverageInteractionsPerCrossing);
           h_probe_eta_mu4_L1 -> Fill(probe_eta);
           if(isBarrel) h_probe_phi_mu4_L1 -> Fill(probe_phi);
@@ -2081,12 +2450,20 @@ void RPC::FillProbeHist(){
         if(isBarrel) h_probe_pt_mu4_SA -> Fill(probe_pt/1000.);
         hh_probe_qetapt_mu4_SA -> Fill(probe_charge*probe_eta, probe_pt/1000.);
         // Plateau cut
-        if (probe_pt/1000. > 8.0) {
+        if (probe_pt/1000. > 3.38) {
           if(isBarrel) h_probe_mu_mu4_SA -> Fill(AverageInteractionsPerCrossing);
           h_probe_eta_mu4_SA -> Fill(probe_eta);
           if(isBarrel) h_probe_phi_mu4_SA -> Fill(probe_phi);
           hh_probe_etaphi_mu4_SA -> Fill(probe_eta, probe_phi);
         }
+      }
+      // Fill CB probe hists
+      if (probe_mesL1_pass -> at(N4) > -1 && probe_mesSA_pass -> at(N4) > -1 && probe_mesCB_pass -> at(N4) > -1){
+        if(isBarrel) h_probe_pt_mu4_CB -> Fill(probe_pt/1000.);
+      }
+      // Fill EF probe hists
+      if (probe_mesL1_pass -> at(N4) > -1 && probe_mesSA_pass -> at(N4) > -1 && probe_mesCB_pass -> at(N4) > -1 && probe_mesEF_pass -> at(N4) > -1){
+        if(isBarrel) h_probe_pt_mu4_EF -> Fill(probe_pt/1000.);
       }
 
       break;
@@ -2094,6 +2471,7 @@ void RPC::FillProbeHist(){
       break;
     case 3: //Z
       // Check TAP
+      
       if (!(probe_mesEFTAG_pass -> at(N50) > -1 && ( sumReqdRL1<tp_extdR && 0.2<tp_extdR ) && ( sumReqdREF<tp_dR ))){
         return;
       }
@@ -2121,7 +2499,18 @@ void RPC::FillProbeHist(){
           hh_probe_etaphi_mu50_SA -> Fill(probe_eta, probe_phi);
         }
       }
+      cout << probe_mesSA_pass -> at(N50) << ", " << probe_mesCB_pass -> at(N50) << endl;
 
+      // Fill CB probe hists
+      if (probe_mesL1_pass -> at(N50) > -1 && probe_mesSA_pass -> at(N50) > -1 && probe_mesCB_pass -> at(N50) > -1){
+        h_probe_pt_mu50_CB -> Fill(probe_pt/1000.);
+        if (probe_pt/1000. > 8.0) {
+          if(isBarrel) h_probe_mu_mu50_CB -> Fill(AverageInteractionsPerCrossing);
+          if(isBarrel) h_probe_phi_mu50_CB -> Fill(probe_phi);
+          h_probe_eta_mu50_CB -> Fill(probe_eta);
+        }
+      }
+     
       break;
   }
   return;
@@ -2130,7 +2519,10 @@ void RPC::FillProbeHist(){
 void RPC::CalcEff(){
   // mu4
   CalcHistToHist( h_probe_mu_mu4_SA,       h_probe_mu_mu4_L1,       h_eff_mu_mu4_L1SA);
+  CalcHistToHist( h_probe_pt_mu4_L1,       h_probe_pt_mu4_PROBE,    h_eff_pt_mu4_L1);
   CalcHistToHist( h_probe_pt_mu4_SA,       h_probe_pt_mu4_L1,       h_eff_pt_mu4_L1SA);
+  CalcHistToHist( h_probe_pt_mu4_CB,       h_probe_pt_mu4_SA,       h_eff_pt_mu4_SACB);
+  CalcHistToHist( h_probe_pt_mu4_EF,       h_probe_pt_mu4_CB,       h_eff_pt_mu4_CBEF);
   CalcHistToHist( h_probe_eta_mu4_SA,      h_probe_eta_mu4_L1,      h_eff_eta_mu4_L1SA);
   CalcHistToHist( h_probe_phi_mu4_SA,      h_probe_phi_mu4_L1,      h_eff_phi_mu4_L1SA);
   CalcHistToHist( hh_probe_qetapt_mu4_SA,  hh_probe_qetapt_mu4_L1,  hh_eff_qetapt_mu4_L1SA);
@@ -2141,6 +2533,10 @@ void RPC::CalcEff(){
   CalcHistToHist( h_probe_pt_mu50_SA,      h_probe_pt_mu50_L1,      h_eff_pt_mu50_L1SA);
   CalcHistToHist( h_probe_eta_mu50_SA,     h_probe_eta_mu50_L1,     h_eff_eta_mu50_L1SA);
   CalcHistToHist( h_probe_phi_mu50_SA,     h_probe_phi_mu50_L1,     h_eff_phi_mu50_L1SA);
+  CalcHistToHist( h_probe_mu_mu50_CB,      h_probe_mu_mu50_SA,      h_eff_mu_mu50_SACB);
+  CalcHistToHist( h_probe_pt_mu50_CB,      h_probe_pt_mu50_SA,      h_eff_pt_mu50_SACB);
+  CalcHistToHist( h_probe_eta_mu50_CB,     h_probe_eta_mu50_SA,     h_eff_eta_mu50_SACB);
+  CalcHistToHist( h_probe_phi_mu50_CB,     h_probe_phi_mu50_SA,     h_eff_phi_mu50_SACB);
   CalcHistToHist( hh_probe_qetapt_mu50_SA, hh_probe_qetapt_mu50_L1, hh_eff_qetapt_mu50_L1SA);
   CalcHistToHist( hh_probe_etaphi_mu50_SA, hh_probe_etaphi_mu50_L1, hh_eff_etaphi_mu50_L1SA);
 }
@@ -2181,6 +2577,9 @@ void RPC::DrawEffHist(TString pdf){
   hh_eff_qetapt_mu4_L1SA->GetZaxis()->SetRangeUser(0,1.0);
   c1 -> Print( pdf, "pdf" );
 
+  h_eff_pt_mu4_SACB->Draw();
+  h_eff_pt_mu4_SACB->GetYaxis()->SetRangeUser(0,1.1);
+  c1 -> Print( pdf, "pdf" );
 
   h_eff_mu_mu50_L1SA->Draw();
   h_eff_mu_mu50_L1SA->GetYaxis()->SetRangeUser(0,1.1);
@@ -2197,6 +2596,23 @@ void RPC::DrawEffHist(TString pdf){
   h_eff_phi_mu50_L1SA->Draw();
   h_eff_phi_mu50_L1SA->GetYaxis()->SetRangeUser(0,1.1);
   c1 -> Print( pdf, "pdf" );
+
+  h_eff_mu_mu50_SACB->Draw();
+  h_eff_mu_mu50_SACB->GetYaxis()->SetRangeUser(0,1.1);
+  c1 -> Print( pdf, "pdf" );
+
+  h_eff_pt_mu50_SACB->Draw();
+  h_eff_pt_mu50_SACB->GetYaxis()->SetRangeUser(0,1.1);
+  c1 -> Print( pdf, "pdf" );
+
+  h_eff_eta_mu50_SACB->Draw();
+  h_eff_eta_mu50_SACB->GetYaxis()->SetRangeUser(0,1.1);
+  c1 -> Print( pdf, "pdf" );
+
+  h_eff_phi_mu50_SACB->Draw();
+  h_eff_phi_mu50_SACB->GetYaxis()->SetRangeUser(0,1.1);
+  c1 -> Print( pdf, "pdf" );
+
 
   hh_eff_etaphi_mu50_L1SA->Draw("colz");
   hh_eff_etaphi_mu50_L1SA->GetZaxis()->SetRangeUser(0,1.0);
@@ -2292,7 +2708,7 @@ void RPC::FillPtResidualHist(){ // Only eta region cut here
   if ( ((probe_mesSA_pt -> at(N50)) == 0) && ((probe_mesSA_pt -> at(N50)) > -9999) ){ return;}
 
   double pTresidual = calc_pTresidual(probe_pt/1000., abs(probe_mesSA_pt -> at(N50)));
-  cout << probe_mesSA_pass -> at(N50) << ": " << probe_pt/1000. << ": " << abs(probe_mesSA_pt->at(N50)) << ": "  << pTresidual << endl;
+  //cout << probe_mesSA_pass -> at(N50) << ": " << probe_pt/1000. << ": " << abs(probe_mesSA_pt->at(N50)) << ": "  << pTresidual << endl;
 
 
   if (abs(probe_eta) < 1.05){

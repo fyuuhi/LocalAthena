@@ -54,20 +54,93 @@
 #PDF_LABEL="yfukuhara_Jpsimumu_noRpcHitCommentOut"
 #INPUT_NTUPLE="/gpfs/home/yfukuhar/work/CalcEffTool/run/hadd_yfukuhar_Jpsimumu_AOD_noRpcCommentOut.root"
 
-PDF_LABEL="youhei_Jpsimumu_default_IsOutlier_notPass"
-INPUT_NTUPLE="/gpfs/home/yfukuhar/work/CalcEffTool/run/hadd_youhei_Jpsi_default.root"
+#PDF_LABEL="youhei_Jpsimumu_default_mu4_qeta_cut"
+#INPUT_NTUPLE="/gpfs/home/yfukuhar/work/CalcEffTool/run/hadd_youhei_Jpsi_default.root"
 
 #PDF_LABEL="youhei_Jpsimumu_Width400_mu6"
 #INPUT_NTUPLE="/gpfs/home/yfukuhar/work/CalcEffTool/run/hadd_youhei_Jpsi_Width400.root"
 
-IS_DRAW="false"
-#IS_DRAW="true"
-IS_EVENTDISPLAY="true"
+#PDF_LABEL="data18_0621_test_copy"
+#INPUT_NTUPLE="/gpfs/fs2001/yfukuhar/data/data18_0621/data18_0621.root"
+
+#PDF_LABEL="data18_EB_noRpcHitRoiSvcWide"
+#INPUT_NTUPLE="/gpfs/fs2001/yfukuhar/data/ynoguchi_Data18_Ntuple/user.yfukuhar.data18_13TeV.00349335.EnhancedBiasnoRpcHitRoiSvcWide.test.f937_201808061654_EXT0_v7NoTag_EXT0/hadd.root"
+
+#PDF_LABEL="data18_EB_default"
+#INPUT_NTUPLE="/gpfs/fs2001/yfukuhar/data/ynoguchi_Data18_Ntuple/user.yfukuhar.data18_13TeV.00349335.EnhancedBiasdefault.f937_201808052233_EXT0_v1NoTag_EXT0/hadd.root"
+
+#PDF_LABEL="data18_EB_noRpcHitRoiSvc"
+#INPUT_NTUPLE="/gpfs/fs2001/yfukuhar/data/ynoguchi_Data18_Ntuple/user.yfukuhar.data18_13TeV.00349335.EnhancedBiasnoRpcHitRoiSvc.f937_201808052235_EXT0_v1NoTag_EXT0/hadd.root"
+
+#PDF_LABEL="youhei_Jpsi_FixAwInf1k_pass"
+#INPUT_NTUPLE="/gpfs/home/yfukuhar/work/CalcEffTool/run/hadd_youhei_Jpsi_FixAwInf1k.root"
+
+#PDF_LABEL="youhei_Jpsi_Aw05pi1k"
+#INPUT_NTUPLE="/gpfs/home/yfukuhar/work/CalcEffTool/run/hadd_youhei_Jpsi_Aw05pi1k.root"
+
+#PDF_LABEL="youhei_Jpsi_MdtRegion"
+#INPUT_NTUPLE="/gpfs/home/yfukuhar/work/CalcEffTool/run/hadd_youhei_Jpsi_MdtRegion.root"
+
+#PDF_LABEL="youhei_Jpsi_SimpleAw1k_qeta"
+#INPUT_NTUPLE="/gpfs/home/yfukuhar/work/CalcEffTool/run/hadd_youhei_Jpsi_SimpleAw1k.root"
+
+#PDF_LABEL="youhei_Jpsi_default1k_qeta"
+#INPUT_NTUPLE="/gpfs/home/yfukuhar/work/CalcEffTool/run/hadd_youhei_Jpsi_default1k.root"
+
+#PDF_LABEL="youhei_Jpsi_AwAtan21k_qeta"
+#INPUT_NTUPLE="/gpfs/home/yfukuhar/work/CalcEffTool/run/hadd_youhei_Jpsi_AwAtan21k.root"
+
+#PDF_LABEL="youhei_Zmumu_AwAtan2"
+#INPUT_NTUPLE="/gpfs/home/yfukuhar/work/TestCalcEffTool/CalcEffTool/run/hadd_youhei_Zmumu_AwAtan2.root"
+
+#PDF_LABEL="youhei_Zmumu_SimpleAw"
+#INPUT_NTUPLE="/gpfs/home/yfukuhar/work/TestCalcEffTool/CalcEffTool/run/hadd_youhei_Zmumu_SimpleAw.root"
+
+#PDF_LABEL="data18_reprocess_r10796_r10794_Zmumu"
+#INPUT_NTUPLE="/gpfs/fs2001/yfukuhar/data/user.yfukuhar.00349335.physics_EnhancedBias.YFTAP.r10796_r10794_p3516_NoTagPathenav1_EXT0/hadd_data18_reprocess_r10796_r10794.root"
+
+#PDF_LABEL="data18_reprocess_r10795_r10792_Zmumu"
+#INPUT_NTUPLE="/gpfs/fs2001/yfukuhar/data/user.yfukuhar.00349335.physics_EnhancedBias.YFTAP.r10795_r10792_p3516_NoTagPathenav2_EXT0/hadd_data18_reprocess_r10795_r10792.root"
+
+#PDF_LABEL="data18_rate_ED"
+#INPUT_NTUPLE="/home/yfukuhar/gpfs/data/data18_rate/hadd.root"
+
+#PDF_LABEL="tsakai_sample"
+#INPUT_NTUPLE="/gpfs/fs2001/tsakai/sample2.root"
+
+#PDF_LABEL="sakai_yamashita"
+#INPUT_NTUPLE="/home/yfukuhar/work/TestCalcEffTool/CalcEffTool/run/sakai_yamashita.root"
+
+#PDF_LABEL="kayamash_sample"
+#INPUT_NTUPLE="/gpfs/fs6001/kayamash/dataset/efficiencysample2.root"
+
+#PDF_LABEL="yfukuhar_FTKtest.root"
+#INPUT_NTUPLE="/gpfs/home/yfukuhar/work/TestCalcEffTool/CalcEffTool/run/yfukuhar_FTKtest.root"
+
+PDF_LABEL="youhei_FTKtest.root"
+INPUT_NTUPLE="/gpfs/home/yfukuhar/work/TestCalcEffTool/CalcEffTool/run/youhei_FTKtest.root"
+
+#PDF_LABEL="FTK_4.root"
+#INPUT_NTUPLE="/gpfs/home/yfukuhar/work/TestCalcEffTool/CalcEffTool/run/FTK_4.root"
+
+#PDF_LABEL="FTKtest_event3.root"
+#INPUT_NTUPLE="/gpfs/home/yfukuhar/work/TestCalcEffTool/CalcEffTool/run/FTKtest_event3.root"
+
+#IS_DRAW="false"
+IS_DRAW="true"
+IS_EVENTDISPLAY="false"
+#IS_EVENTDISPLAY="true"
 BEGIN_ENTRY=1
-LIMIT_ENTRY=300
-TAP_TYPE=3
+LIMIT_ENTRY=-1
+#LIMIT_ENTRY=1000
+TAP_TYPE=1
 TRIG_CHAIN=0
 #LIMIT_ENTRY=10
+
+echo ""
+echo "PDF_LABEL: "${PDF_LABEL}
+echo "INPUT_NTUPLE: "${INPUT_NTUPLE}
+echo ""
 
 COMMAND="./RPC ${PDF_LABEL} ${INPUT_NTUPLE} ${IS_DRAW} ${IS_EVENTDISPLAY} ${BEGIN_ENTRY} ${LIMIT_ENTRY} ${TAP_TYPE} ${TRIG_CHAIN}"
 LOG="log/log_"${PDF_LABEL}
