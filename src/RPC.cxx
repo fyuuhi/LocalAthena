@@ -2425,7 +2425,7 @@ void RPC::FillProbeHist(){
   //if (AverageInteractionsPerCrossing < 30){return;}
 
   switch (tag_proc) {
-    case 1: //Jpsi until L2
+    case 3: //Jpsi until L2
       // Check TAP
       if (!(probe_mesEFTAG_pass -> at(N4) > -1 && ( sumReqdRL1<tp_extdR && 0.2<tp_extdR ) && ( sumReqdREF<tp_dR ))){
         return;
@@ -2469,7 +2469,7 @@ void RPC::FillProbeHist(){
       break;
     case 2: //Jpsi from L2:
       break;
-    case 3: //Z
+    case 1: //Z
       // Check TAP
       
       if (!(probe_mesEFTAG_pass -> at(N50) > -1 && ( sumReqdRL1<tp_extdR && 0.2<tp_extdR ) && ( sumReqdREF<tp_dR ))){
