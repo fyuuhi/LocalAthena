@@ -468,7 +468,7 @@ void RPC::FillInEffHist(int tap_type, int NTrigChain ){
   }
 
   // eta and qeta
-  if (probe_pt/1000. > 4. &&  probe_pt/1000. < 6.){
+  if (probe_pt/1000. > 4.){
     if (probe_mesSA_pass -> at(NTrigChain) > 0) { // pass
       h_InEff_eta -> Fill(probe_eta, 1.);
       h_InEff_qeta -> Fill(probe_eta*probe_charge, 1.);
@@ -477,8 +477,13 @@ void RPC::FillInEffHist(int tap_type, int NTrigChain ){
         h_InEff_eta -> Fill(probe_eta, -1.);
         h_InEff_qeta -> Fill(probe_eta*probe_charge, -1.);
       } else { // pT was not calculated
-        h_InEff_eta -> Fill(probe_eta, -2.);
-        h_InEff_qeta -> Fill(probe_eta*probe_charge, -2.);
+        if (NumberOfSP() > 1.5){
+          h_InEff_eta -> Fill(probe_eta, -2.);
+          h_InEff_qeta -> Fill(probe_eta*probe_charge, -2.);
+        } else if (NumberOfSP() < 1.5){
+          h_InEff_eta -> Fill(probe_eta, -3.);
+          h_InEff_qeta -> Fill(probe_eta*probe_charge, -3.);
+        }
       }
     }
   }
@@ -516,12 +521,12 @@ void RPC::DrawInEffHist(TString pdf){
 
   // eta
   h_InEff_eta->Draw("colz");
-  h_InEff_eta->GetYaxis()->SetRangeUser(-2,2);
+  h_InEff_eta->GetYaxis()->SetRangeUser(-4,4);
   c1 -> Print( pdf, "pdf" );
 
   // qeta
   h_InEff_qeta->Draw("colz");
-  h_InEff_qeta->GetYaxis()->SetRangeUser(-2,2);
+  h_InEff_qeta->GetYaxis()->SetRangeUser(-4,4);
   c1 -> Print( pdf, "pdf" );
 
   // fraction of pt
@@ -599,28 +604,34 @@ void RPC::DrawInEffHist(TString pdf){
   delete hs_pt;
 
   // fraction of eta
-  TH1D* h_eta_all = h_InEff_eta->ProjectionX("_all");
-  TH1D* h_eta_pass = h_InEff_eta->ProjectionX("pass", h_InEff_eta->GetYaxis()->FindBin(0.9),  h_InEff_eta->GetYaxis()->FindBin(1.1));
-  TH1D* h_eta_notpass = h_InEff_eta->ProjectionX("notpass", h_InEff_eta->GetYaxis()->FindBin(-2.1),  h_InEff_eta->GetYaxis()->FindBin(-0.9));
-  TH1D* h_eta_notpass_cal = h_InEff_eta->ProjectionX("notpass_cal", h_InEff_eta->GetYaxis()->FindBin(-1.1),  h_InEff_eta->GetYaxis()->FindBin(-0.9));
-  TH1D* h_eta_notpass_notcal = h_InEff_eta->ProjectionX("notpass_notcal", h_InEff_eta->GetYaxis()->FindBin(-2.1),  h_InEff_eta->GetYaxis()->FindBin(-1.9));
+  TH1D* h_eta_all            = h_InEff_eta->ProjectionX("_all");
+  TH1D* h_eta_pass           = h_InEff_eta->ProjectionX("pass",           h_InEff_eta->GetYaxis()->FindBin(0.9),  h_InEff_eta->GetYaxis()->FindBin(1.1));
+  TH1D* h_eta_notpass        = h_InEff_eta->ProjectionX("notpass",        h_InEff_eta->GetYaxis()->FindBin(-3.1), h_InEff_eta->GetYaxis()->FindBin(-0.9));
+  TH1D* h_eta_notpass_cal    = h_InEff_eta->ProjectionX("notpass_cal",    h_InEff_eta->GetYaxis()->FindBin(-1.1), h_InEff_eta->GetYaxis()->FindBin(-0.9));
+  TH1D* h_eta_notpass_notcal_SP2 = h_InEff_eta->ProjectionX("notpass_notcal_SP2", h_InEff_eta->GetYaxis()->FindBin(-2.1), h_InEff_eta->GetYaxis()->FindBin(-1.9));
+  TH1D* h_eta_notpass_notcal_SP1 = h_InEff_eta->ProjectionX("notpass_notcal_SP1", h_InEff_eta->GetYaxis()->FindBin(-3.1), h_InEff_eta->GetYaxis()->FindBin(-2.9));
 
   TH1D *tmp_h_eta_pass           = (TH1D*)h_eta_pass -> Clone();
   TH1D *tmp_h_eta_notpass        = (TH1D*)h_eta_notpass -> Clone();
   TH1D *tmp_h_eta_notpass_cal    = (TH1D*)h_eta_notpass_cal -> Clone();
-  TH1D *tmp_h_eta_notpass_notcal = (TH1D*)h_eta_notpass_notcal -> Clone();
+  TH1D *tmp_h_eta_notpass_notcal_SP1 = (TH1D*)h_eta_notpass_notcal_SP1 -> Clone();
+  TH1D *tmp_h_eta_notpass_notcal_SP2 = (TH1D*)h_eta_notpass_notcal_SP2 -> Clone();
 
   h_eta_pass->Divide(h_eta_all);
   h_eta_notpass_cal->Divide(h_eta_all);
-  h_eta_notpass_notcal->Divide(h_eta_all);
+  h_eta_notpass_notcal_SP1->Divide(h_eta_all);
+  h_eta_notpass_notcal_SP2->Divide(h_eta_all);
 
   THStack *hs_eta = new THStack("hs_eta",Form(";%s;Fraction",h_InEff_eta->GetXaxis()->GetTitle()));
   h_eta_pass->SetFillColor(kGreen);
+  h_eta_pass->SetFillStyle(3244);
   h_eta_notpass_cal->SetFillColor(kBlue);
-  h_eta_notpass_notcal->SetFillColor(kRed);
+  h_eta_notpass_notcal_SP1->SetFillColor(kRed);
+  h_eta_notpass_notcal_SP2->SetFillColor(kGreen+2);
   hs_eta->Add(h_eta_pass);
   hs_eta->Add(h_eta_notpass_cal);
-  hs_eta->Add(h_eta_notpass_notcal);
+  hs_eta->Add(h_eta_notpass_notcal_SP1);
+  hs_eta->Add(h_eta_notpass_notcal_SP2);
 
   gStyle->SetHistTopMargin(0);
   hs_eta->Draw();
@@ -629,29 +640,123 @@ void RPC::DrawInEffHist(TString pdf){
 
   leg_pt->Draw();
 
+  TLegend *leg_eta = new TLegend(0.00,0.00,0.57,0.15);
+  leg_eta->AddEntry(h_eta_pass,"Passed: pT > 0","f");
+  leg_eta->AddEntry(h_eta_notpass_cal,"Not Passed: pT > 0","f");
+  leg_eta->AddEntry(h_eta_notpass_notcal_SP1,"Not Passed: pT = 0, nSP = 0 or 1","f");
+  leg_eta->AddEntry(h_eta_notpass_notcal_SP2,"Not Passed: pT = 0, nSP > 1","f");
+  leg_eta->Draw();
+
   c1 -> Print(pdf, "pdf" );
 
   // divided by not-pass-hist
   tmp_h_eta_notpass_cal->Divide(tmp_h_eta_notpass);
-  tmp_h_eta_notpass_notcal->Divide(tmp_h_eta_notpass);
+  tmp_h_eta_notpass_notcal_SP1->Divide(tmp_h_eta_notpass);
+  tmp_h_eta_notpass_notcal_SP2->Divide(tmp_h_eta_notpass);
 
   THStack *tmp_hs_eta = new THStack("tmp_hs_eta",Form(";%s;Fraction",h_InEff_eta->GetXaxis()->GetTitle()));
   tmp_h_eta_notpass_cal->SetFillColor(kBlue);
-  tmp_h_eta_notpass_notcal->SetFillColor(kRed);
+  tmp_h_eta_notpass_notcal_SP1->SetFillColor(kRed);
+  tmp_h_eta_notpass_notcal_SP2->SetFillColor(kGreen+2);
   tmp_hs_eta->Add(tmp_h_eta_notpass_cal);
-  tmp_hs_eta->Add(tmp_h_eta_notpass_notcal);
+  tmp_hs_eta->Add(tmp_h_eta_notpass_notcal_SP1);
+  tmp_hs_eta->Add(tmp_h_eta_notpass_notcal_SP2);
 
   gStyle->SetHistTopMargin(0);
   tmp_hs_eta->Draw();
   tmp_hs_eta->SetMaximum(1.1);
   tmp_hs_eta->Draw();
 
-  tmp_leg_pt->Draw();
+
+  TLegend *tmp_leg_eta = new TLegend(0.00,0.00,0.57,0.15);
+  tmp_leg_eta->AddEntry(h_eta_notpass_cal,"Not Passed: pT > 0","f");
+  tmp_leg_eta->AddEntry(h_eta_notpass_notcal_SP1,"Not Passed: pT = 0, nSP = 0 or 1","f");
+  tmp_leg_eta->AddEntry(h_eta_notpass_notcal_SP2,"Not Passed: pT = 0, nSP > 1","f");
+  tmp_leg_eta->Draw();
+
+  tmp_leg_eta->Draw();
 
   c1 -> Print(pdf, "pdf" );
   delete hs_eta;
 
+  // fraction of qeta
+  TH1D* h_qeta_all            = h_InEff_qeta->ProjectionX("_all");
+  TH1D* h_qeta_pass           = h_InEff_qeta->ProjectionX("pass",           h_InEff_qeta->GetYaxis()->FindBin(0.9),  h_InEff_qeta->GetYaxis()->FindBin(1.1));
+  TH1D* h_qeta_notpass        = h_InEff_qeta->ProjectionX("notpass",        h_InEff_qeta->GetYaxis()->FindBin(-3.1), h_InEff_qeta->GetYaxis()->FindBin(-0.9));
+  TH1D* h_qeta_notpass_cal    = h_InEff_qeta->ProjectionX("notpass_cal",    h_InEff_qeta->GetYaxis()->FindBin(-1.1), h_InEff_qeta->GetYaxis()->FindBin(-0.9));
+  TH1D* h_qeta_notpass_notcal_SP2 = h_InEff_qeta->ProjectionX("notpass_notcal_SP2", h_InEff_qeta->GetYaxis()->FindBin(-2.1), h_InEff_qeta->GetYaxis()->FindBin(-1.9));
+  TH1D* h_qeta_notpass_notcal_SP1 = h_InEff_qeta->ProjectionX("notpass_notcal_SP1", h_InEff_qeta->GetYaxis()->FindBin(-3.1), h_InEff_qeta->GetYaxis()->FindBin(-2.9));
 
+  TH1D *tmp_h_qeta_pass           = (TH1D*)h_qeta_pass -> Clone();
+  TH1D *tmp_h_qeta_notpass        = (TH1D*)h_qeta_notpass -> Clone();
+  TH1D *tmp_h_qeta_notpass_cal    = (TH1D*)h_qeta_notpass_cal -> Clone();
+  TH1D *tmp_h_qeta_notpass_notcal_SP1 = (TH1D*)h_qeta_notpass_notcal_SP1 -> Clone();
+  TH1D *tmp_h_qeta_notpass_notcal_SP2 = (TH1D*)h_qeta_notpass_notcal_SP2 -> Clone();
+
+  h_qeta_pass->Divide(h_qeta_all);
+  h_qeta_notpass_cal->Divide(h_qeta_all);
+  h_qeta_notpass_notcal_SP1->Divide(h_qeta_all);
+  h_qeta_notpass_notcal_SP2->Divide(h_qeta_all);
+
+  THStack *hs_qeta = new THStack("hs_qeta",Form(";%s;Fraction",h_InEff_qeta->GetXaxis()->GetTitle()));
+  h_qeta_pass->SetFillStyle(3244);
+  h_qeta_pass->SetFillColor(kGreen);
+  h_qeta_notpass_cal->SetFillColor(kBlue);
+  h_qeta_notpass_notcal_SP1->SetFillColor(kRed);
+  h_qeta_notpass_notcal_SP2->SetFillColor(kGreen+2);
+  hs_qeta->Add(h_qeta_pass);
+  hs_qeta->Add(h_qeta_notpass_cal);
+  hs_qeta->Add(h_qeta_notpass_notcal_SP1);
+  hs_qeta->Add(h_qeta_notpass_notcal_SP2);
+
+  gStyle->SetHistTopMargin(0);
+  hs_qeta->Draw();
+  hs_qeta->SetMaximum(1.1);
+  hs_qeta->Draw();
+
+
+  TLegend *leg_qeta = new TLegend(0.00,0.00,0.57,0.15);
+  leg_qeta->AddEntry(h_qeta_pass,"Passed: pT > 0","f");
+  leg_qeta->AddEntry(h_qeta_notpass_cal,"Not Passed: pT > 0","f");
+  leg_qeta->AddEntry(h_qeta_notpass_notcal_SP1,"Not Passed: pT = 0, nSP = 0 or 1","f");
+  leg_qeta->AddEntry(h_qeta_notpass_notcal_SP2,"Not Passed: pT = 0, nSP > 1","f");
+  leg_qeta->Draw();
+
+
+  c1 -> Print(pdf, "pdf" );
+
+  // divided by not-pass-hist
+  tmp_h_qeta_notpass_cal->Divide(tmp_h_qeta_notpass);
+  tmp_h_qeta_notpass_notcal_SP1->Divide(tmp_h_qeta_notpass);
+  tmp_h_qeta_notpass_notcal_SP2->Divide(tmp_h_qeta_notpass);
+
+  THStack *tmp_hs_qeta = new THStack("tmp_hs_qeta",Form(";%s;Fraction",h_InEff_qeta->GetXaxis()->GetTitle()));
+  tmp_h_qeta_notpass_cal->SetFillColor(kBlue);
+  tmp_h_qeta_notpass_notcal_SP1->SetFillColor(kRed);
+  tmp_h_qeta_notpass_notcal_SP2->SetFillColor(kGreen+2);
+  tmp_hs_qeta->Add(tmp_h_qeta_notpass_cal);
+  tmp_hs_qeta->Add(tmp_h_qeta_notpass_notcal_SP1);
+  tmp_hs_qeta->Add(tmp_h_qeta_notpass_notcal_SP2);
+
+  gStyle->SetHistTopMargin(0);
+  tmp_hs_qeta->Draw();
+  tmp_hs_qeta->SetMaximum(1.1);
+  tmp_hs_qeta->Draw();
+
+
+  TLegend *tmp_leg_qeta = new TLegend(0.00,0.00,0.57,0.15);
+  tmp_leg_qeta->AddEntry(h_qeta_notpass_cal,"Not Passed: pT > 0","f");
+  tmp_leg_qeta->AddEntry(h_qeta_notpass_notcal_SP1,"Not Passed: pT = 0, nSP = 0 or 1","f");
+  tmp_leg_qeta->AddEntry(h_qeta_notpass_notcal_SP2,"Not Passed: pT = 0, nSP > 1","f");
+  tmp_leg_qeta->Draw();
+
+  tmp_leg_qeta->Draw();
+
+  c1 -> Print(pdf, "pdf" );
+  delete hs_qeta;
+
+
+  /*
   // fraction of qeta
   TH1D* h_qeta_all = h_InEff_qeta->ProjectionX("_all");
   TH1D* h_qeta_pass = h_InEff_qeta->ProjectionX("pass", h_InEff_qeta->GetYaxis()->FindBin(0.9),  h_InEff_qeta->GetYaxis()->FindBin(1.1));
@@ -717,6 +822,7 @@ void RPC::DrawInEffHist(TString pdf){
 
   c1 -> Print(pdf, "pdf" );
   delete hs_qeta;
+  */
 
   delete leg_pt;
   c1 -> Print( pdf + "]", "pdf" );
@@ -909,9 +1015,9 @@ void RPC::Display(int tap_type, int trig_chain, Long64_t begin_entry, Long64_t l
       continue;
     }
 
-    if ( probe_mesSA_pass -> at(NTrigChain) > 0 ) {
-      continue;
-    }
+    //if ( probe_mesSA_pass -> at(NTrigChain) > 0 ) {
+    //  continue;
+    //}
 
     // Check sAddress to avoid Special sector
     //if (probe_mesSA_sAddress -> at(NTrigChain) == 2 || probe_mesSA_sAddress -> at(NTrigChain) == 3 || probe_mesSA_sAddress -> at(NTrigChain) == -1){
@@ -923,9 +1029,9 @@ void RPC::Display(int tap_type, int trig_chain, Long64_t begin_entry, Long64_t l
     //}
 
     //offline pT cut
-    if ( !((probe_pt/1000. > 4.0) && (probe_pt/1000. < 6.0)) ){
-      continue;
-    }
+    //if ( !((probe_pt/1000. > 4.0) && (probe_pt/1000. < 6.0)) ){
+    //  continue;
+    //}
 
     // L2MuonSA pT cut
     //if ( abs(probe_mesSA_pt->at(NTrigChain)) > ZERO_LIMIT ){
@@ -941,10 +1047,10 @@ void RPC::Display(int tap_type, int trig_chain, Long64_t begin_entry, Long64_t l
     // continue;
     //}
 
-    double qeta = probe_eta*probe_charge;
-    if ( !(qeta > -1.3 && qeta < -0.9)){
-      continue;
-    }
+    //double qeta = probe_eta*probe_charge;
+    //if ( !(qeta > -1.3 && qeta < -0.9)){
+    //  continue;
+    //}
 
 
     // Check NumberOfSP
@@ -983,12 +1089,13 @@ void RPC::Display(int tap_type, int trig_chain, Long64_t begin_entry, Long64_t l
       label_for_sector = "Large Special";
     } else if (probe_mesSA_sAddress->at(NTrigChain) == 3){
       label_for_sector = "Small Special";
-    } else if (probe_mesSA_sAddress->at(NTrigChain) == 4){
+    } else if (probe_mesSA_sAddress->at(NTrigChain) == -1){
       label_for_sector = "Endcap";
     }
 
 
     cout << "Sector: " << label_for_sector << endl;
+    cout << probe_mesSA_sAddress->at(NTrigChain) << endl;
     //cout << "Rmin_BI: " << Rmin_BI << ", Rmin_BM: " << Rmin_BM << ", Rmin_BO: " << Rmin_BO << endl;
     //cout << "Rmax_BI: " << Rmax_BI << ", Rmax_BM: " << Rmax_BM << ", Rmax_BO: " << Rmax_BO << endl;
     //cout << "Zmin_BI: " << Zmin_BI << ", Zmin_BM: " << Zmin_BM << ", Zmin_BO: " << Zmin_BO << endl;
@@ -2499,7 +2606,7 @@ void RPC::FillProbeHist(){
           hh_probe_etaphi_mu50_SA -> Fill(probe_eta, probe_phi);
         }
       }
-      cout << probe_mesSA_pass -> at(N50) << ", " << probe_mesCB_pass -> at(N50) << endl;
+      //cout << probe_mesSA_pass -> at(N50) << ", " << probe_mesCB_pass -> at(N50) << endl;
 
       // Fill CB probe hists
       if (probe_mesL1_pass -> at(N50) > -1 && probe_mesSA_pass -> at(N50) > -1 && probe_mesCB_pass -> at(N50) > -1){

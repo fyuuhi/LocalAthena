@@ -42,7 +42,7 @@
 #PDF_LABEL="yfukuhara_Zmumu_defaultGridTest"
 #INPUT_NTUPLE="/home/yfukuhar/gpfs/data/yfukuhara_Zmumu_Ntuple/defaultGridTest/hadd_yfukuhar_Zmumu_AOD_defaultGridTest.root"
 
-#PDF_LABEL="yfukuhara_Jpsimumu_default"
+#PDF_LABEL="yfukuhara_Jpsi_default"
 #INPUT_NTUPLE="/gpfs/home/yfukuhar/work/CalcEffTool/run/hadd_yfukuhar_Jpsimumu_AOD_default.root"
 
 #PDF_LABEL="yfukuhara_Jpsimumu_noRpcHit"
@@ -84,11 +84,11 @@
 #PDF_LABEL="youhei_Jpsi_SimpleAw1k_qeta"
 #INPUT_NTUPLE="/gpfs/home/yfukuhar/work/CalcEffTool/run/hadd_youhei_Jpsi_SimpleAw1k.root"
 
-#PDF_LABEL="youhei_Jpsi_default1k_qeta"
+#PDF_LABEL="youhei_Jpsi_default1k"
 #INPUT_NTUPLE="/gpfs/home/yfukuhar/work/CalcEffTool/run/hadd_youhei_Jpsi_default1k.root"
 
-PDF_LABEL="youhei_Jpsi_AwAtan21k"
-INPUT_NTUPLE="/gpfs/home/yfukuhar/work/CalcEffTool/run/hadd_youhei_Jpsi_AwAtan21k.root"
+#PDF_LABEL="youhei_Jpsi_AwAtan21k"
+#INPUT_NTUPLE="/gpfs/home/yfukuhar/work/CalcEffTool/run/hadd_youhei_Jpsi_AwAtan21k.root"
 
 #PDF_LABEL="youhei_Zmumu_AwAtan2"
 #INPUT_NTUPLE="/gpfs/home/yfukuhar/work/TestCalcEffTool/CalcEffTool/run/hadd_youhei_Zmumu_AwAtan2.root"
@@ -102,7 +102,8 @@ INPUT_NTUPLE="/gpfs/home/yfukuhar/work/CalcEffTool/run/hadd_youhei_Jpsi_AwAtan21
 #PDF_LABEL="data18_reprocess_r10795_r10792_Zmumu"
 #INPUT_NTUPLE="/gpfs/fs2001/yfukuhar/data/user.yfukuhar.00349335.physics_EnhancedBias.YFTAP.r10795_r10792_p3516_NoTagPathenav2_EXT0/hadd_data18_reprocess_r10795_r10792.root"
 
-#PDF_LABEL="data18_rate_ED"
+#This root file is data18-official.
+#PDF_LABEL="data18_rate_ED_all"
 #INPUT_NTUPLE="/home/yfukuhar/gpfs/data/data18_rate/hadd.root"
 
 #PDF_LABEL="tsakai_sample"
@@ -126,13 +127,16 @@ INPUT_NTUPLE="/gpfs/home/yfukuhar/work/CalcEffTool/run/hadd_youhei_Jpsi_AwAtan21
 #PDF_LABEL="FTKtest_event3.root"
 #INPUT_NTUPLE="/gpfs/home/yfukuhar/work/TestCalcEffTool/CalcEffTool/run/FTKtest_event3.root"
 
-#IS_DRAW="false"
-IS_DRAW="true"
-IS_EVENTDISPLAY="false"
-#IS_EVENTDISPLAY="true"
+PDF_LABEL="Jpsi_youhei_debug.root"
+INPUT_NTUPLE="/home/yfukuhar/gpfs/workspace/CalcEffTool_for_mc16c/CalcEffTool/run/Jpsi_youhei_debug.root"
+
+IS_DRAW="false"
+#IS_DRAW="true"
+#IS_EVENTDISPLAY="false"
+IS_EVENTDISPLAY="true"
 BEGIN_ENTRY=1
 LIMIT_ENTRY=-1
-#LIMIT_ENTRY=1000
+#LIMIT_ENTRY=100000
 TAP_TYPE=3
 TRIG_CHAIN=0
 #LIMIT_ENTRY=10
