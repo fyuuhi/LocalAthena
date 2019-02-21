@@ -1015,9 +1015,9 @@ void RPC::Display(int tap_type, int trig_chain, Long64_t begin_entry, Long64_t l
       continue;
     }
 
-    //if ( probe_mesSA_pass -> at(NTrigChain) > 0 ) {
-    //  continue;
-    //}
+    if ( probe_mesSA_pass -> at(NTrigChain) > 0 ) {
+      continue;
+    }
 
     // Check sAddress to avoid Special sector
     //if (probe_mesSA_sAddress -> at(NTrigChain) == 2 || probe_mesSA_sAddress -> at(NTrigChain) == 3 || probe_mesSA_sAddress -> at(NTrigChain) == -1){
@@ -2522,10 +2522,14 @@ void RPC::DrawFractionOfnMDTs(TH2F* h_NumberOfMdt, TCanvas* c1, TString pdf){
 void RPC::FillProbeHist(){
 
   double qeta = probe_eta*probe_charge;
-  bool isBarrel = true;
-  //bool isQetaCut = ((qeta > -0.4) && (qeta < -0.0));
+  //bool isBarrel = true;
+  bool isQetaCut = ((qeta > -0.4) && (qeta < -0.0));
   //bool isBarrel = (abs(probe_eta) < 1.05) && (isQetaCut);
-  //bool isBarrel = (abs(probe_eta) < 1.05);
+  bool isBarrel = (abs(probe_eta) < 1.05);
+
+  if ( !(qeta > -1.3 && qeta < -0.9)){
+    return;
+  }
 
 
   // mu cut

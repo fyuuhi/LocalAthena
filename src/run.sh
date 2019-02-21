@@ -87,8 +87,8 @@
 #PDF_LABEL="youhei_Jpsi_default1k"
 #INPUT_NTUPLE="/gpfs/home/yfukuhar/work/CalcEffTool/run/hadd_youhei_Jpsi_default1k.root"
 
-#PDF_LABEL="youhei_Jpsi_AwAtan21k"
-#INPUT_NTUPLE="/gpfs/home/yfukuhar/work/CalcEffTool/run/hadd_youhei_Jpsi_AwAtan21k.root"
+PDF_LABEL="youhei_Jpsi_AwAtan21k"
+INPUT_NTUPLE="/gpfs/home/yfukuhar/work/CalcEffTool/run/hadd_youhei_Jpsi_AwAtan21k.root"
 
 #PDF_LABEL="youhei_Zmumu_AwAtan2"
 #INPUT_NTUPLE="/gpfs/home/yfukuhar/work/TestCalcEffTool/CalcEffTool/run/hadd_youhei_Zmumu_AwAtan2.root"
@@ -127,13 +127,13 @@
 #PDF_LABEL="FTKtest_event3.root"
 #INPUT_NTUPLE="/gpfs/home/yfukuhar/work/TestCalcEffTool/CalcEffTool/run/FTKtest_event3.root"
 
-PDF_LABEL="Jpsi_youhei_debug.root"
-INPUT_NTUPLE="/home/yfukuhar/gpfs/workspace/CalcEffTool_for_mc16c/CalcEffTool/run/Jpsi_youhei_debug.root"
+#PDF_LABEL="Jpsi_youhei_debug.root"
+#INPUT_NTUPLE="/home/yfukuhar/gpfs/workspace/CalcEffTool_for_mc16c/CalcEffTool/run/Jpsi_youhei_debug.root"
 
-IS_DRAW="false"
-#IS_DRAW="true"
-#IS_EVENTDISPLAY="false"
-IS_EVENTDISPLAY="true"
+#IS_DRAW="false"
+IS_DRAW="true"
+IS_EVENTDISPLAY="false"
+#IS_EVENTDISPLAY="true"
 BEGIN_ENTRY=1
 LIMIT_ENTRY=-1
 #LIMIT_ENTRY=100000
