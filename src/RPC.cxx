@@ -134,7 +134,7 @@ void RPC::Loop( int Nevents, int DisplayNumber )
       }
 
       FillProbeHist();
-      FillInEffHist(3, 0);
+      FillInEffHist(1, 0);
 
       /*
       tag_proc = NTagProc;
@@ -1015,9 +1015,9 @@ void RPC::Display(int tap_type, int trig_chain, Long64_t begin_entry, Long64_t l
       continue;
     }
 
-    if ( probe_mesSA_pass -> at(NTrigChain) > 0 ) {
-      continue;
-    }
+    //if ( probe_mesSA_pass -> at(NTrigChain) > 0 ) {
+    //  continue;
+    //}
 
     // Check sAddress to avoid Special sector
     //if (probe_mesSA_sAddress -> at(NTrigChain) == 2 || probe_mesSA_sAddress -> at(NTrigChain) == 3 || probe_mesSA_sAddress -> at(NTrigChain) == -1){
@@ -1030,6 +1030,11 @@ void RPC::Display(int tap_type, int trig_chain, Long64_t begin_entry, Long64_t l
 
     //offline pT cut
     //if ( !((probe_pt/1000. > 4.0) && (probe_pt/1000. < 6.0)) ){
+    //  continue;
+    //}
+
+    //offline pT cut
+    //if ( !((probe_pt/1000. > 10.0)) ){
     //  continue;
     //}
 
@@ -1579,7 +1584,7 @@ void RPC::Display(int tap_type, int trig_chain, Long64_t begin_entry, Long64_t l
     gr_segment.Draw("P, same");
     gr_segment_EI.Draw("P, same");
 
-    TText eventInfo = TText(0.05,0.02,Form("EventNumber = %d, RunNumber = %d, LumiBlock = %d, AverageInteractionsPerCrossing = %5.3f",EventNumber, RunNumber, LumiBlock, AverageInteractionsPerCrossing));
+    TText eventInfo = TText(0.05,0.02,Form("EventNumber = %llu, RunNumber = %d, LumiBlock = %d, AverageInteractionsPerCrossing = %5.3f",EventNumber, RunNumber, LumiBlock, AverageInteractionsPerCrossing));
     eventInfo.SetNDC();
     eventInfo.SetTextSize(0.03);
     eventInfo.Draw();
@@ -1587,7 +1592,7 @@ void RPC::Display(int tap_type, int trig_chain, Long64_t begin_entry, Long64_t l
     c2->RedrawAxis();
     delete frame;
 
-    /*
+    ///*
     // Set Legend for BI
     TLegend leg_BI = TLegend(0.805,0.22,0.99,0.95);
     leg_BI.SetHeader(Form("#splitline{(2) Barrel Inner}{%s}", label_for_sector.Data()),"C");
@@ -1774,7 +1779,7 @@ void RPC::Display(int tap_type, int trig_chain, Long64_t begin_entry, Long64_t l
     c2->RedrawAxis();
 
     delete frame_BO;
-    */
+    //*/
 
     current_entry += 1;
     cout << "===" << begin_entry << ": " << current_entry << ": " << limit_entry << endl;
@@ -2520,16 +2525,19 @@ void RPC::DrawFractionOfnMDTs(TH2F* h_NumberOfMdt, TCanvas* c1, TString pdf){
 
 
 void RPC::FillProbeHist(){
+  const double ZERO_LIMIT = 1e-5;
 
   double qeta = probe_eta*probe_charge;
   //bool isBarrel = true;
   bool isQetaCut = ((qeta > -0.4) && (qeta < -0.0));
   //bool isBarrel = (abs(probe_eta) < 1.05) && (isQetaCut);
-  bool isBarrel = (abs(probe_eta) < 1.05);
+  bool isBarrel = true;
+  //bool isBarrel = (abs(probe_eta) < 1.05);
 
-  if ( !(qeta > -1.3 && qeta < -0.9)){
-    return;
-  }
+  //if ( !(qeta > -1.3 && qeta < -0.9)){
+  //  return;
+  //}
+
 
 
   // mu cut
@@ -2555,8 +2563,11 @@ void RPC::FillProbeHist(){
           if(isBarrel) h_probe_phi_mu4_L1 -> Fill(probe_phi);
           hh_probe_etaphi_mu4_L1 -> Fill(probe_eta, probe_phi);
         }
+        // for LUT-SP check
+        //if(abs(probe_mesSA_pt->at(N4)) < ZERO_LIMIT && NumberOfSP() > 1.5) hh_probe_etaphi_mu4_SA -> Fill(probe_mesSA_eta->at(N4), probe_mesSA_phi->at(N4));
       }
       // Fill SA probe hists
+
       if (probe_mesL1_pass -> at(N4) > -1 && probe_mesSA_pass -> at(N4) > -1){
         if(isBarrel) h_probe_pt_mu4_SA -> Fill(probe_pt/1000.);
         hh_probe_qetapt_mu4_SA -> Fill(probe_charge*probe_eta, probe_pt/1000.);
@@ -2576,6 +2587,8 @@ void RPC::FillProbeHist(){
       if (probe_mesL1_pass -> at(N4) > -1 && probe_mesSA_pass -> at(N4) > -1 && probe_mesCB_pass -> at(N4) > -1 && probe_mesEF_pass -> at(N4) > -1){
         if(isBarrel) h_probe_pt_mu4_EF -> Fill(probe_pt/1000.);
       }
+
+      FillPtResidualHist();
 
       break;
     case 2: //Jpsi from L2:
@@ -2816,16 +2829,16 @@ double RPC::calc_pTresidual( double offline_pt, double trig_pt){
 }
 
 void RPC::FillPtResidualHist(){ // Only eta region cut here
-  if ( ((probe_mesSA_pt -> at(N50)) == 0) && ((probe_mesSA_pt -> at(N50)) > -9999) ){ return;}
+  if ( ((probe_mesSA_pt -> at(N4)) == 0) && ((probe_mesSA_pt -> at(N4)) > -9999) ){ return;}
 
-  double pTresidual = calc_pTresidual(probe_pt/1000., abs(probe_mesSA_pt -> at(N50)));
-  //cout << probe_mesSA_pass -> at(N50) << ": " << probe_pt/1000. << ": " << abs(probe_mesSA_pt->at(N50)) << ": "  << pTresidual << endl;
+  double pTresidual = calc_pTresidual(probe_pt/1000., abs(probe_mesSA_pt -> at(N4)));
+  //cout << probe_mesSA_pass -> at(N4) << ": " << probe_pt/1000. << ": " << abs(probe_mesSA_pt->at(N4)) << ": "  << pTresidual << endl;
 
 
-  if (abs(probe_eta) < 1.05){
-    h_PtResidual_pt -> Fill(probe_pt/1000., pTresidual);
-    h_pt_vs_pt -> Fill(probe_pt/1000., abs(probe_mesSA_pt->at(N50)));
-  }
+  //if (abs(probe_eta) < 1.05){
+  h_PtResidual_pt -> Fill(probe_pt/1000., pTresidual);
+  h_pt_vs_pt -> Fill(probe_pt/1000., abs(probe_mesSA_pt->at(N4)));
+  //}
   h_PtResidual_eta -> Fill(probe_eta, pTresidual);
 }
 

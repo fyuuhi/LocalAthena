@@ -87,8 +87,8 @@
 #PDF_LABEL="youhei_Jpsi_default1k"
 #INPUT_NTUPLE="/gpfs/home/yfukuhar/work/CalcEffTool/run/hadd_youhei_Jpsi_default1k.root"
 
-PDF_LABEL="youhei_Jpsi_AwAtan21k"
-INPUT_NTUPLE="/gpfs/home/yfukuhar/work/CalcEffTool/run/hadd_youhei_Jpsi_AwAtan21k.root"
+#PDF_LABEL="youhei_Jpsi_AwAtan21k"
+#INPUT_NTUPLE="/gpfs/home/yfukuhar/work/CalcEffTool/run/hadd_youhei_Jpsi_AwAtan21k.root"
 
 #PDF_LABEL="youhei_Zmumu_AwAtan2"
 #INPUT_NTUPLE="/gpfs/home/yfukuhar/work/TestCalcEffTool/CalcEffTool/run/hadd_youhei_Zmumu_AwAtan2.root"
@@ -103,8 +103,8 @@ INPUT_NTUPLE="/gpfs/home/yfukuhar/work/CalcEffTool/run/hadd_youhei_Jpsi_AwAtan21
 #INPUT_NTUPLE="/gpfs/fs2001/yfukuhar/data/user.yfukuhar.00349335.physics_EnhancedBias.YFTAP.r10795_r10792_p3516_NoTagPathenav2_EXT0/hadd_data18_reprocess_r10795_r10792.root"
 
 #This root file is data18-official.
-#PDF_LABEL="data18_rate_ED_all"
-#INPUT_NTUPLE="/home/yfukuhar/gpfs/data/data18_rate/hadd.root"
+PDF_LABEL="data18_rate_ED_test"
+INPUT_NTUPLE="/home/yfukuhar/gpfs/data/data18_rate/hadd.root"
 
 #PDF_LABEL="tsakai_sample"
 #INPUT_NTUPLE="/gpfs/fs2001/tsakai/sample2.root"
@@ -127,16 +127,31 @@ INPUT_NTUPLE="/gpfs/home/yfukuhar/work/CalcEffTool/run/hadd_youhei_Jpsi_AwAtan21
 #PDF_LABEL="FTKtest_event3.root"
 #INPUT_NTUPLE="/gpfs/home/yfukuhar/work/TestCalcEffTool/CalcEffTool/run/FTKtest_event3.root"
 
-#PDF_LABEL="Jpsi_youhei_debug.root"
+#PDF_LABEL="Jpsi_youhei_debug_qeta"
 #INPUT_NTUPLE="/home/yfukuhar/gpfs/workspace/CalcEffTool_for_mc16c/CalcEffTool/run/Jpsi_youhei_debug.root"
 
-#IS_DRAW="false"
-IS_DRAW="true"
-IS_EVENTDISPLAY="false"
-#IS_EVENTDISPLAY="true"
+#PDF_LABEL="Jpsi_youhei_debug_new"
+#INPUT_NTUPLE="/home/yfukuhar/gpfs/workspace/CalcEffTool_for_mc16c/CalcEffTool/run/Jpsi_youhei_debug_new.root"
+
+#PDF_LABEL="LUTexcpt"
+#INPUT_NTUPLE="/home/yfukuhar/gpfs/workspace/CalcEffTool_for_mc16c/CalcEffTool/run/LUTexcpt.root"
+
+#PDF_LABEL="default1k_qeta"
+#INPUT_NTUPLE="/home/yfukuhar/gpfs/workspace/CalcEffTool_for_mc16c/CalcEffTool/run/default1k.root"
+
+PDF_LABEL="FTK_default"
+INPUT_NTUPLE="/gpfs/fs7001/yfukuhar/workspace/TestCalcEffTool/CalcEffTool/run/Output/_gpfs_fs7001_yfukuhar_workspace_yamaguchi_21_5_default_LocalAthena_run_output1_AOD.pool.root/test0605_01.root"
+
+#PDF_LABEL="FTK_ext"
+#INPUT_NTUPLE="/gpfs/fs7001/yfukuhar/workspace/TestCalcEffTool/CalcEffTool/run/Output/_gpfs_fs7001_yfukuhar_workspace_yamaguchi_21_5_LocalAthena_run_output33_AOD.pool.root/test0605_01.root"
+
+IS_DRAW="false"
+#IS_DRAW="true"
+#IS_EVENTDISPLAY="false"
+IS_EVENTDISPLAY="true"
 BEGIN_ENTRY=1
 LIMIT_ENTRY=-1
-#LIMIT_ENTRY=100000
+#LIMIT_ENTRY=1000000
 TAP_TYPE=3
 TRIG_CHAIN=0
 #LIMIT_ENTRY=10
