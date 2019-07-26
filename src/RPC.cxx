@@ -111,162 +111,162 @@ int main(int argc, char *argv[]){
 void RPC::Loop( int Nevents, int DisplayNumber )
 {
   const double ZERO_LIMIT = 1e-5;
-   if (fChain == 0) return;
+  if (fChain == 0) return;
 
-   int nLoop;
-   if (Nevents == -1) {
-     nLoop = fChain -> GetEntries();
-   } else {
-     nLoop = Nevents;
-   }
+  int nLoop;
+  if (Nevents == -1) {
+    nLoop = fChain -> GetEntries();
+  } else {
+    nLoop = Nevents;
+  }
 
-   //Long64_t nentries = fChain->GetEntriesFast();
-   double entries = fChain->GetEntries();
-   LOGI << "Nentries:" << entries;
+  //Long64_t nentries = fChain->GetEntriesFast();
+  double entries = fChain->GetEntries();
+  LOGI << "Nentries:" << entries;
 
-   //const int N50 = 14;
+  //const int N50 = 14;
 
 
-   Long64_t nbytes = 0, nb = 0;
-   for (Long64_t jentry=0; jentry<nLoop;jentry++) {
-      int  ientry = LoadTree(jentry);
-      nb = fChain->GetEntry(jentry);   nbytes += nb;
-      if (ientry < 0) break;
-      if( ientry%DisplayNumber == 0){
-        LOGI << "now event number -->> " << ientry << "/" << nLoop << " : " << ((double) ientry)/nLoop * 100. << "%";
+  Long64_t nbytes = 0, nb = 0;
+  for (Long64_t jentry=0; jentry<nLoop;jentry++) {
+    int  ientry = LoadTree(jentry);
+    nb = fChain->GetEntry(jentry);   nbytes += nb;
+    if (ientry < 0) break;
+    if( ientry%DisplayNumber == 0){
+      LOGI << "now event number -->> " << ientry << "/" << nLoop << " : " << ((double) ientry)/nLoop * 100. << "%";
+    }
+
+    //==================================================================
+    //Analysis code for a entry
+    //==================================================================
+
+    // Check GRL
+    if (RunNumber == 349533){
+      if (GRLlist(LumiBlock)){
+        continue;
       }
+    }
 
-      //==================================================================
-      //Analysis code for a entry
-      //==================================================================
+    FillProbeHist();
+    FillInEffHist(1, 0);
 
-      // Check GRL
-      if (RunNumber == 349533){
-        if (GRLlist(LumiBlock)){
+    /*
+    tag_proc = NTagProc;
+    switch (tag_proc) {
+      case 1: //Jpsi until L2
+        // Check TAP
+        if (!(probe_mesEFTAG_pass -> at(N4) > -1 && probe_mesL1_pass -> at(N4) > 0 && ( sumReqdRL1<tp_extdR && 0.2<tp_extdR ) && ( sumReqdREF<tp_dR ))){
           continue;
         }
-      }
+        break;
+      case 2: //Jpsi from L2:
+        break;
+      case 3: //Z
 
-      FillProbeHist();
-      FillInEffHist(1, 0);
+        // Check TAP
+        if (!(probe_mesEFTAG_pass -> at(N50) > -1 && probe_mesL1_pass -> at(N50) > 0 && ( sumReqdRL1<tp_extdR && 0.2<tp_extdR ) && ( sumReqdREF<tp_dR ))){
+          continue;
+        }
+        // Set superpoint and segment for each station
+        for ( int i = 0; i < probe_segment_n; i++){
+          double R = TMath::Sqrt(probe_segment_x[i]*probe_segment_x[i] + probe_segment_y[i]*probe_segment_y[i]);
+          double Z = probe_segment_z[i];
+          if (probe_segment_chamberIndex[i] == 0 || probe_segment_chamberIndex[i] == 1) {
+            h_ResidualSegment_eta_BI -> Fill(probe_eta, calc_residual(probe_mesSA_roadAw -> at(N50)[0], probe_mesSA_roadBw -> at(N50)[0], Z, R));
+            h_ResidualSegment_eta_BI_2d -> Fill(calc_residual(probe_mesSA_roadFtkAw -> at(N50)[0], probe_mesSA_roadFtkBw -> at(N50)[0], Z, R), calc_residual(probe_mesSA_roadRpcAw -> at(N50)[0], probe_mesSA_roadRpcBw -> at(N50)[0], Z, R));
 
-      ///*
-      tag_proc = NTagProc;
-      switch (tag_proc) {
-        case 1: //Jpsi until L2
-          // Check TAP
-          if (!(probe_mesEFTAG_pass -> at(N4) > -1 && probe_mesL1_pass -> at(N4) > 0 && ( sumReqdRL1<tp_extdR && 0.2<tp_extdR ) && ( sumReqdREF<tp_dR ))){
-            continue;
-          }
-          break;
-        case 2: //Jpsi from L2:
-          break;
-        case 3: //Z
-
-          // Check TAP
-          if (!(probe_mesEFTAG_pass -> at(N50) > -1 && probe_mesL1_pass -> at(N50) > 0 && ( sumReqdRL1<tp_extdR && 0.2<tp_extdR ) && ( sumReqdREF<tp_dR ))){
-            continue;
-          }
-          // Set superpoint and segment for each station
-          for ( int i = 0; i < probe_segment_n; i++){
-            double R = TMath::Sqrt(probe_segment_x[i]*probe_segment_x[i] + probe_segment_y[i]*probe_segment_y[i]);
-            double Z = probe_segment_z[i];
-            if (probe_segment_chamberIndex[i] == 0 || probe_segment_chamberIndex[i] == 1) {
-              h_ResidualSegment_eta_BI -> Fill(probe_eta, calc_residual(probe_mesSA_roadAw -> at(N50)[0], probe_mesSA_roadBw -> at(N50)[0], Z, R));
-              h_ResidualSegment_eta_BI_2d -> Fill(calc_residual(probe_mesSA_roadFtkAw -> at(N50)[0], probe_mesSA_roadFtkBw -> at(N50)[0], Z, R), calc_residual(probe_mesSA_roadRpcAw -> at(N50)[0], probe_mesSA_roadRpcBw -> at(N50)[0], Z, R));
-
-              if (abs(probe_mesSA_roadRpcAw->at(N50)[0]) > ZERO_LIMIT && abs(probe_mesSA_roadRpcBw->at(N50)[0] > ZERO_LIMIT)){
-                h_ResidualSegment_eta_rpc_BI -> Fill(calc_residual(probe_mesSA_roadRpcAw -> at(N50)[0], probe_mesSA_roadRpcBw -> at(N50)[0], Z, R));
-              }
-
-              if (abs(probe_mesSA_roadFtkAw->at(N50)[0]) > ZERO_LIMIT && abs(probe_mesSA_roadFtkBw->at(N50)[0] > ZERO_LIMIT)){
-              h_ResidualSegment_eta_ftk_BI -> Fill(calc_residual(probe_mesSA_roadFtkAw -> at(N50)[0], probe_mesSA_roadFtkBw -> at(N50)[0], Z, R));
-              }
-              //cout << "BI: " << calc_residual(probe_mesSA_roadAw -> at(N50)[0], probe_mesSA_roadBw -> at(N50)[0], Z, R) << endl;
-            } else if(probe_segment_chamberIndex[i] == 2 || probe_segment_chamberIndex[i] == 3) {
-              h_ResidualSegment_eta_BM -> Fill(probe_eta, calc_residual(probe_mesSA_roadAw -> at(N50)[1], probe_mesSA_roadBw -> at(N50)[1], Z, R));
-              if (abs(probe_mesSA_roadRpcAw->at(N50)[1]) > ZERO_LIMIT && abs(probe_mesSA_roadRpcBw->at(N50)[1] > ZERO_LIMIT)){
-                h_ResidualSegment_eta_rpc_BM -> Fill(calc_residual(probe_mesSA_roadRpcAw -> at(N50)[1], probe_mesSA_roadRpcBw -> at(N50)[1], Z, R));
-              }
-              if (abs(probe_mesSA_roadFtkAw->at(N50)[1]) > ZERO_LIMIT && abs(probe_mesSA_roadFtkBw->at(N50)[1] > ZERO_LIMIT)){
-                h_ResidualSegment_eta_ftk_BM -> Fill(calc_residual(probe_mesSA_roadFtkAw -> at(N50)[1], probe_mesSA_roadFtkBw -> at(N50)[1], Z, R));
-              }
-              //cout <<"BM: " <<  calc_residual(probe_mesSA_roadAw -> at(N50)[0], probe_mesSA_roadBw -> at(N50)[0], Z, R) << endl;
-            } else if(probe_segment_chamberIndex[i] == 4 || probe_segment_chamberIndex[i] == 5) {
-              h_ResidualSegment_eta_BO -> Fill(probe_eta, calc_residual(probe_mesSA_roadAw -> at(N50)[2], probe_mesSA_roadBw -> at(N50)[2], Z, R));
-              if (abs(probe_mesSA_roadRpcAw->at(N50)[2]) > ZERO_LIMIT && abs(probe_mesSA_roadRpcBw->at(N50)[2] > ZERO_LIMIT)){
-                h_ResidualSegment_eta_rpc_BO -> Fill(calc_residual(probe_mesSA_roadRpcAw -> at(N50)[2], probe_mesSA_roadRpcBw -> at(N50)[2], Z, R));
-              }
-              if (abs(probe_mesSA_roadFtkAw->at(N50)[2]) > ZERO_LIMIT && abs(probe_mesSA_roadFtkBw->at(N50)[2] > ZERO_LIMIT)){
-              h_ResidualSegment_eta_ftk_BO -> Fill(calc_residual(probe_mesSA_roadFtkAw -> at(N50)[2], probe_mesSA_roadFtkBw -> at(N50)[2], Z, R));
-              }
-              //cout <<"BO: " <<  calc_residual(probe_mesSA_roadAw -> at(N50)[0], probe_mesSA_roadBw -> at(N50)[0], Z, R) << endl;
+            if (abs(probe_mesSA_roadRpcAw->at(N50)[0]) > ZERO_LIMIT && abs(probe_mesSA_roadRpcBw->at(N50)[0] > ZERO_LIMIT)){
+              h_ResidualSegment_eta_rpc_BI -> Fill(calc_residual(probe_mesSA_roadRpcAw -> at(N50)[0], probe_mesSA_roadRpcBw -> at(N50)[0], Z, R));
             }
+
+            if (abs(probe_mesSA_roadFtkAw->at(N50)[0]) > ZERO_LIMIT && abs(probe_mesSA_roadFtkBw->at(N50)[0] > ZERO_LIMIT)){
+              h_ResidualSegment_eta_ftk_BI -> Fill(calc_residual(probe_mesSA_roadFtkAw -> at(N50)[0], probe_mesSA_roadFtkBw -> at(N50)[0], Z, R));
+            }
+            //cout << "BI: " << calc_residual(probe_mesSA_roadAw -> at(N50)[0], probe_mesSA_roadBw -> at(N50)[0], Z, R) << endl;
+          } else if(probe_segment_chamberIndex[i] == 2 || probe_segment_chamberIndex[i] == 3) {
+            h_ResidualSegment_eta_BM -> Fill(probe_eta, calc_residual(probe_mesSA_roadAw -> at(N50)[1], probe_mesSA_roadBw -> at(N50)[1], Z, R));
+            if (abs(probe_mesSA_roadRpcAw->at(N50)[1]) > ZERO_LIMIT && abs(probe_mesSA_roadRpcBw->at(N50)[1] > ZERO_LIMIT)){
+              h_ResidualSegment_eta_rpc_BM -> Fill(calc_residual(probe_mesSA_roadRpcAw -> at(N50)[1], probe_mesSA_roadRpcBw -> at(N50)[1], Z, R));
+            }
+            if (abs(probe_mesSA_roadFtkAw->at(N50)[1]) > ZERO_LIMIT && abs(probe_mesSA_roadFtkBw->at(N50)[1] > ZERO_LIMIT)){
+              h_ResidualSegment_eta_ftk_BM -> Fill(calc_residual(probe_mesSA_roadFtkAw -> at(N50)[1], probe_mesSA_roadFtkBw -> at(N50)[1], Z, R));
+            }
+            //cout <<"BM: " <<  calc_residual(probe_mesSA_roadAw -> at(N50)[0], probe_mesSA_roadBw -> at(N50)[0], Z, R) << endl;
+          } else if(probe_segment_chamberIndex[i] == 4 || probe_segment_chamberIndex[i] == 5) {
+            h_ResidualSegment_eta_BO -> Fill(probe_eta, calc_residual(probe_mesSA_roadAw -> at(N50)[2], probe_mesSA_roadBw -> at(N50)[2], Z, R));
+            if (abs(probe_mesSA_roadRpcAw->at(N50)[2]) > ZERO_LIMIT && abs(probe_mesSA_roadRpcBw->at(N50)[2] > ZERO_LIMIT)){
+              h_ResidualSegment_eta_rpc_BO -> Fill(calc_residual(probe_mesSA_roadRpcAw -> at(N50)[2], probe_mesSA_roadRpcBw -> at(N50)[2], Z, R));
+            }
+            if (abs(probe_mesSA_roadFtkAw->at(N50)[2]) > ZERO_LIMIT && abs(probe_mesSA_roadFtkBw->at(N50)[2] > ZERO_LIMIT)){
+              h_ResidualSegment_eta_ftk_BO -> Fill(calc_residual(probe_mesSA_roadFtkAw -> at(N50)[2], probe_mesSA_roadFtkBw -> at(N50)[2], Z, R));
+            }
+            //cout <<"BO: " <<  calc_residual(probe_mesSA_roadAw -> at(N50)[0], probe_mesSA_roadBw -> at(N50)[0], Z, R) << endl;
           }
+        }
 
 
-          //// Check isRpcFailure
-          //if (probe_mesSA_isRpcFailure -> at(N50) == 1){
-          //  continue;
-          //}
+        //// Check isRpcFailure
+        //if (probe_mesSA_isRpcFailure -> at(N50) == 1){
+        //  continue;
+        //}
 
-          FillMdtHist();
-          FillSPHist();
-          FillPtResidualHist();
+        FillMdtHist();
+        FillSPHist();
+        //FillPtResidualHist();
 
-          //BIS
-          //if (probe_mesSA_superPointR_BI->at(N50) != 0 &&
-          //    probe_mesSA_superPointR_BI -> at(N50) / 1000. > -90 &&
-          //    probe_mesSA_sAddress -> at(N50) == 2 ) {
-          //  h_superPointRZ_BIS -> Fill( probe_mesSA_superPointZ_BI->at(N50)/1000, probe_mesSA_superPointR_BI->at(N50)/1000); 
-          //  h_segmentRZ_BIS -> Fill( probe_segmentZ_BIS, probe_segmentR_BIS); 
-          //  h_residualRZ_BIS -> Fill( Res(probe_mesSA_superPointZ_BI->at(N50)/1000,probe_segmentZ_BIS), Res(probe_mesSA_superPointR_BI->at(N50)/1000,probe_segmentR_BIS));
-          //}
-          ////BIL
-          //if (probe_mesSA_superPointR_BI->at(N50) != 0 &&
-          //    probe_mesSA_superPointR_BI -> at(N50) / 1000. > -90 &&
-          //    probe_mesSA_sAddress -> at(N50) == 0 ) {
-          //  h_superPointRZ_BIL -> Fill( probe_mesSA_superPointZ_BI->at(N50)/1000, probe_mesSA_superPointR_BI->at(N50)/1000); 
-          //  h_segmentRZ_BIL -> Fill( probe_segmentZ_BIL, probe_segmentR_BIL); 
-          //  h_residualRZ_BIL -> Fill( Res(probe_mesSA_superPointZ_BI->at(N50)/1000,probe_segmentZ_BIL), Res(probe_mesSA_superPointR_BI->at(N50)/1000,probe_segmentR_BIL));
-          //}
-          ////BMS
-          //if (probe_mesSA_superPointR_BM->at(N50) != 0 &&
-          //    probe_mesSA_superPointR_BM -> at(N50) / 1000. > -90 &&
-          //    probe_mesSA_sAddress -> at(N50) == 2 ) {
-          //  h_superPointRZ_BMS -> Fill( probe_mesSA_superPointZ_BM->at(N50)/1000, probe_mesSA_superPointR_BM->at(N50)/1000); 
-          //  h_segmentRZ_BMS -> Fill( probe_segmentZ_BMS, probe_segmentR_BMS); 
-          //  h_residualRZ_BMS -> Fill( Res(probe_mesSA_superPointZ_BM->at(N50)/1000,probe_segmentZ_BMS), Res(probe_mesSA_superPointR_BM->at(N50)/1000,probe_segmentR_BMS));
-          //}
-          ////BML
-          //if (probe_mesSA_superPointR_BM->at(N50) != 0 &&
-          //    probe_mesSA_superPointR_BM -> at(N50) / 1000. > -90 &&
-          //    probe_mesSA_sAddress -> at(N50) == 0 ) {
-          //  h_superPointRZ_BML -> Fill( probe_mesSA_superPointZ_BM->at(N50)/1000, probe_mesSA_superPointR_BM->at(N50)/1000); 
-          //  h_segmentRZ_BML -> Fill( probe_segmentZ_BML, probe_segmentR_BML); 
-          //  h_residualRZ_BML -> Fill( Res(probe_mesSA_superPointZ_BM->at(N50)/1000,probe_segmentZ_BML), Res(probe_mesSA_superPointR_BM->at(N50)/1000,probe_segmentR_BML));
-          //}
-          ////BOS
-          //if (probe_mesSA_superPointR_BO->at(N50) != 0 &&
-          //    probe_mesSA_superPointR_BO -> at(N50) / 1000. > -90 &&
-          //    probe_mesSA_sAddress -> at(N50) == 2 ) {
-          //  h_superPointRZ_BOS -> Fill( probe_mesSA_superPointZ_BO->at(N50)/1000, probe_mesSA_superPointR_BO->at(N50)/1000); 
-          //  h_segmentRZ_BOS -> Fill( probe_segmentZ_BOS, probe_segmentR_BOS); 
-          //  h_residualRZ_BOS -> Fill( Res(probe_mesSA_superPointZ_BO->at(N50)/1000,probe_segmentZ_BOS), Res(probe_mesSA_superPointR_BO->at(N50)/1000,probe_segmentR_BOS));
-          //}
-          ////BOL
-          //if (probe_mesSA_superPointR_BO->at(N50) != 0 &&
-          //    probe_mesSA_superPointR_BO -> at(N50) / 1000. > -90 &&
-          //    probe_mesSA_sAddress -> at(N50) == 0 ) {
-          //  h_superPointRZ_BOL -> Fill( probe_mesSA_superPointZ_BO->at(N50)/1000, probe_mesSA_superPointR_BO->at(N50)/1000); 
-          //  h_segmentRZ_BOL -> Fill( probe_segmentZ_BOL, probe_segmentR_BOL); 
-          //  h_residualRZ_BOL -> Fill( Res(probe_mesSA_superPointZ_BO->at(N50)/1000,probe_segmentZ_BOL), Res(probe_mesSA_superPointR_BO->at(N50)/1000,probe_segmentR_BOL));
-          //}
-          break;
-      }
-   //*/
+        //BIS
+        //if (probe_mesSA_superPointR_BI->at(N50) != 0 &&
+        //    probe_mesSA_superPointR_BI -> at(N50) / 1000. > -90 &&
+        //    probe_mesSA_sAddress -> at(N50) == 2 ) {
+        //  h_superPointRZ_BIS -> Fill( probe_mesSA_superPointZ_BI->at(N50)/1000, probe_mesSA_superPointR_BI->at(N50)/1000); 
+        //  h_segmentRZ_BIS -> Fill( probe_segmentZ_BIS, probe_segmentR_BIS); 
+        //  h_residualRZ_BIS -> Fill( Res(probe_mesSA_superPointZ_BI->at(N50)/1000,probe_segmentZ_BIS), Res(probe_mesSA_superPointR_BI->at(N50)/1000,probe_segmentR_BIS));
+        //}
+        ////BIL
+        //if (probe_mesSA_superPointR_BI->at(N50) != 0 &&
+        //    probe_mesSA_superPointR_BI -> at(N50) / 1000. > -90 &&
+        //    probe_mesSA_sAddress -> at(N50) == 0 ) {
+        //  h_superPointRZ_BIL -> Fill( probe_mesSA_superPointZ_BI->at(N50)/1000, probe_mesSA_superPointR_BI->at(N50)/1000); 
+        //  h_segmentRZ_BIL -> Fill( probe_segmentZ_BIL, probe_segmentR_BIL); 
+        //  h_residualRZ_BIL -> Fill( Res(probe_mesSA_superPointZ_BI->at(N50)/1000,probe_segmentZ_BIL), Res(probe_mesSA_superPointR_BI->at(N50)/1000,probe_segmentR_BIL));
+        //}
+        ////BMS
+        //if (probe_mesSA_superPointR_BM->at(N50) != 0 &&
+        //    probe_mesSA_superPointR_BM -> at(N50) / 1000. > -90 &&
+        //    probe_mesSA_sAddress -> at(N50) == 2 ) {
+        //  h_superPointRZ_BMS -> Fill( probe_mesSA_superPointZ_BM->at(N50)/1000, probe_mesSA_superPointR_BM->at(N50)/1000); 
+        //  h_segmentRZ_BMS -> Fill( probe_segmentZ_BMS, probe_segmentR_BMS); 
+        //  h_residualRZ_BMS -> Fill( Res(probe_mesSA_superPointZ_BM->at(N50)/1000,probe_segmentZ_BMS), Res(probe_mesSA_superPointR_BM->at(N50)/1000,probe_segmentR_BMS));
+        //}
+        ////BML
+        //if (probe_mesSA_superPointR_BM->at(N50) != 0 &&
+        //    probe_mesSA_superPointR_BM -> at(N50) / 1000. > -90 &&
+        //    probe_mesSA_sAddress -> at(N50) == 0 ) {
+        //  h_superPointRZ_BML -> Fill( probe_mesSA_superPointZ_BM->at(N50)/1000, probe_mesSA_superPointR_BM->at(N50)/1000); 
+        //  h_segmentRZ_BML -> Fill( probe_segmentZ_BML, probe_segmentR_BML); 
+        //  h_residualRZ_BML -> Fill( Res(probe_mesSA_superPointZ_BM->at(N50)/1000,probe_segmentZ_BML), Res(probe_mesSA_superPointR_BM->at(N50)/1000,probe_segmentR_BML));
+        //}
+        ////BOS
+        //if (probe_mesSA_superPointR_BO->at(N50) != 0 &&
+        //    probe_mesSA_superPointR_BO -> at(N50) / 1000. > -90 &&
+        //    probe_mesSA_sAddress -> at(N50) == 2 ) {
+        //  h_superPointRZ_BOS -> Fill( probe_mesSA_superPointZ_BO->at(N50)/1000, probe_mesSA_superPointR_BO->at(N50)/1000); 
+        //  h_segmentRZ_BOS -> Fill( probe_segmentZ_BOS, probe_segmentR_BOS); 
+        //  h_residualRZ_BOS -> Fill( Res(probe_mesSA_superPointZ_BO->at(N50)/1000,probe_segmentZ_BOS), Res(probe_mesSA_superPointR_BO->at(N50)/1000,probe_segmentR_BOS));
+        //}
+        ////BOL
+        //if (probe_mesSA_superPointR_BO->at(N50) != 0 &&
+        //    probe_mesSA_superPointR_BO -> at(N50) / 1000. > -90 &&
+        //    probe_mesSA_sAddress -> at(N50) == 0 ) {
+        //  h_superPointRZ_BOL -> Fill( probe_mesSA_superPointZ_BO->at(N50)/1000, probe_mesSA_superPointR_BO->at(N50)/1000); 
+        //  h_segmentRZ_BOL -> Fill( probe_segmentZ_BOL, probe_segmentR_BOL); 
+        //  h_residualRZ_BOL -> Fill( Res(probe_mesSA_superPointZ_BO->at(N50)/1000,probe_segmentZ_BOL), Res(probe_mesSA_superPointR_BO->at(N50)/1000,probe_segmentR_BOL));
+        //}
+        break;
+    }
+    */
 
-   } // end of each entry
+  } // end of each entry
 
 } // end of RPC::Loop()
 
@@ -520,7 +520,7 @@ double Res(double param1, double param2){
 //}
 
 void RPC::FillInEffHist(int tap_type, int NTrigChain ){
-    const double ZERO_LIMIT = 1e-5;
+  const double ZERO_LIMIT = 1e-5;
 
   // Check TAP
   if (tag_proc != tap_type){ return;}
@@ -2791,8 +2791,8 @@ void RPC::FillProbeHist(){
   //bool isBarrel = true;
   bool isQetaCut = ((qeta > -0.4) && (qeta < -0.0));
   //bool isBarrel = (abs(probe_eta) < 1.05) && (isQetaCut);
-  bool isBarrel = true;
-  //bool isBarrel = (abs(probe_eta) < 1.05);
+  //bool isBarrel = true;
+  bool isBarrel = (abs(probe_eta) < 1.05);
 
   //if ( !(qeta > -1.3 && qeta < -0.9)){
   //  return;
@@ -2800,17 +2800,58 @@ void RPC::FillProbeHist(){
 
   // Special For FTK
   if ( tag_proc == 3){
-    //LOGD << "debug message to stdout with color";
-    //PLOG_VERBOSE << "This is a VERBOSE message";
-    //PLOG_DEBUG << "This is a DEBUG message";
-    //PLOG_INFO << "This is an INFO message";
-    //PLOG_WARNING << "This is a WARNING message";
-    //PLOG_ERROR << "This is an ERROR message";
-    //PLOG_FATAL << "This is a FATAL message";
-    LOGD << "size: " << (probe_mesL2_pass->at(0)).size();
-    for ( auto pass: probe_mesL2_pass->at(0) )
+    LOGD << "size: " << (probe_mesL2_pass->at(N4)).size();
+    LOGD << "l2sa : pass/pt/eta/phi/sAddress/roi: " << probe_mesSA_pass->at(N4) << "/" << probe_mesSA_pt->at(N4) << "/" << probe_mesSA_eta->at(N4) << "/" << probe_mesSA_phi->at(N4)<< "/" << probe_mesSA_sAddress->at(N4);
+    for ( int i = 0; i < (probe_mesL2_pass->at(N4)).size(); i++ ){
+      if ( probe_mesL2_sAddressSA->at(N4)[i] > -1){
+        LOGD << "l2sa Barrel: pass/pt/eta/phi/sAddress: " << probe_mesL2_pass->at(N4)[i] << "/" << probe_mesL2_ptSA->at(N4)[i] << "/" << probe_mesL2_etaSA->at(N4)[i] << "/" << probe_mesL2_phiSA->at(N4)[i] << "/" << probe_mesL2_sAddressSA->at(N4)[i];
+        LOGD << "l2sa Barrel: ptFtk/etaFtk/phiFtk/roadAlgo: " << probe_mesL2_ptFtk->at(N4)[i] << "/" << probe_mesL2_etaFtk->at(N4)[i] << "/" << probe_mesL2_phiFtk->at(N4)[i] << "/" << probe_mesL2_roadAlgo->at(N4)[i];
+      } else {
+        LOGD << "l2sa Endcap: pass/pt/eta/phi/sAddress: " << probe_mesL2_pass->at(N4)[i] << "/" << probe_mesL2_ptSA->at(N4)[i] << "/" << probe_mesL2_etaSA->at(N4)[i] << "/" << probe_mesL2_phiSA->at(N4)[i] << "/" << probe_mesL2_sAddressSA->at(N4)[i];
+        LOGD << "l2sa Endcap: ptFtk/etaFtk/phiFtk/roadAlgo: " << probe_mesL2_ptFtk->at(N4)[i] << "/" << probe_mesL2_etaFtk->at(N4)[i] << "/" << probe_mesL2_phiFtk->at(N4)[i] << "/" << probe_mesL2_roadAlgo->at(N4)[i];
+      }
+    }
     //LOGD << "vec size" << pass.size();
-    LOGD << "pass" << pass;
+    //LOGD << "pass" << pass;
+
+    if ( abs(probe_eta) < 1.05 ){
+      LOGD << "barrel";
+      m_probe_pt_mu4[0]->Fill(probe_pt/1000.); // PROBE
+      if ( probe_mesL1_pass->at(N4) > -1){
+        LOGD << "L1Pass";
+        m_probe_pt_mu4[1]->Fill(probe_pt/1000.); // L1
+        // SA and CB
+        if ( probe_mesSA_pass->at(N4) > -1){
+          LOGD << "SAPass";
+          m_probe_pt_mu4[2]->Fill(probe_pt/1000.); // SA
+          if ( probe_mesCB_pass->at(N4) > -1){
+            LOGD << "CBPass";
+            m_probe_pt_mu4[3]->Fill(probe_pt/1000.); // CB
+          }
+        }
+
+        // L2
+        int SApass = -1;
+        int CBThrepass = -1;
+        for ( int i = 0; i < (probe_mesL2_pass->at(N4)).size(); i++ ){
+          double L2pt = abs(probe_mesL2_ptSA->at(N4)[i]);
+          if ( probe_mesL2_pass->at(N4)[i] > -1 ){
+            SApass = 1;
+          }
+          if ( L2pt > 3.86 ){ // CB thre of HLT_mu4 in barrel is 3.86 GeV
+            CBThrepass = 1;
+          }
+        }
+        if ( SApass == 1 && CBThrepass == 1) {
+          m_probe_pt_mu4[4]->Fill(probe_pt/1000.);
+        } else {
+        }
+        LOGD << "SApass: " << SApass << ", probe_mesSA_pass: " << probe_mesSA_pass->at(N4);
+        LOGD << "CBThrepass: " << CBThrepass;
+      }
+
+      //if(isBarrel) h_probe_pt_mu4_PROBE -> Fill(probe_pt/1000.);
+    }
   }
 
   // mu cut
@@ -2861,14 +2902,14 @@ void RPC::FillProbeHist(){
         if(isBarrel) h_probe_pt_mu4_EF -> Fill(probe_pt/1000.);
       }
 
-      FillPtResidualHist();
+      //FillPtResidualHist();
 
       break;
     case 2: //Jpsi from L2:
       break;
     case 1: //Z
       // Check TAP
-      
+
       if (!(probe_mesEFTAG_pass -> at(N50) > -1 && ( sumReqdRL1<tp_extdR && 0.2<tp_extdR ) && ( sumReqdREF<tp_dR ))){
         return;
       }
@@ -2907,13 +2948,20 @@ void RPC::FillProbeHist(){
           h_probe_eta_mu50_CB -> Fill(probe_eta);
         }
       }
-     
+
       break;
   }
   return;
 }
 
 void RPC::CalcEff(){
+
+  CalcHistToHist( m_probe_pt_mu4[1], m_probe_pt_mu4[0], m_eff_pt_mu4_L1);
+  CalcHistToHist( m_probe_pt_mu4[2], m_probe_pt_mu4[1], m_eff_pt_mu4_L1SA);
+  CalcHistToHist( m_probe_pt_mu4[3], m_probe_pt_mu4[2], m_eff_pt_mu4_SACB);
+  CalcHistToHist( m_probe_pt_mu4[4], m_probe_pt_mu4[1], m_eff_pt_mu4_L1L2);
+  CalcHistToHist( m_probe_pt_mu4[3], m_probe_pt_mu4[1], m_eff_pt_mu4_L1CB);
+
   // mu4
   CalcHistToHist( h_probe_mu_mu4_SA,       h_probe_mu_mu4_L1,       h_eff_mu_mu4_L1SA);
   CalcHistToHist( h_probe_pt_mu4_L1,       h_probe_pt_mu4_PROBE,    h_eff_pt_mu4_L1);
@@ -2939,6 +2987,7 @@ void RPC::CalcEff(){
 }
 
 void RPC::DrawEffHist(TString pdf){
+  LOGI << "---start---";
   //==================================================================
   //Set Canvas
   //==================================================================
@@ -2949,6 +2998,44 @@ void RPC::DrawEffHist(TString pdf){
   c1->SetBottomMargin(0.20);
 
   c1 -> Print( pdf + "[", "pdf" );
+
+  m_eff_pt_mu4_L1->Draw();
+  m_eff_pt_mu4_L1->GetYaxis()->SetRangeUser(0,1.1);
+  c1 -> Print( pdf, "pdf" );
+
+  m_eff_pt_mu4_L1SA->Draw();
+  m_eff_pt_mu4_L1SA->GetYaxis()->SetRangeUser(0,1.1);
+  c1 -> Print( pdf, "pdf" );
+
+  m_eff_pt_mu4_SACB->Draw();
+  m_eff_pt_mu4_SACB->GetYaxis()->SetRangeUser(0,1.1);
+  c1 -> Print( pdf, "pdf" );
+
+  m_eff_pt_mu4_L1L2->Draw();
+  m_eff_pt_mu4_L1L2->GetYaxis()->SetRangeUser(0,1.1);
+  c1 -> Print( pdf, "pdf" );
+
+  m_eff_pt_mu4_L1CB->Draw();
+  m_eff_pt_mu4_L1CB->GetYaxis()->SetRangeUser(0,1.1);
+  c1 -> Print( pdf, "pdf" );
+
+  m_eff_pt_mu4_L1->Draw();
+  m_eff_pt_mu4_L1->SetMarkerColor(kRed);
+  m_eff_pt_mu4_L1->SetLineColor(kRed);
+  m_eff_pt_mu4_L1SA->Draw("same");
+  m_eff_pt_mu4_L1SA->SetMarkerColor(kYellow+2);
+  m_eff_pt_mu4_L1SA->SetLineColor(kYellow+2);
+  m_eff_pt_mu4_SACB->Draw("same");
+  m_eff_pt_mu4_SACB->SetMarkerColor(kPink+2);
+  m_eff_pt_mu4_SACB->SetLineColor(kPink+2);
+  m_eff_pt_mu4_L1L2->Draw("same");
+  m_eff_pt_mu4_L1L2->SetMarkerColor(kBlue);
+  m_eff_pt_mu4_L1L2->SetLineColor(kBlue);
+  m_eff_pt_mu4_L1CB->Draw("same");
+  m_eff_pt_mu4_L1CB->SetMarkerColor(kCyan+2);
+  m_eff_pt_mu4_L1CB->SetLineColor(kCyan+2);
+  c1 -> Print( pdf, "pdf" );
+
 
   h_eff_mu_mu4_L1SA->Draw();
   h_eff_mu_mu4_L1SA->GetYaxis()->SetRangeUser(0,1.1);

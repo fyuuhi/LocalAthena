@@ -175,13 +175,16 @@ INPUT_NTUPLE="/home/yfukuhar/gpfs/data/data18_rate/hadd.root"
 PDF_LABEL="FTK_424100_n5_500eve"
 INPUT_NTUPLE="/gpfs/fs7001/yfukuhar/workspace/TestCalcEffTool/CalcEffTool/run/FTK_424100_n5_500eve.root"
 
+PDF_LABEL="Jpsi_mu3p5mu3p5"
+INPUT_NTUPLE="/gpfs/fs7001/yfukuhar/workspace/TestCalcEffTool/CalcEffTool/run/Jpsi_mu3p5mu3p5.root"
+
 #IS_DRAW="false"
 IS_DRAW="true"
 IS_EVENTDISPLAY="false"
 #IS_EVENTDISPLAY="true"
 BEGIN_ENTRY=1
-LIMIT_ENTRY=-1
-#LIMIT_ENTRY=1000000
+#LIMIT_ENTRY=-1
+LIMIT_ENTRY=100000
 TAP_TYPE=3
 TRIG_CHAIN=0
 #LIMIT_ENTRY=10
