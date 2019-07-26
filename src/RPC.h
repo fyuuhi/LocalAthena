@@ -226,6 +226,37 @@ public :
    vector < vector < float > > *probe_mesSA_etaMin;
    vector < vector < float > > *probe_mesSA_etaMax;
 
+   vector < vector < double > >* probe_mesL2_pass;
+   vector < vector < double > >* probe_mesL2_pt;
+   vector < vector < double > >* probe_mesL2_eta;
+   vector < vector < double > >* probe_mesL2_phi;
+
+   vector < vector < double > >* probe_mesL2_ptFtk;
+   vector < vector < double > >* probe_mesL2_etaFtk;
+   vector < vector < double > >* probe_mesL2_phiFtk;
+   vector < vector < double > >* probe_mesL2_roadAlgo;
+
+   vector < vector < double > >* probe_mesL2_passSA;
+   vector < vector < double > >* probe_mesL2_numSpSA;
+   vector < vector < double > >* probe_mesL2_ptSA;
+   vector < vector < double > >* probe_mesL2_etaSA;
+   vector < vector < double > >* probe_mesL2_phiSA;
+   vector < vector < double > >* probe_mesL2_sAddressSA;
+
+
+   vector < vector < float > >* probe_mesSA_roadFtkAw;
+   vector < vector < float > >* probe_mesSA_roadFtkBw;
+   vector < vector < float > >* probe_mesSA_extFtkEta;
+   vector < vector < float > >* probe_mesSA_extFtkPhi;
+   vector < vector < float > >* probe_mesSA_extFtkR;
+   vector < vector < float > >* probe_mesSA_extFtkZ;
+   vector < vector < float > >* probe_mesSA_roadRpcAw;
+   vector < vector < float > >* probe_mesSA_roadRpcBw;
+   vector < int >* probe_mesSA_roadAlgo;
+   vector < double >* probe_mesSA_ptFtk;
+   vector < double >* probe_mesSA_etaFtk;
+   vector < double >* probe_mesSA_phiFtk;
+
    vector <float> *probe_mesSA_roiEta;
    vector <float> *probe_mesSA_roiPhi;
 
@@ -426,6 +457,36 @@ public :
    TBranch *b_probe_mesSA_etaMin; //!
    TBranch *b_probe_mesSA_etaMax; //!
 
+   TBranch* b_probe_mesSA_roadFtkAw; //!
+   TBranch* b_probe_mesSA_roadFtkBw; //!
+   TBranch* b_probe_mesSA_extFtkEta; //!
+   TBranch* b_probe_mesSA_extFtkPhi; //!
+   TBranch* b_probe_mesSA_extFtkR; //!
+   TBranch* b_probe_mesSA_extFtkZ; //!
+   TBranch* b_probe_mesSA_roadRpcAw; //!
+   TBranch* b_probe_mesSA_roadRpcBw; //!
+   TBranch* b_probe_mesSA_roadAlgo; //!
+   TBranch* b_probe_mesSA_ptFtk; //!
+   TBranch* b_probe_mesSA_etaFtk; //!
+   TBranch* b_probe_mesSA_phiFtk; //!
+
+   TBranch* b_probe_mesL2_pass; //!
+   TBranch* b_probe_mesL2_pt; //!
+   TBranch* b_probe_mesL2_eta; //!
+   TBranch* b_probe_mesL2_phi; //!
+
+   TBranch* b_probe_mesL2_ptFtk; //!
+   TBranch* b_probe_mesL2_etaFtk; //!
+   TBranch* b_probe_mesL2_phiFtk; //!
+   TBranch* b_probe_mesL2_roadAlgo; //!
+
+   TBranch* b_probe_mesL2_passSA; //!
+   TBranch* b_probe_mesL2_numSpSA; //!
+   TBranch* b_probe_mesL2_ptSA; //!
+   TBranch* b_probe_mesL2_etaSA; //!
+   TBranch* b_probe_mesL2_phiSA; //!
+   TBranch* b_probe_mesL2_sAddressSA; //!
+
    TBranch *b_probe_mesSA_roiEta; //!
    TBranch *b_probe_mesSA_roiPhi; //!
 
@@ -572,8 +633,17 @@ public :
 
    TH2F *h_ResidualSegment_eta; //!
    TH2F *h_ResidualSegment_eta_BI; //!
+   TH2F *h_ResidualSegment_eta_BI_2d; //!
    TH2F *h_ResidualSegment_eta_BM; //!
    TH2F *h_ResidualSegment_eta_BO; //!
+
+   TH1F *h_ResidualSegment_eta_rpc_BI; //!
+   TH1F *h_ResidualSegment_eta_rpc_BM; //!
+   TH1F *h_ResidualSegment_eta_rpc_BO; //!
+
+   TH1F *h_ResidualSegment_eta_ftk_BI; //!
+   TH1F *h_ResidualSegment_eta_ftk_BM; //!
+   TH1F *h_ResidualSegment_eta_ftk_BO; //!
 
    TH2F *h_ResidualMdt_Outlier_eta; //!
    TH2F *h_ResidualMdt_Outlier_eta_BI; //!
@@ -598,6 +668,8 @@ public :
    TH2F *h_PtResidual_pt; //!
    TH2F *h_PtResidual_eta; //!
    TH2F *h_pt_vs_pt; //!
+   TH2F *h_ptl2_vs_ptFtk; //!
+   TH2F *h_pt_vs_ptFtk; //!
 
    TH2F* h_InEff_pt;
    TH2F* h_InEff_eta;
@@ -816,8 +888,38 @@ void RPC::Init(TTree *tree)
    probe_mesSA_etaMin = 0;
    probe_mesSA_etaMax = 0;
 
+   probe_mesSA_roadFtkAw = 0;
+   probe_mesSA_roadFtkBw = 0;
+   probe_mesSA_extFtkEta = 0;
+   probe_mesSA_extFtkPhi = 0;
+   probe_mesSA_extFtkR = 0;
+   probe_mesSA_extFtkZ = 0;
+   probe_mesSA_roadRpcAw = 0;
+   probe_mesSA_roadRpcBw = 0;
+   probe_mesSA_roadAlgo = 0;
+   probe_mesSA_ptFtk = 0;
+   probe_mesSA_etaFtk = 0;
+   probe_mesSA_phiFtk = 0;
+
    probe_mesSA_roiEta = 0;
    probe_mesSA_roiPhi = 0;
+
+   probe_mesL2_pass       = 0;
+   probe_mesL2_pt         = 0;
+   probe_mesL2_eta        = 0;
+   probe_mesL2_phi        = 0;
+
+   probe_mesL2_ptFtk      = 0;
+   probe_mesL2_etaFtk     = 0;
+   probe_mesL2_phiFtk     = 0;
+   probe_mesL2_roadAlgo   = 0;
+
+   probe_mesL2_passSA     = 0;
+   probe_mesL2_numSpSA    = 0;
+   probe_mesL2_ptSA       = 0;
+   probe_mesL2_etaSA      = 0;
+   probe_mesL2_phiSA      = 0;
+   probe_mesL2_sAddressSA = 0;
 
    probe_mesCB_pass = 0;
    probe_mesCB_dR = 0;
@@ -1020,6 +1122,36 @@ void RPC::Init(TTree *tree)
    fChain->SetBranchAddress("probe_mesSA_etaMin", &probe_mesSA_etaMin, &b_probe_mesSA_etaMin );
    fChain->SetBranchAddress("probe_mesSA_etaMax", &probe_mesSA_etaMax, &b_probe_mesSA_etaMax );
 
+   fChain->SetBranchAddress("probe_mesSA_roadFtkAw", &probe_mesSA_roadFtkAw, &b_probe_mesSA_roadFtkAw );
+   fChain->SetBranchAddress("probe_mesSA_roadFtkBw", &probe_mesSA_roadFtkBw, &b_probe_mesSA_roadFtkBw );
+   fChain->SetBranchAddress("probe_mesSA_extFtkEta", &probe_mesSA_extFtkEta, &b_probe_mesSA_extFtkEta );
+   fChain->SetBranchAddress("probe_mesSA_extFtkPhi", &probe_mesSA_extFtkPhi, &b_probe_mesSA_extFtkPhi );
+   fChain->SetBranchAddress("probe_mesSA_extFtkR",   &probe_mesSA_extFtkR, &b_probe_mesSA_extFtkR );
+   fChain->SetBranchAddress("probe_mesSA_extFtkZ",   &probe_mesSA_extFtkZ, &b_probe_mesSA_extFtkZ );
+   fChain->SetBranchAddress("probe_mesSA_roadRpcAw", &probe_mesSA_roadRpcAw, &b_probe_mesSA_roadRpcAw );
+   fChain->SetBranchAddress("probe_mesSA_roadRpcBw", &probe_mesSA_roadRpcBw, &b_probe_mesSA_roadRpcBw );
+   fChain->SetBranchAddress("probe_mesSA_roadAlgo", &probe_mesSA_roadAlgo, &b_probe_mesSA_roadAlgo );
+   fChain->SetBranchAddress("probe_mesSA_ptFtk", &probe_mesSA_ptFtk, &b_probe_mesSA_ptFtk );
+   fChain->SetBranchAddress("probe_mesSA_etaFtk", &probe_mesSA_etaFtk, &b_probe_mesSA_etaFtk );
+   fChain->SetBranchAddress("probe_mesSA_phiFtk", &probe_mesSA_phiFtk, &b_probe_mesSA_phiFtk );
+
+   fChain->SetBranchAddress("probe_mesL2_pass",       &probe_mesL2_pass, &b_probe_mesL2_pass);
+   fChain->SetBranchAddress("probe_mesL2_pt",         &probe_mesL2_pt, &b_probe_mesL2_pt);
+   fChain->SetBranchAddress("probe_mesL2_eta",        &probe_mesL2_eta, &b_probe_mesL2_eta);
+   fChain->SetBranchAddress("probe_mesL2_phi",        &probe_mesL2_phi, &b_probe_mesL2_phi);
+
+   fChain->SetBranchAddress("probe_mesL2_ptFtk",      &probe_mesL2_ptFtk, &b_probe_mesL2_ptFtk);
+   fChain->SetBranchAddress("probe_mesL2_etaFtk",     &probe_mesL2_etaFtk, &b_probe_mesL2_etaFtk);
+   fChain->SetBranchAddress("probe_mesL2_phiFtk",     &probe_mesL2_phiFtk, &b_probe_mesL2_phiFtk);
+   fChain->SetBranchAddress("probe_mesL2_roadAlgo",   &probe_mesL2_roadAlgo, &b_probe_mesL2_roadAlgo);
+
+   fChain->SetBranchAddress("probe_mesL2_passSA",     &probe_mesL2_phiSA, &b_probe_mesL2_phiSA);
+   fChain->SetBranchAddress("probe_mesL2_numSpSA",    &probe_mesL2_numSpSA, &b_probe_mesL2_numSpSA);
+   fChain->SetBranchAddress("probe_mesL2_ptSA",       &probe_mesL2_ptSA, &b_probe_mesL2_ptSA);
+   fChain->SetBranchAddress("probe_mesL2_etaSA",      &probe_mesL2_etaSA, &b_probe_mesL2_etaSA);
+   fChain->SetBranchAddress("probe_mesL2_phiSA",      &probe_mesL2_phiSA, &b_probe_mesL2_phiSA);
+   fChain->SetBranchAddress("probe_mesL2_sAddressSA", &probe_mesL2_sAddressSA, &b_probe_mesL2_sAddressSA);
+
    fChain->SetBranchAddress("probe_mesSA_roiEta", &probe_mesSA_roiEta, &b_probe_mesSA_roiEta );
    fChain->SetBranchAddress("probe_mesSA_roiPhi", &probe_mesSA_roiPhi, &b_probe_mesSA_roiPhi );
 
@@ -1177,6 +1309,8 @@ void RPC::InitPtResidualHist(){
   h_PtResidual_pt  = new TH2F("h_PtResidual_pt",  "h_PtResidual_pt;Probe p_{T} [GeV];p_{T} residual;Counts",  100, 0,    100, 50,  -20, 20);
   h_PtResidual_eta = new TH2F("h_PtResidual_eta", "h_PtResidual_eta;Probe #eta;p_{T} residual;Counts",        100, -2.5, 2.5, 50,  -20, 20);
   h_pt_vs_pt       = new TH2F("h_pt_vs_pt",       "h_pt_vs_pt;Probe Offline p_{T} [GeV];Probe L2MuonSA p_{T} [GeV];Counts", 100, 0,    100, 100, 0,   100);
+  h_ptl2_vs_ptFtk       = new TH2F("h_ptl2_vs_ptFtk",       "h_ptl2_vs_ptFtk;Probe L2MuonSA p_{T} [GeV];Probe FTK p_{T} [GeV];Counts", 100, 0,    100, 100, 0,   100);
+  h_pt_vs_ptFtk       = new TH2F("h_pt_vs_ptFtk",       "h_pt_vs_ptFtk;Probe Offline p_{T} [GeV];Probe FTK p_{T} [GeV];Counts", 100, 0,    100, 100, 0,   100);
 }
 
 void RPC::InitInEffHist(){
@@ -1216,10 +1350,19 @@ void RPC::InitHist(){
   h_residualRZ_BOS = new TH2F("h_residualRZ_BOS", "h_residualRZ_BOS;Z;R;Counts", 100, -0.1, 0.1, 100, -0.1, 0.1);
   h_residualRZ_BOL = new TH2F("h_residualRZ_BOL", "h_residualRZ_BOL;Z;R;Counts", 100, -0.1, 0.1, 100, -0.1, 0.1);
 
-  h_ResidualSegment_eta    = new TH2F("h_ResidualSegment_eta",    "h_ResidualSegment_eta;#eta;Residual;Counts",                      100, -1.05, 1.05, 100, -1000, 1000);
-  h_ResidualSegment_eta_BI = new TH2F("h_ResidualSegment_eta_BI", "h_ResidualSegment_eta_BI;#eta;(BI) Segment residual [mm];Counts", 100, -1.05, 1.05, 100, -1000, 1000);
-  h_ResidualSegment_eta_BM = new TH2F("h_ResidualSegment_eta_BM", "h_ResidualSegment_eta_BM;#eta;(BM) Segment residual [mm];Counts", 100, -1.05, 1.05, 100, -1000, 1000);
-  h_ResidualSegment_eta_BO = new TH2F("h_ResidualSegment_eta_BO", "h_ResidualSegment_eta_BO;#eta;(BO) Segment residual [mm];Counts", 100, -1.05, 1.05, 100, -1000, 1000);
+  h_ResidualSegment_eta        = new TH2F("h_ResidualSegment_eta",        "h_ResidualSegment_eta;#eta;Residual;Counts",                          100, -1.05, 1.05, 100, -200, 200);
+  h_ResidualSegment_eta_BI     = new TH2F("h_ResidualSegment_eta_BI",     "h_ResidualSegment_eta_BI;#eta;(BI) Segment residual [mm];Counts",     100, -1.05, 1.05, 100, -200, 200);
+  h_ResidualSegment_eta_BI_2d     = new TH2F("h_ResidualSegment_eta_BI_2d",     "h_ResidualSegment_eta_BI_2d;(BI) RPC road residual;(BI) FTK road residual;Counts",     100, -200, 200, 100, -200, 200);
+  h_ResidualSegment_eta_BM     = new TH2F("h_ResidualSegment_eta_BM",     "h_ResidualSegment_eta_BM;#eta;(BM) Segment residual [mm];Counts",     100, -1.05, 1.05, 100, -200, 200);
+  h_ResidualSegment_eta_BO     = new TH2F("h_ResidualSegment_eta_BO",     "h_ResidualSegment_eta_BO;#eta;(BO) Segment residual [mm];Counts",     100, -1.05, 1.05, 100, -200, 200);
+
+  h_ResidualSegment_eta_rpc_BI = new TH1F("h_ResidualSegment_eta_rpc_BI", "h_ResidualSegment_eta_rpc_BI;(BI) Segment residual [mm];Counts", 200, -400, 400);
+  h_ResidualSegment_eta_rpc_BM = new TH1F("h_ResidualSegment_eta_rpc_BM", "h_ResidualSegment_eta_rpc_BM;(BM) Segment residual [mm];Counts", 200, -400, 400);
+  h_ResidualSegment_eta_rpc_BO = new TH1F("h_ResidualSegment_eta_rpc_BO", "h_ResidualSegment_eta_rpc_BO;(BO) Segment residual [mm];Counts", 200, -400, 400);
+
+  h_ResidualSegment_eta_ftk_BI = new TH1F("h_ResidualSegment_eta_ftk_BI", "h_ResidualSegment_eta_ftk_BI;(BI) Segment residual [mm];Counts", 200, -400, 400);
+  h_ResidualSegment_eta_ftk_BM = new TH1F("h_ResidualSegment_eta_ftk_BM", "h_ResidualSegment_eta_ftk_BM;(BM) Segment residual [mm];Counts", 200, -400, 400);
+  h_ResidualSegment_eta_ftk_BO = new TH1F("h_ResidualSegment_eta_ftk_BO", "h_ResidualSegment_eta_ftk_BO;(BO) Segment residual [mm];Counts", 200, -400, 400);
 }
 
 void RPC::End(){

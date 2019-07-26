@@ -33,6 +33,8 @@
 using namespace std;
 
 #include "/gpfs/home/yfukuhar/RootUtils/rootlogon.C"
+//#include "/gpfs/fs7001/yfukuhar/workspace/TestCalcEffTool/CalcEffTool/CalcEfficiency/CalcEfficiency/easy_logger.h"
+//#include "/gpfs/home/yfukuhar/work/RpcL2MuonSA/RpcL2MuonSA/src/easy_logger.h"
 
 double Res(double param1, double param2);
 bool GRLlist(int LumiBlock);
@@ -97,6 +99,7 @@ int main(int argc, char *argv[]){
 
 void RPC::Loop( int Nevents, int DisplayNumber )
 {
+  const double ZERO_LIMIT = 1e-5;
    if (fChain == 0) return;
 
    int nLoop;
@@ -136,7 +139,7 @@ void RPC::Loop( int Nevents, int DisplayNumber )
       FillProbeHist();
       FillInEffHist(1, 0);
 
-      /*
+      ///*
       tag_proc = NTagProc;
       switch (tag_proc) {
         case 1: //Jpsi until L2
@@ -159,12 +162,33 @@ void RPC::Loop( int Nevents, int DisplayNumber )
             double Z = probe_segment_z[i];
             if (probe_segment_chamberIndex[i] == 0 || probe_segment_chamberIndex[i] == 1) {
               h_ResidualSegment_eta_BI -> Fill(probe_eta, calc_residual(probe_mesSA_roadAw -> at(N50)[0], probe_mesSA_roadBw -> at(N50)[0], Z, R));
+              h_ResidualSegment_eta_BI_2d -> Fill(calc_residual(probe_mesSA_roadFtkAw -> at(N50)[0], probe_mesSA_roadFtkBw -> at(N50)[0], Z, R), calc_residual(probe_mesSA_roadRpcAw -> at(N50)[0], probe_mesSA_roadRpcBw -> at(N50)[0], Z, R));
+
+              if (abs(probe_mesSA_roadRpcAw->at(N50)[0]) > ZERO_LIMIT && abs(probe_mesSA_roadRpcBw->at(N50)[0] > ZERO_LIMIT)){
+                h_ResidualSegment_eta_rpc_BI -> Fill(calc_residual(probe_mesSA_roadRpcAw -> at(N50)[0], probe_mesSA_roadRpcBw -> at(N50)[0], Z, R));
+              }
+
+              if (abs(probe_mesSA_roadFtkAw->at(N50)[0]) > ZERO_LIMIT && abs(probe_mesSA_roadFtkBw->at(N50)[0] > ZERO_LIMIT)){
+              h_ResidualSegment_eta_ftk_BI -> Fill(calc_residual(probe_mesSA_roadFtkAw -> at(N50)[0], probe_mesSA_roadFtkBw -> at(N50)[0], Z, R));
+              }
               //cout << "BI: " << calc_residual(probe_mesSA_roadAw -> at(N50)[0], probe_mesSA_roadBw -> at(N50)[0], Z, R) << endl;
             } else if(probe_segment_chamberIndex[i] == 2 || probe_segment_chamberIndex[i] == 3) {
               h_ResidualSegment_eta_BM -> Fill(probe_eta, calc_residual(probe_mesSA_roadAw -> at(N50)[1], probe_mesSA_roadBw -> at(N50)[1], Z, R));
+              if (abs(probe_mesSA_roadRpcAw->at(N50)[1]) > ZERO_LIMIT && abs(probe_mesSA_roadRpcBw->at(N50)[1] > ZERO_LIMIT)){
+                h_ResidualSegment_eta_rpc_BM -> Fill(calc_residual(probe_mesSA_roadRpcAw -> at(N50)[1], probe_mesSA_roadRpcBw -> at(N50)[1], Z, R));
+              }
+              if (abs(probe_mesSA_roadFtkAw->at(N50)[1]) > ZERO_LIMIT && abs(probe_mesSA_roadFtkBw->at(N50)[1] > ZERO_LIMIT)){
+                h_ResidualSegment_eta_ftk_BM -> Fill(calc_residual(probe_mesSA_roadFtkAw -> at(N50)[1], probe_mesSA_roadFtkBw -> at(N50)[1], Z, R));
+              }
               //cout <<"BM: " <<  calc_residual(probe_mesSA_roadAw -> at(N50)[0], probe_mesSA_roadBw -> at(N50)[0], Z, R) << endl;
             } else if(probe_segment_chamberIndex[i] == 4 || probe_segment_chamberIndex[i] == 5) {
               h_ResidualSegment_eta_BO -> Fill(probe_eta, calc_residual(probe_mesSA_roadAw -> at(N50)[2], probe_mesSA_roadBw -> at(N50)[2], Z, R));
+              if (abs(probe_mesSA_roadRpcAw->at(N50)[2]) > ZERO_LIMIT && abs(probe_mesSA_roadRpcBw->at(N50)[2] > ZERO_LIMIT)){
+                h_ResidualSegment_eta_rpc_BO -> Fill(calc_residual(probe_mesSA_roadRpcAw -> at(N50)[2], probe_mesSA_roadRpcBw -> at(N50)[2], Z, R));
+              }
+              if (abs(probe_mesSA_roadFtkAw->at(N50)[2]) > ZERO_LIMIT && abs(probe_mesSA_roadFtkBw->at(N50)[2] > ZERO_LIMIT)){
+              h_ResidualSegment_eta_ftk_BO -> Fill(calc_residual(probe_mesSA_roadFtkAw -> at(N50)[2], probe_mesSA_roadFtkBw -> at(N50)[2], Z, R));
+              }
               //cout <<"BO: " <<  calc_residual(probe_mesSA_roadAw -> at(N50)[0], probe_mesSA_roadBw -> at(N50)[0], Z, R) << endl;
             }
           }
@@ -229,7 +253,7 @@ void RPC::Loop( int Nevents, int DisplayNumber )
           //}
           break;
       }
-   */
+   //*/
 
    } // end of each entry
 
@@ -254,11 +278,57 @@ void RPC::DrawHist(TString pdf){
   h_ResidualSegment_eta_BI -> Draw("colz");
   c1 -> Print(pdf, "pdf" );
 
+  h_ResidualSegment_eta_BI_2d -> Draw("colz");
+  c1 -> Print(pdf, "pdf" );
+
   h_ResidualSegment_eta_BM -> Draw("colz");
   c1 -> Print(pdf, "pdf" );
 
   h_ResidualSegment_eta_BO -> Draw("colz");
   c1 -> Print(pdf, "pdf" );
+
+  cout << "GetNbinsX(BI): " << h_ResidualSegment_eta_rpc_BI->GetNbinsX() << endl;
+  cout << "0(BI): " << h_ResidualSegment_eta_rpc_BI->GetBinContent(0) << endl;
+  cout << "1(BI): " << h_ResidualSegment_eta_rpc_BI->GetBinContent(1) << endl;
+  cout << "GetNbinsX(BI): " << h_ResidualSegment_eta_ftk_BI->GetNbinsX() << endl;
+  cout << "0(BI): " << h_ResidualSegment_eta_ftk_BI->GetBinContent(0) << endl;
+  cout << "1(BI): " << h_ResidualSegment_eta_ftk_BI->GetBinContent(1) << endl;
+  h_ResidualSegment_eta_rpc_BI->SetLineColor(kRed);
+  //h_ResidualSegment_eta_rpc_BI->SetBinContent(1, h_ResidualSegment_eta_rpc_BI->GetBinContent(0)+h_ResidualSegment_eta_rpc_BI->GetBinContent(1));
+  //h_ResidualSegment_eta_rpc_BI->SetBinContent(h_ResidualSegment_eta_rpc_BI->GetNbinsX(), h_ResidualSegment_eta_rpc_BI->GetBinContent(h_ResidualSegment_eta_rpc_BI->GetNbinsX())+h_ResidualSegment_eta_rpc_BI->GetBinContent(h_ResidualSegment_eta_rpc_BI->GetNbinsX()+1));
+  h_ResidualSegment_eta_rpc_BI->Draw();
+  h_ResidualSegment_eta_ftk_BI->SetLineColor(kBlue);
+  //h_ResidualSegment_eta_ftk_BI->SetBinContent(1, h_ResidualSegment_eta_ftk_BI->GetBinContent(0)+h_ResidualSegment_eta_ftk_BI->GetBinContent(1));
+  //h_ResidualSegment_eta_ftk_BI->SetBinContent(h_ResidualSegment_eta_ftk_BI->GetNbinsX(), h_ResidualSegment_eta_ftk_BI->GetBinContent(h_ResidualSegment_eta_ftk_BI->GetNbinsX())+h_ResidualSegment_eta_ftk_BI->GetBinContent(h_ResidualSegment_eta_ftk_BI->GetNbinsX()+1));
+  h_ResidualSegment_eta_ftk_BI->Draw("same");
+  TLegend *leg2 = new TLegend(0.00,0.00,0.3,0.15);
+  leg2->AddEntry(h_ResidualSegment_eta_rpc_BI,"RPC road","f");
+  leg2->AddEntry(h_ResidualSegment_eta_ftk_BI,"FTK road","f");
+  leg2->Draw();
+  c1 -> Print(pdf, "pdf" );
+  cout << "0(BI): " << h_ResidualSegment_eta_rpc_BI->GetBinContent(0) << endl;
+  cout << "1(BI): " << h_ResidualSegment_eta_rpc_BI->GetBinContent(1) << endl;
+  cout << "0(BI): " << h_ResidualSegment_eta_ftk_BI->GetBinContent(0) << endl;
+  cout << "1(BI): " << h_ResidualSegment_eta_ftk_BI->GetBinContent(1) << endl;
+
+  h_ResidualSegment_eta_rpc_BM->SetLineColor(kRed);
+  //h_ResidualSegment_eta_rpc_BM->SetBinContent(1, h_ResidualSegment_eta_rpc_BM->GetBinContent(0)+h_ResidualSegment_eta_rpc_BM->GetBinContent(1));
+  h_ResidualSegment_eta_rpc_BM->Draw();
+  h_ResidualSegment_eta_ftk_BM->SetLineColor(kBlue);
+  //h_ResidualSegment_eta_ftk_BM->SetBinContent(1, h_ResidualSegment_eta_ftk_BM->GetBinContent(0)+h_ResidualSegment_eta_ftk_BM->GetBinContent(1));
+  h_ResidualSegment_eta_ftk_BM->Draw("same");
+  leg2->Draw();
+  c1 -> Print(pdf, "pdf" );
+
+  h_ResidualSegment_eta_rpc_BO->SetLineColor(kRed);
+  //h_ResidualSegment_eta_rpc_BO->SetBinContent(1, h_ResidualSegment_eta_rpc_BO->GetBinContent(0)+h_ResidualSegment_eta_rpc_BO->GetBinContent(1));
+  h_ResidualSegment_eta_rpc_BO->Draw();
+  h_ResidualSegment_eta_ftk_BO->SetLineColor(kBlue);
+  //h_ResidualSegment_eta_ftk_BO->SetBinContent(1, h_ResidualSegment_eta_ftk_BO->GetBinContent(0)+h_ResidualSegment_eta_ftk_BO->GetBinContent(1));
+  h_ResidualSegment_eta_ftk_BO->Draw("same");
+  leg2->Draw();
+  c1 -> Print(pdf, "pdf" );
+
 
   // Inlier
   h_ResidualMdt_Inlier_pt_barrel_BI->Draw("colz");
@@ -1044,9 +1114,9 @@ void RPC::Display(int tap_type, int trig_chain, Long64_t begin_entry, Long64_t l
     //}
 
     // Check Barrel
-    //if (abs(probe_eta) > 1.05){
-    //  continue;
-    //}
+    if (abs(probe_eta) > 1.05){
+      continue;
+    }
 
     //if (!(abs(probe_mesSA_superPointR_BM -> at(NTrigChain)) > 0. && probe_mesSA_superPointR_EI -> at(NTrigChain) > 0.)){
     // continue;
@@ -1247,75 +1317,199 @@ void RPC::Display(int tap_type, int trig_chain, Long64_t begin_entry, Long64_t l
     cout << "DEBUG2: " << nOffSeg << ": " << nRPC << ": " << nMDT << endl;
 
     // road
-    TF1 f_road_BI = TF1("f_road_BI", "[0]*x+[1]", -9999, 9999);
+    cout << "road: " << probe_mesSA_roadAlgo -> at(NTrigChain) << ": " << probe_mesSA_roadAlgo->at(NTrigChain) << endl;
     cout << "road: " << probe_mesSA_roadAw -> at(NTrigChain)[0] << ": " << probe_mesSA_roadBw->at(NTrigChain)[0] << endl;
     cout << "road: " << probe_mesSA_roadAw -> at(NTrigChain)[1] << ": " << probe_mesSA_roadBw->at(NTrigChain)[1] << endl;
     cout << "road: " << probe_mesSA_roadAw -> at(NTrigChain)[2] << ": " << probe_mesSA_roadBw->at(NTrigChain)[2] << endl;
-    f_road_BI.SetTitle(";Z [m];R [m]");
-    f_road_BI.SetParameter(0,probe_mesSA_roadAw -> at(NTrigChain)[0]);
-    f_road_BI.SetParameter(1,probe_mesSA_roadBw -> at(NTrigChain)[0]/1000.);
-    f_road_BI.SetLineColor(30);
-    f_road_BI.SetLineWidth(2);
-    f_road_BI.SetLineStyle(2);
+    cout << "roadFtk: " << probe_mesSA_roadFtkAw -> at(NTrigChain)[0] << ": " << probe_mesSA_roadFtkBw->at(NTrigChain)[0] << endl;
+    cout << "roadFtk: " << probe_mesSA_roadFtkAw -> at(NTrigChain)[1] << ": " << probe_mesSA_roadFtkBw->at(NTrigChain)[1] << endl;
+    cout << "roadFtk: " << probe_mesSA_roadFtkAw -> at(NTrigChain)[2] << ": " << probe_mesSA_roadFtkBw->at(NTrigChain)[2] << endl;
+    cout << "roadRpc: " << probe_mesSA_roadRpcAw -> at(NTrigChain)[0] << ": " << probe_mesSA_roadRpcBw->at(NTrigChain)[0] << endl;
+    cout << "roadRpc: " << probe_mesSA_roadRpcAw -> at(NTrigChain)[1] << ": " << probe_mesSA_roadRpcBw->at(NTrigChain)[1] << endl;
+    cout << "roadRpc: " << probe_mesSA_roadRpcAw -> at(NTrigChain)[2] << ": " << probe_mesSA_roadRpcBw->at(NTrigChain)[2] << endl;
 
-    TF1 f_road_BI_plus = TF1("f_road_BI_plus", "[0]*x+[1]", -9999, 9999);
-    f_road_BI_plus.SetParameter(0,probe_mesSA_roadAw -> at(NTrigChain)[0]);
-    f_road_BI_plus.SetParameter(1,( (probe_mesSA_roadBw -> at(NTrigChain)[0]/1000.) + rWidthToBw(probe_mesSA_roadAw->at(NTrigChain)[0],0.4)));
-    f_road_BI_plus.SetLineColor(30);
-    f_road_BI_plus.SetLineWidth(2);
-    f_road_BI_plus.SetLineStyle(1);
+    TF1 f_roadRpc_BI = TF1("f_roadRpc_BI", "[0]*x+[1]", -9999, 9999);
+    f_roadRpc_BI.SetTitle(";Z [m];R [m]");
+    f_roadRpc_BI.SetParameter(0,probe_mesSA_roadRpcAw -> at(NTrigChain)[0]);
+    f_roadRpc_BI.SetParameter(1,probe_mesSA_roadRpcBw -> at(NTrigChain)[0]/1000.);
+    f_roadRpc_BI.SetLineColor(kCyan+2);
+    f_roadRpc_BI.SetLineWidth(2);
+    f_roadRpc_BI.SetLineStyle(2);
 
-    TF1 f_road_BI_minus = TF1("f_road_BI_minus", "[0]*x+[1]", -9999, 9999);
-    f_road_BI_minus.SetParameter(0,probe_mesSA_roadAw -> at(NTrigChain)[0]);
-    f_road_BI_minus.SetParameter(1,( (probe_mesSA_roadBw -> at(NTrigChain)[0]/1000.) - rWidthToBw(probe_mesSA_roadAw->at(NTrigChain)[0],0.4)));
-    f_road_BI_minus.SetLineColor(30);
-    f_road_BI_minus.SetLineWidth(2);
-    f_road_BI_minus.SetLineStyle(1);
+    //double aw_rpc_BI = probe_mesSA_roadRpcAw->at(NTrigChain)[0];
+    //double bw_rpc_BI = probe_mesSA_roadRpcBw->at(NTrigChain)[0]/1000.;
+    //double x1_rpc_BI = (4 - bw_rpc_BI)/aw_rpc_BI;
+    //double x2_rpc_BI = (6 - bw_rpc_BI)/aw_rpc_BI;
+    //double xMin_rpc_BI = (x1_rpc_BI<x2_rpc_BI)? x1_rpc_BI:x2_rpc_BI;
+    //double xMax_rpc_BI = (x1_rpc_BI<x2_rpc_BI)? x2_rpc_BI:x1_rpc_BI;
+    //cout << "xMin,Max: " << xMin_rpc_BI << ": " << xMax_rpc_BI << endl;
+    //f_roadRpc_BI.SetRange(xMin_rpc_BI,xMax_rpc_BI,4,6);
+
+    TF1 f_roadRpc_BI_plus = TF1("f_roadRpc_BI_plus", "[0]*x+[1]", -9999, 9999);
+    f_roadRpc_BI_plus.SetParameter(0,probe_mesSA_roadRpcAw -> at(NTrigChain)[0]);
+    f_roadRpc_BI_plus.SetParameter(1,( (probe_mesSA_roadRpcBw -> at(NTrigChain)[0]/1000.) + rWidthToBw(probe_mesSA_roadRpcAw->at(NTrigChain)[0],0.4)));
+    f_roadRpc_BI_plus.SetLineColor(kCyan+2);
+    f_roadRpc_BI_plus.SetLineWidth(2);
+    f_roadRpc_BI_plus.SetLineStyle(1);
+
+    TF1 f_roadRpc_BI_minus = TF1("f_roadRpc_BI_minus", "[0]*x+[1]", -9999, 9999);
+    f_roadRpc_BI_minus.SetParameter(0,probe_mesSA_roadRpcAw -> at(NTrigChain)[0]);
+    f_roadRpc_BI_minus.SetParameter(1,( (probe_mesSA_roadRpcBw -> at(NTrigChain)[0]/1000.) - rWidthToBw(probe_mesSA_roadRpcAw->at(NTrigChain)[0],0.4)));
+    f_roadRpc_BI_minus.SetLineColor(kCyan+2);
+    f_roadRpc_BI_minus.SetLineWidth(2);
+    f_roadRpc_BI_minus.SetLineStyle(1);
+
+    TF1 f_roadFtk_BI = TF1("f_roadFtk_BI", "[0]*x+[1]", -9999, 9999);
+    f_roadFtk_BI.SetTitle(";Z [m];R [m]");
+    f_roadFtk_BI.SetParameter(0,probe_mesSA_roadFtkAw -> at(NTrigChain)[0]);
+    f_roadFtk_BI.SetParameter(1,probe_mesSA_roadFtkBw -> at(NTrigChain)[0]/1000.);
+    f_roadFtk_BI.SetLineColor(kMagenta+2);
+    f_roadFtk_BI.SetLineWidth(2);
+    f_roadFtk_BI.SetLineStyle(2);
+
+    //double aw_ftk_BI = probe_mesSA_roadFtkAw->at(NTrigChain)[0];
+    //double bw_ftk_BI = probe_mesSA_roadFtkBw->at(NTrigChain)[0]/1000.;
+    //double x1_ftk_BI = (4 - bw_ftk_BI)/aw_ftk_BI;
+    //double x2_ftk_BI = (6 - bw_ftk_BI)/aw_ftk_BI;
+    //double xMin_ftk_BI = (x1_ftk_BI<x2_ftk_BI)? x1_ftk_BI:x2_ftk_BI;
+    //double xMax_ftk_BI = (x1_ftk_BI<x2_ftk_BI)? x2_ftk_BI:x1_ftk_BI;
+    //cout << "xMin,Max: " << xMin_ftk_BI << ": " << xMax_ftk_BI << endl;
+    //f_roadFtk_BI.SetRange(xMin_ftk_BI,xMax_ftk_BI,4,6);
+
+    TF1 f_roadFtk_BI_plus = TF1("f_roadFtk_BI_plus", "[0]*x+[1]", -9999, 9999);
+    f_roadFtk_BI_plus.SetParameter(0,probe_mesSA_roadFtkAw -> at(NTrigChain)[0]);
+    f_roadFtk_BI_plus.SetParameter(1,( (probe_mesSA_roadFtkBw -> at(NTrigChain)[0]/1000.) + rWidthToBw(probe_mesSA_roadFtkAw->at(NTrigChain)[0],0.4)));
+    f_roadFtk_BI_plus.SetLineColor(kMagenta+2);
+    f_roadFtk_BI_plus.SetLineWidth(2);
+    f_roadFtk_BI_plus.SetLineStyle(1);
+
+    TF1 f_roadFtk_BI_minus = TF1("f_roadFtk_BI_minus", "[0]*x+[1]", -9999, 9999);
+    f_roadFtk_BI_minus.SetParameter(0,probe_mesSA_roadFtkAw -> at(NTrigChain)[0]);
+    f_roadFtk_BI_minus.SetParameter(1,( (probe_mesSA_roadFtkBw -> at(NTrigChain)[0]/1000.) - rWidthToBw(probe_mesSA_roadFtkAw->at(NTrigChain)[0],0.4)));
+    f_roadFtk_BI_minus.SetLineColor(kMagenta+2);
+    f_roadFtk_BI_minus.SetLineWidth(2);
+    f_roadFtk_BI_minus.SetLineStyle(1);
 
 
-    TF1 f_road_BM = TF1("f_road_BM", "[0]*x+[1]", -9999, 9999);
-    f_road_BM.SetTitle(";Z [m];R [m]");
-    f_road_BM.SetParameter(0,probe_mesSA_roadAw -> at(NTrigChain)[1]);
-    f_road_BM.SetParameter(1,probe_mesSA_roadBw -> at(NTrigChain)[1]/1000.);
-    f_road_BM.SetLineColor(30);
-    f_road_BM.SetLineWidth(2);
-    f_road_BM.SetLineStyle(2);
+    TF1 f_roadRpc_BM = TF1("f_roadRpc_BM", "[0]*x+[1]", -9999, 9999);
+    f_roadRpc_BM.SetTitle(";Z [m];R [m]");
+    f_roadRpc_BM.SetParameter(0,probe_mesSA_roadRpcAw -> at(NTrigChain)[1]);
+    f_roadRpc_BM.SetParameter(1,probe_mesSA_roadRpcBw -> at(NTrigChain)[1]/1000.);
+    f_roadRpc_BM.SetLineColor(kCyan+2);
+    f_roadRpc_BM.SetLineWidth(2);
+    f_roadRpc_BM.SetLineStyle(2);
 
-    TF1 f_road_BM_plus = TF1("f_road_BM_plus", "[0]*x+[1]", -9999, 9999);
-    f_road_BM_plus.SetParameter(0,probe_mesSA_roadAw -> at(NTrigChain)[1]);
-    f_road_BM_plus.SetParameter(1,( (probe_mesSA_roadBw -> at(NTrigChain)[1]/1000.) + rWidthToBw(probe_mesSA_roadAw->at(NTrigChain)[1],0.2)));
-    f_road_BM_plus.SetLineColor(30);
-    f_road_BM_plus.SetLineWidth(2);
-    f_road_BM_plus.SetLineStyle(1);
+    //double aw_rpc_BM = probe_mesSA_roadRpcAw->at(NTrigChain)[1];
+    //double bw_rpc_BM = probe_mesSA_roadRpcBw->at(NTrigChain)[1]/1000.;
+    //double x1_rpc_BM = (6 - bw_rpc_BM)/aw_rpc_BM;
+    //double x2_rpc_BM = (8 - bw_rpc_BM)/aw_rpc_BM;
+    //double xMin_rpc_BM = (x1_rpc_BM<x2_rpc_BM)? x1_rpc_BM:x2_rpc_BM;
+    //double xMax_rpc_BM = (x1_rpc_BM<x2_rpc_BM)? x2_rpc_BM:x1_rpc_BM;
+    //f_roadRpc_BM.SetRange(xMin_rpc_BM,xMax_rpc_BM,6,8);
 
-    TF1 f_road_BM_minus = TF1("f_road_BM_minus", "[0]*x+[1]", -9999, 9999);
-    f_road_BM_minus.SetParameter(0,probe_mesSA_roadAw -> at(NTrigChain)[1]);
-    f_road_BM_minus.SetParameter(1,( (probe_mesSA_roadBw -> at(NTrigChain)[1]/1000.) - rWidthToBw(probe_mesSA_roadAw->at(NTrigChain)[1],0.2)));
-    f_road_BM_minus.SetLineColor(30);
-    f_road_BM_minus.SetLineWidth(2);
-    f_road_BM_minus.SetLineStyle(1);
+    TF1 f_roadRpc_BM_plus = TF1("f_roadRpc_BM_plus", "[0]*x+[1]", -9999, 9999);
+    f_roadRpc_BM_plus.SetParameter(0,probe_mesSA_roadRpcAw -> at(NTrigChain)[1]);
+    f_roadRpc_BM_plus.SetParameter(1,( (probe_mesSA_roadRpcBw -> at(NTrigChain)[1]/1000.) + rWidthToBw(probe_mesSA_roadRpcAw->at(NTrigChain)[1],0.2)));
+    f_roadRpc_BM_plus.SetLineColor(kCyan+2);
+    f_roadRpc_BM_plus.SetLineWidth(2);
+    f_roadRpc_BM_plus.SetLineStyle(1);
 
-    TF1 f_road_BO = TF1("f_road_BO", "[0]*x+[1]", -9999, 9999);
-    f_road_BO.SetTitle(";Z [m];R [m]");
-    f_road_BO.SetParameter(0,probe_mesSA_roadAw -> at(NTrigChain)[2]);
-    f_road_BO.SetParameter(1,probe_mesSA_roadBw -> at(NTrigChain)[2]/1000.);
-    f_road_BO.SetLineColor(30);
-    f_road_BO.SetLineWidth(2);
-    f_road_BO.SetLineStyle(2);
+    TF1 f_roadRpc_BM_minus = TF1("f_roadRpc_BM_minus", "[0]*x+[1]", -9999, 9999);
+    f_roadRpc_BM_minus.SetParameter(0,probe_mesSA_roadRpcAw -> at(NTrigChain)[1]);
+    f_roadRpc_BM_minus.SetParameter(1,( (probe_mesSA_roadRpcBw -> at(NTrigChain)[1]/1000.) - rWidthToBw(probe_mesSA_roadRpcAw->at(NTrigChain)[1],0.2)));
+    f_roadRpc_BM_minus.SetLineColor(kCyan+2);
+    f_roadRpc_BM_minus.SetLineWidth(2);
+    f_roadRpc_BM_minus.SetLineStyle(1);
 
-    TF1 f_road_BO_plus = TF1("f_road_BO_plus", "[0]*x+[1]", -9999, 9999);
-    f_road_BO_plus.SetParameter(0,probe_mesSA_roadAw -> at(NTrigChain)[2]);
-    f_road_BO_plus.SetParameter(1,( (probe_mesSA_roadBw -> at(NTrigChain)[2]/1000.) + rWidthToBw(probe_mesSA_roadAw->at(NTrigChain)[2],0.4)));
-    f_road_BO_plus.SetLineColor(30);
-    f_road_BO_plus.SetLineWidth(2);
-    f_road_BO_plus.SetLineStyle(1);
+    TF1 f_roadFtk_BM = TF1("f_roadFtk_BM", "[0]*x+[1]", -9999, 9999);
+    f_roadFtk_BM.SetTitle(";Z [m];R [m]");
+    f_roadFtk_BM.SetParameter(0,probe_mesSA_roadFtkAw -> at(NTrigChain)[1]);
+    f_roadFtk_BM.SetParameter(1,probe_mesSA_roadFtkBw -> at(NTrigChain)[1]/1000.);
+    f_roadFtk_BM.SetLineColor(kMagenta+2);
+    f_roadFtk_BM.SetLineWidth(2);
+    f_roadFtk_BM.SetLineStyle(2);
 
-    TF1 f_road_BO_minus = TF1("f_road_BO_minus", "[0]*x+[1]", -9999, 9999);
-    f_road_BO_minus.SetParameter(0,probe_mesSA_roadAw -> at(NTrigChain)[2]);
-    f_road_BO_minus.SetParameter(1,( (probe_mesSA_roadBw -> at(NTrigChain)[2]/1000.) - rWidthToBw(probe_mesSA_roadAw->at(NTrigChain)[2],0.4)));
-    f_road_BO_minus.SetLineColor(30);
-    f_road_BO_minus.SetLineWidth(2);
-    f_road_BO_minus.SetLineStyle(1);
+    //double aw_ftk_BM = probe_mesSA_roadFtkAw->at(NTrigChain)[1];
+    //double bw_ftk_BM = probe_mesSA_roadFtkBw->at(NTrigChain)[1]/1000.;
+    //double x1_ftk_BM = (6 - bw_ftk_BM)/aw_ftk_BM;
+    //double x2_ftk_BM = (8 - bw_ftk_BM)/aw_ftk_BM;
+    //double xMin_ftk_BM = (x1_ftk_BM<x2_ftk_BM)? x1_ftk_BM:x2_ftk_BM;
+    //double xMax_ftk_BM = (x1_ftk_BM<x2_ftk_BM)? x2_ftk_BM:x1_ftk_BM;
+    //f_roadFtk_BM.SetRange(xMin_ftk_BM,xMax_ftk_BM,6,8);
+
+    TF1 f_roadFtk_BM_plus = TF1("f_roadFtk_BM_plus", "[0]*x+[1]", -9999, 9999);
+    f_roadFtk_BM_plus.SetParameter(0,probe_mesSA_roadFtkAw -> at(NTrigChain)[1]);
+    f_roadFtk_BM_plus.SetParameter(1,( (probe_mesSA_roadFtkBw -> at(NTrigChain)[1]/1000.) + rWidthToBw(probe_mesSA_roadFtkAw->at(NTrigChain)[1],0.2)));
+    f_roadFtk_BM_plus.SetLineColor(kMagenta+2);
+    f_roadFtk_BM_plus.SetLineWidth(2);
+    f_roadFtk_BM_plus.SetLineStyle(1);
+
+    TF1 f_roadFtk_BM_minus = TF1("f_roadFtk_BM_minus", "[0]*x+[1]", -9999, 9999);
+    f_roadFtk_BM_minus.SetParameter(0,probe_mesSA_roadFtkAw -> at(NTrigChain)[1]);
+    f_roadFtk_BM_minus.SetParameter(1,( (probe_mesSA_roadFtkBw -> at(NTrigChain)[1]/1000.) - rWidthToBw(probe_mesSA_roadFtkAw->at(NTrigChain)[1],0.2)));
+    f_roadFtk_BM_minus.SetLineColor(kMagenta+2);
+    f_roadFtk_BM_minus.SetLineWidth(2);
+    f_roadFtk_BM_minus.SetLineStyle(1);
+
+    TF1 f_roadRpc_BO = TF1("f_roadRpc_BO", "[0]*x+[1]", -9999, 9999);
+    f_roadRpc_BO.SetTitle(";Z [m];R [m]");
+    f_roadRpc_BO.SetParameter(0,probe_mesSA_roadRpcAw -> at(NTrigChain)[2]);
+    f_roadRpc_BO.SetParameter(1,probe_mesSA_roadRpcBw -> at(NTrigChain)[2]/1000.);
+    f_roadRpc_BO.SetLineColor(kCyan+2);
+    f_roadRpc_BO.SetLineWidth(2);
+    f_roadRpc_BO.SetLineStyle(2);
+
+    //double aw_rpc_BO = probe_mesSA_roadRpcAw->at(NTrigChain)[2];
+    //double bw_rpc_BO = probe_mesSA_roadRpcBw->at(NTrigChain)[2]/1000.;
+    //double x1_rpc_BO = (8 - bw_rpc_BO)/aw_rpc_BO;
+    //double x2_rpc_BO = (11 - bw_rpc_BO)/aw_rpc_BO;
+    //double xMin_rpc_BO = (x1_rpc_BO<x2_rpc_BO)? x1_rpc_BO:x2_rpc_BO;
+    //double xMax_rpc_BO = (x1_rpc_BO<x2_rpc_BO)? x2_rpc_BO:x1_rpc_BO;
+    //f_roadRpc_BO.SetRange(xMin_rpc_BO,xMax_rpc_BO,8,11);
+
+    TF1 f_roadRpc_BO_plus = TF1("f_roadRpc_BO_plus", "[0]*x+[1]", -9999, 9999);
+    f_roadRpc_BO_plus.SetParameter(0,probe_mesSA_roadRpcAw -> at(NTrigChain)[2]);
+    f_roadRpc_BO_plus.SetParameter(1,( (probe_mesSA_roadRpcBw -> at(NTrigChain)[2]/1000.) + rWidthToBw(probe_mesSA_roadRpcAw->at(NTrigChain)[2],0.4)));
+    f_roadRpc_BO_plus.SetLineColor(kCyan+2);
+    f_roadRpc_BO_plus.SetLineWidth(2);
+    f_roadRpc_BO_plus.SetLineStyle(1);
+
+    TF1 f_roadRpc_BO_minus = TF1("f_roadRpc_BO_minus", "[0]*x+[1]", -9999, 9999);
+    f_roadRpc_BO_minus.SetParameter(0,probe_mesSA_roadRpcAw -> at(NTrigChain)[2]);
+    f_roadRpc_BO_minus.SetParameter(1,( (probe_mesSA_roadRpcBw -> at(NTrigChain)[2]/1000.) - rWidthToBw(probe_mesSA_roadRpcAw->at(NTrigChain)[2],0.4)));
+    f_roadRpc_BO_minus.SetLineColor(kCyan+2);
+    f_roadRpc_BO_minus.SetLineWidth(2);
+    f_roadRpc_BO_minus.SetLineStyle(1);
+
+    TF1 f_roadFtk_BO = TF1("f_roadFtk_BO", "[0]*x+[1]", -9999, 9999);
+    f_roadFtk_BO.SetTitle(";Z [m];R [m]");
+    f_roadFtk_BO.SetParameter(0,probe_mesSA_roadFtkAw -> at(NTrigChain)[2]);
+    f_roadFtk_BO.SetParameter(1,probe_mesSA_roadFtkBw -> at(NTrigChain)[2]/1000.);
+    f_roadFtk_BO.SetLineColor(kMagenta+2);
+    f_roadFtk_BO.SetLineWidth(2);
+    f_roadFtk_BO.SetLineStyle(2);
+
+    //double aw_ftk_BO = probe_mesSA_roadFtkAw->at(NTrigChain)[2];
+    //double bw_ftk_BO = probe_mesSA_roadFtkBw->at(NTrigChain)[2]/1000.;
+    //double x1_ftk_BO = (8 - bw_ftk_BO)/aw_ftk_BO;
+    //double x2_ftk_BO = (11 - bw_ftk_BO)/aw_ftk_BO;
+    //double xMin_ftk_BO = (x1_ftk_BO<x2_ftk_BO)? x1_ftk_BO:x2_ftk_BO;
+    //double xMax_ftk_BO = (x1_ftk_BO<x2_ftk_BO)? x2_ftk_BO:x1_ftk_BO;
+    //f_roadFtk_BO.SetRange(xMin_ftk_BO,xMax_ftk_BO,8,11);
+
+    TF1 f_roadFtk_BO_plus = TF1("f_roadFtk_BO_plus", "[0]*x+[1]", -9999, 9999);
+    f_roadFtk_BO_plus.SetParameter(0,probe_mesSA_roadFtkAw -> at(NTrigChain)[2]);
+    f_roadFtk_BO_plus.SetParameter(1,( (probe_mesSA_roadFtkBw -> at(NTrigChain)[2]/1000.) + rWidthToBw(probe_mesSA_roadFtkAw->at(NTrigChain)[2],0.4)));
+    f_roadFtk_BO_plus.SetLineColor(kMagenta+2);
+    f_roadFtk_BO_plus.SetLineWidth(2);
+    f_roadFtk_BO_plus.SetLineStyle(1);
+
+    TF1 f_roadFtk_BO_minus = TF1("f_roadFtk_BO_minus", "[0]*x+[1]", -9999, 9999);
+    f_roadFtk_BO_minus.SetParameter(0,probe_mesSA_roadFtkAw -> at(NTrigChain)[2]);
+    f_roadFtk_BO_minus.SetParameter(1,( (probe_mesSA_roadFtkBw -> at(NTrigChain)[2]/1000.) - rWidthToBw(probe_mesSA_roadFtkAw->at(NTrigChain)[2],0.4)));
+    f_roadFtk_BO_minus.SetLineColor(kMagenta+2);
+    f_roadFtk_BO_minus.SetLineWidth(2);
+    f_roadFtk_BO_minus.SetLineStyle(1);
 
     TF1 f_road_EI = TF1("f_road_EI", "[0]*x+[1]", -9999, 9999);
     f_road_EI.SetTitle(";Z [m];R [m]");
@@ -1515,6 +1709,15 @@ void RPC::Display(int tap_type, int trig_chain, Long64_t begin_entry, Long64_t l
       l_rpc = leg_left.AddEntry((TObject*)0,"RPC Fit Failure","");
       l_rpc -> SetTextColor(kRed);
     }
+    // Display road
+    TLegendEntry* l_road;
+    if (probe_mesSA_roadAlgo->at(NTrigChain) == 1){
+      l_road = leg_left.AddEntry((TObject*)0,"FTK road used","");
+      l_road -> SetTextColor(kMagenta+2);
+    } else{
+      l_road = leg_left.AddEntry((TObject*)0,"RPC road used","");
+      l_road -> SetTextColor(kCyan+2);
+    }
 
 
     leg_left.AddEntry((TObject*)0,Form("#splitline{Offline probe p_{T}}{ : %4.3f [GeV]}",probe_pt/1000.),"");
@@ -1536,9 +1739,16 @@ void RPC::Display(int tap_type, int trig_chain, Long64_t begin_entry, Long64_t l
     MdtRegion_BI.Draw("f, same");
     MdtRegion_BM.Draw("f, same");
     MdtRegion_BO.Draw("f, same");
-    f_road_BI.Draw("f, same");
-    f_road_BM.Draw("f, same");
-    f_road_BO.Draw("f, same");
+    f_roadRpc_BI.Draw(" same");
+    //f_roadRpc_BI_plus.Draw(" same");
+    //f_roadRpc_BI_minus.Draw(" same");
+    f_roadFtk_BI.Draw(" same");
+    //f_roadFtk_BI_plus.Draw(" same");
+    //f_roadFtk_BI_minus.Draw(" same");
+    f_roadRpc_BM.Draw(" same");
+    f_roadFtk_BM.Draw(" same");
+    f_roadRpc_BO.Draw(" same");
+    f_roadFtk_BO.Draw(" same");
     gr_segment.SetMarkerStyle(21);
     gr_segment.SetMarkerSize(2);
     gr_segment.SetMarkerColor(6);
@@ -1601,16 +1811,20 @@ void RPC::Display(int tap_type, int trig_chain, Long64_t begin_entry, Long64_t l
     leg_BI.AddEntry(&gr_SP,Form("#splitline{SuperPoint}{(%4.3f, %4.3f)}",(probe_mesSA_superPointZ_BI -> at(NTrigChain))/1000., (probe_mesSA_superPointR_BI -> at(NTrigChain))/1000.),      "p");
     leg_BI.AddEntry(&gr_MdtHit_Inlier,  Form("#splitline{Inlier}{MDT hit (%d)}",nMDT_BI_Inlier),  "p");
     leg_BI.AddEntry(&gr_MdtHit_Outlier_1, Form("#splitline{Outlier}{MDT hit (%d)}",nMDT_BI_Outlier), "p");
-    leg_BI.AddEntry(&f_road_BI,            "Road",            "l");
+    leg_BI.AddEntry(&f_roadRpc_BI,            "Rpc Road",            "l");
+    leg_BI.AddEntry(&f_roadFtk_BI,            "Ftk Road",            "l");
     leg_BI.AddEntry(&MdtRegion_BI,"MDT Region","f");
     leg_BI.AddEntry(&f_roi,"RoI direction","l");
     TH1* frame_BI = c2->DrawFrame(Zmin_BI,Rmin_BI,Zmax_BI,Rmax_BI);
     frame_BI->GetXaxis()->SetTitle("Z [m]");
     frame_BI->GetYaxis()->SetTitle("R [m]");
-    f_road_BI.Draw("same");
-    f_road_BI_plus.Draw("same");
-    f_road_BI_minus.Draw("same");
-    MdtRegion_BI.Draw("f, same");
+    f_roadRpc_BI.Draw("same");
+    f_roadRpc_BI_plus.Draw("same");
+    f_roadRpc_BI_minus.Draw("same");
+    f_roadFtk_BI.Draw("same");
+    f_roadFtk_BI_plus.Draw("same");
+    f_roadFtk_BI_minus.Draw("same");
+    //MdtRegion_BI.Draw("f, same");
     f_roi.Draw("same");
     gr_MdtHit_Outlier_3.Draw("P, same");
     gr_MdtHit_Outlier_2.Draw("P, same");
@@ -1640,11 +1854,20 @@ void RPC::Display(int tap_type, int trig_chain, Long64_t begin_entry, Long64_t l
       l_rpc_BI = leg_left_BI.AddEntry((TObject*)0,"RPC Fit Failure","");
       l_rpc_BI -> SetTextColor(kRed);
     }
+    // Display road
+    TLegendEntry* l_road_BI;
+    if (probe_mesSA_roadAlgo->at(NTrigChain) == 1){
+      l_road_BI = leg_left_BI.AddEntry((TObject*)0,"FTK road used","");
+      l_road_BI -> SetTextColor(kMagenta+2);
+    } else{
+      l_road_BI = leg_left_BI.AddEntry((TObject*)0,"RPC road used","");
+      l_road_BI -> SetTextColor(kCyan+2);
+    }
 
     leg_left_BI.AddEntry((TObject*)0,Form("#splitline{Offline probe p_{T}}{ : %4.3f [GeV]}",probe_pt/1000.),"");
     leg_left_BI.AddEntry((TObject*)0,Form("#splitline{L2MuonSA probe p_{T}}{ : %4.3f [GeV]}",abs(probe_mesSA_pt->at(NTrigChain))),"");
-    leg_left_BI.AddEntry((TObject*)0,Form("#splitline{Road Slope}{ : %4.3f}", probe_mesSA_roadAw->at(NTrigChain)[0]),"");
-    leg_left_BI.AddEntry((TObject*)0,Form("#splitline{Road R-Intercept}{ : %4.3f}",probe_mesSA_roadBw->at(NTrigChain)[0] / 1000.),"");
+    leg_left_BI.AddEntry((TObject*)0,Form("#splitline{FTK Road}{%4.3f, %4.3f}", probe_mesSA_roadFtkAw->at(NTrigChain)[0], probe_mesSA_roadFtkBw->at(NTrigChain)[0]/1000.),"");
+    leg_left_BI.AddEntry((TObject*)0,Form("#splitline{RPC Road}{%4.3f, %4.3f}", probe_mesSA_roadRpcAw->at(NTrigChain)[0], probe_mesSA_roadRpcBw->at(NTrigChain)[0]/1000.),"");
     leg_left_BI.Draw();
 
     gr_SP.Draw("P, same");
@@ -1662,16 +1885,20 @@ void RPC::Display(int tap_type, int trig_chain, Long64_t begin_entry, Long64_t l
     leg_BM.AddEntry(&gr_MdtHit_Inlier,  Form("#splitline{Inlier}{MDT hit (%d)}",nMDT_BM_Inlier),  "p");
     leg_BM.AddEntry(&gr_MdtHit_Outlier_1, Form("#splitline{Outlier}{MDT hit (%d)}",nMDT_BM_Outlier), "p");
     leg_BM.AddEntry(&gr_RPC,"RPC hit","p");
-    leg_BM.AddEntry(&f_road_BM,"Road","l");
+    leg_BM.AddEntry(&f_roadRpc_BM,"Rpc Road","l");
+    leg_BM.AddEntry(&f_roadFtk_BM,"Ftk Road","l");
     leg_BM.AddEntry(&MdtRegion_BI,"MDT Region","f");
     leg_BM.AddEntry(&f_roi,"RoI direction","l");
     TH1* frame_BM = c2->DrawFrame(Zmin_BM,Rmin_BM,Zmax_BM,Rmax_BM);
     frame_BM->GetXaxis()->SetTitle("Z [m]");
     frame_BM->GetYaxis()->SetTitle("R [m]");
-    f_road_BM.Draw("same");
-    f_road_BM_plus.Draw("same");
-    f_road_BM_minus.Draw("same");
-    MdtRegion_BM.Draw("f, same");
+    f_roadRpc_BM.Draw("same");
+    f_roadRpc_BM_plus.Draw("same");
+    f_roadRpc_BM_minus.Draw("same");
+    f_roadFtk_BM.Draw("same");
+    f_roadFtk_BM_plus.Draw("same");
+    f_roadFtk_BM_minus.Draw("same");
+    //MdtRegion_BM.Draw("f, same");
     f_roi.Draw("same");
     gr_MdtHit_Outlier_3.Draw("P,same");
     gr_MdtHit_Outlier_2.Draw("P,same");
@@ -1701,11 +1928,20 @@ void RPC::Display(int tap_type, int trig_chain, Long64_t begin_entry, Long64_t l
       l_rpc_BM = leg_left_BM.AddEntry((TObject*)0,"RPC Fit Failure","");
       l_rpc_BM -> SetTextColor(kRed);
     }
+    // Display road
+    TLegendEntry* l_road_BM;
+    if (probe_mesSA_roadAlgo->at(NTrigChain) == 1){
+      l_road_BM = leg_left_BM.AddEntry((TObject*)0,"FTK road used","");
+      l_road_BM -> SetTextColor(kMagenta+2);
+    } else{
+      l_road_BM = leg_left_BM.AddEntry((TObject*)0,"RPC road used","");
+      l_road_BM -> SetTextColor(kCyan+2);
+    }
 
     leg_left_BM.AddEntry((TObject*)0,Form("#splitline{Offline probe p_{T}}{ : %4.3f [GeV]}",probe_pt/1000.),"");
     leg_left_BM.AddEntry((TObject*)0,Form("#splitline{L2MuonSA probe p_{T}}{ : %4.3f [GeV]}",abs(probe_mesSA_pt->at(NTrigChain))),"");
-    leg_left_BM.AddEntry((TObject*)0,Form("#splitline{Road Slope}{ : %4.3f}", probe_mesSA_roadAw->at(NTrigChain)[1]),"");
-    leg_left_BM.AddEntry((TObject*)0,Form("#splitline{Road R-Intercept}{ : %4.3f}",probe_mesSA_roadBw->at(NTrigChain)[1] / 1000.),"");
+    leg_left_BM.AddEntry((TObject*)0,Form("#splitline{FTK Road}{%4.3f, %4.3f}", probe_mesSA_roadFtkAw->at(NTrigChain)[1], probe_mesSA_roadFtkBw->at(NTrigChain)[1]/1000.),"");
+    leg_left_BM.AddEntry((TObject*)0,Form("#splitline{RPC Road}{%4.3f, %4.3f}", probe_mesSA_roadRpcAw->at(NTrigChain)[1], probe_mesSA_roadRpcBw->at(NTrigChain)[1]/1000.),"");
     leg_left_BM.Draw();
 
     gr_RPC.Draw("P, same");
@@ -1725,16 +1961,20 @@ void RPC::Display(int tap_type, int trig_chain, Long64_t begin_entry, Long64_t l
     leg_BO.AddEntry(&gr_MdtHit_Inlier,  Form("#splitline{Inlier}{MDT hit (%d)}",nMDT_BO_Inlier),  "p");
     leg_BO.AddEntry(&gr_MdtHit_Outlier_1, Form("#splitline{Outlier}{MDT hit (%d)}",nMDT_BO_Outlier), "p");
     leg_BO.AddEntry(&gr_RPC,"RPC hit","p");
-    leg_BO.AddEntry(&f_road_BO,"Road","l");
+    leg_BO.AddEntry(&f_roadRpc_BO,"Rpc Road","l");
+    leg_BO.AddEntry(&f_roadFtk_BO,"Ftk Road","l");
     leg_BO.AddEntry(&MdtRegion_BI,"MDT Region","f");
     leg_BO.AddEntry(&f_roi,"RoI direction","l");
     TH1* frame_BO = c2->DrawFrame(Zmin_BO,Rmin_BO,Zmax_BO,Rmax_BO);
     frame_BO->GetXaxis()->SetTitle("Z [m]");
     frame_BO->GetYaxis()->SetTitle("R [m]");
-    f_road_BO.Draw("same");
-    f_road_BO_plus.Draw("same");
-    f_road_BO_minus.Draw("same");
-    MdtRegion_BO.Draw("f, same");
+    f_roadRpc_BO.Draw("same");
+    f_roadRpc_BO_plus.Draw("same");
+    f_roadRpc_BO_minus.Draw("same");
+    f_roadFtk_BO.Draw("same");
+    f_roadFtk_BO_plus.Draw("same");
+    f_roadFtk_BO_minus.Draw("same");
+    //MdtRegion_BO.Draw("f, same");
     f_roi.Draw("same");
     gr_MdtHit_Outlier_3.Draw("P,same");
     gr_MdtHit_Outlier_2.Draw("P,same");
@@ -1764,11 +2004,20 @@ void RPC::Display(int tap_type, int trig_chain, Long64_t begin_entry, Long64_t l
       l_rpc_BO = leg_left_BO.AddEntry((TObject*)0,"RPC Fit Failure","");
       l_rpc_BO -> SetTextColor(kRed);
     }
+    // Display road
+    TLegendEntry* l_road_BO;
+    if (probe_mesSA_roadAlgo->at(NTrigChain) == 1){
+      l_road_BO = leg_left_BO.AddEntry((TObject*)0,"FTK road used","");
+      l_road_BO -> SetTextColor(kMagenta+2);
+    } else{
+      l_road_BO = leg_left_BO.AddEntry((TObject*)0,"RPC road used","");
+      l_road_BO -> SetTextColor(kCyan+2);
+    }
 
     leg_left_BO.AddEntry((TObject*)0,Form("#splitline{Offline probe p_{T}}{ : %4.3f [GeV]}",probe_pt/1000.),"");
     leg_left_BO.AddEntry((TObject*)0,Form("#splitline{L2MuonSA probe p_{T}}{ : %4.3f [GeV]}",abs(probe_mesSA_pt->at(NTrigChain))),"");
-    leg_left_BO.AddEntry((TObject*)0,Form("#splitline{Road Slope}{ : %4.3f}", probe_mesSA_roadAw->at(NTrigChain)[2]),"");
-    leg_left_BO.AddEntry((TObject*)0,Form("#splitline{Road R-Intercept}{ : %4.3f}",probe_mesSA_roadBw->at(NTrigChain)[2] / 1000.),"");
+    leg_left_BO.AddEntry((TObject*)0,Form("#splitline{FTK Road}{%4.3f, %4.3f}", probe_mesSA_roadFtkAw->at(NTrigChain)[2], probe_mesSA_roadFtkBw->at(NTrigChain)[2]/1000.),"");
+    leg_left_BO.AddEntry((TObject*)0,Form("#splitline{RPC Road}{%4.3f, %4.3f}", probe_mesSA_roadRpcAw->at(NTrigChain)[2], probe_mesSA_roadRpcBw->at(NTrigChain)[2]/1000.),"");
     leg_left_BO.Draw();
 
     gr_RPC.Draw("P, same");
@@ -2829,16 +3078,35 @@ double RPC::calc_pTresidual( double offline_pt, double trig_pt){
 }
 
 void RPC::FillPtResidualHist(){ // Only eta region cut here
-  if ( ((probe_mesSA_pt -> at(N4)) == 0) && ((probe_mesSA_pt -> at(N4)) > -9999) ){ return;}
+  //if ( ((probe_mesSA_pt -> at(N4)) == 0) && ((probe_mesSA_pt -> at(N4)) > -9999) ){ return;}
+  //if ( ((probe_mesSA_pt -> at(N4)) == 0) && ((probe_mesSA_pt -> at(N4)) > -9999) ){ return;}
 
-  double pTresidual = calc_pTresidual(probe_pt/1000., abs(probe_mesSA_pt -> at(N4)));
-  //cout << probe_mesSA_pass -> at(N4) << ": " << probe_pt/1000. << ": " << abs(probe_mesSA_pt->at(N4)) << ": "  << pTresidual << endl;
+  double pTresidual;
+  //cout << probe_mesSA_pass -> at(N4) << ": " << (probe_mesSA_ptFtk->at(N4))/1000. << ":" << probe_pt/1000. << ": " << abs(probe_mesSA_pt->at(N4)) << ": "  << pTresidual << endl;
+  //if (abs(probe_mesSA_ptFtk->at(N4))>0.)
+  if (probe_mesSA_ptFtk->size()>0.){
+    cout << probe_mesSA_pass -> at(N4) << ": " << (probe_mesSA_ptFtk->at(N4))/1000. << ":" << probe_pt/1000. << ": " << abs(probe_mesSA_pt->at(N4)) << ": "  << pTresidual << endl;
+    cout << "road: " << probe_mesSA_roadAlgo -> at(N4) << ": " << probe_mesSA_roadAlgo->at(N4) << endl;
+  }
+
+  if (probe_mesSA_ptFtk->size()>0. && probe_mesSA_ptFtk->at(N4) && probe_mesSA_roadAlgo->at(N4) == 1){
+    pTresidual = calc_pTresidual(probe_pt/1000., abs(probe_mesSA_ptFtk -> at(N4)));
+    cout << "ftk" << endl;
+  } else {
+    pTresidual = calc_pTresidual(probe_pt/1000., abs(probe_mesSA_pt -> at(N4)));
+  }
 
 
   //if (abs(probe_eta) < 1.05){
   h_PtResidual_pt -> Fill(probe_pt/1000., pTresidual);
   h_pt_vs_pt -> Fill(probe_pt/1000., abs(probe_mesSA_pt->at(N4)));
+
+  if (probe_mesSA_ptFtk->size()>0. && probe_mesSA_ptFtk->at(N4) && probe_mesSA_roadAlgo->at(N4) == 1){
+    h_ptl2_vs_ptFtk -> Fill(abs(probe_mesSA_pt->at(N4)), abs(probe_mesSA_ptFtk->at(N4))/1000.);
+    h_pt_vs_ptFtk -> Fill(probe_pt/1000., abs(probe_mesSA_ptFtk->at(N4))/1000.);
+  }
   //}
+
   h_PtResidual_eta -> Fill(probe_eta, pTresidual);
 }
 
@@ -2846,7 +3114,16 @@ void RPC::DrawPtResidualHist(TCanvas* c1, TString pdf){
   h_PtResidual_pt -> Draw("colz");
   c1 -> Print(pdf, "pdf");
 
-  h_pt_vs_pt -> Draw("colz");
+  h_pt_vs_pt -> Draw();
+  h_pt_vs_ptFtk -> Draw("same");
+  h_pt_vs_pt->SetMarkerColor(kRed);
+  h_pt_vs_ptFtk->SetMarkerColor(kBlue);
+  c1 -> Print(pdf, "pdf");
+
+  h_ptl2_vs_ptFtk -> Draw("colz");
+  c1 -> Print(pdf, "pdf");
+
+  h_pt_vs_ptFtk -> Draw("colz");
   c1 -> Print(pdf, "pdf");
 
   h_PtResidual_eta -> Draw("colz");
