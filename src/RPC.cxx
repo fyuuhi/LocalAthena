@@ -33,8 +33,13 @@
 using namespace std;
 
 #include "/gpfs/home/yfukuhar/RootUtils/rootlogon.C"
+#include <plog/Log.h> // Step1: include the header.
+#include <plog/Appenders/ConsoleAppender.h>
+#include <plog/Appenders/ColorConsoleAppender.h>
+
 //#include "/gpfs/fs7001/yfukuhar/workspace/TestCalcEffTool/CalcEffTool/CalcEfficiency/CalcEfficiency/easy_logger.h"
 //#include "/gpfs/home/yfukuhar/work/RpcL2MuonSA/RpcL2MuonSA/src/easy_logger.h"
+//#include "/gpfs/home/yfukuhar/work/RpcL2MuonSA/RpcL2MuonSA/src/tmp.h"
 
 double Res(double param1, double param2);
 bool GRLlist(int LumiBlock);
@@ -43,8 +48,13 @@ bool GRLlist(int LumiBlock);
 //main function (argv[1]: PDF_LABEL, argv[2]: INPUT_NTUPLE, argv[3]: IS_DRAW, arg[4]: IS_EVENTDISPLAY, arg[5]: BEGIN_ENTRY, arg[6]: LIMIT_ENTRY, arg[7]: TAP_TYPE, arg[8]: trig_chain)
 //==================================================================
 int main(int argc, char *argv[]){
+  static plog::ColorConsoleAppender<plog::TxtFormatter> consoleAppender;
+  //plog::init(plog::info, &consoleAppender);
+  plog::init(plog::verbose, &consoleAppender);
+  //plog::init(plog::debug, &consoleAppender);
+
   rootlogon();
-  cout << "---start---" << endl;
+  LOGI << "---start---";
   TColor::InvertPalette();
   gStyle->SetLegendBorderSize(0);
 
@@ -58,7 +68,7 @@ int main(int argc, char *argv[]){
   Int_t limit_entry = atoi(argv[6]);
   Int_t tap_type = atoi(argv[7]);
   Int_t trig_chain = atoi(argv[8]);
-  cout << begin_entry << "," << limit_entry << endl;
+  LOGI << begin_entry << "," << limit_entry;
 
   TFile *fout = new TFile(Form("outroot/%s.root", PdfLabel.Data()), "recreate");
 
@@ -66,25 +76,26 @@ int main(int argc, char *argv[]){
   RPC t_349014(tree1); 
 
   if (isDraw == "true"){
-    t_349014.Loop(limit_entry, 10000);
-    cout << "[INFO]: Loop SUCCESS" << endl;
+    //t_349014.Loop(limit_entry, 10000);
+    t_349014.Loop(limit_entry, 1);
+    LOGI << "Loop SUCCESS";
 
     t_349014.DrawHist("../plot/DrawHist_" + PdfLabel + ".pdf");
-    cout << "[INFO]: DrawHist SUCCESS" << endl;
+    LOGI << "DrawHist SUCCESS";
 
     t_349014.CalcEff();
-    cout << "[INFO]: CalcEff SUCCESS" << endl;
+    LOGI << "CalcEff SUCCESS";
 
     t_349014.DrawEffHist("../plot/DrawEffHist_" + PdfLabel + ".pdf");
-    cout << "[INFO]: DrawEffHist SUCCESS" << endl;
+    LOGI << "DrawEffHist SUCCESS";
 
     t_349014.DrawInEffHist("../plot/DrawInEffHist_" + PdfLabel + ".pdf");
-    cout << "[INFO]: DrawInEffHist SUCCESS" << endl;
+    LOGI << "DrawInEffHist SUCCESS";
   }
 
   if (isEventDisplay == "true"){
     t_349014.Display(tap_type, trig_chain, begin_entry, limit_entry, "../plot/Display_" + PdfLabel + ".pdf");
-    cout << "[INFO]: Display SUCCESS" << endl;
+    LOGI << "Display SUCCESS";
   }
   // == Core End ==
 
@@ -92,7 +103,7 @@ int main(int argc, char *argv[]){
   fout -> Write();
 
   t_349014.End();
-  cout << "[INFO]: End SUCCESS" << endl;
+  LOGI << "End SUCCESS";
 
   return 0;
 }
@@ -111,7 +122,7 @@ void RPC::Loop( int Nevents, int DisplayNumber )
 
    //Long64_t nentries = fChain->GetEntriesFast();
    double entries = fChain->GetEntries();
-   cout << "[INFO]: Nentries:" << entries << endl;
+   LOGI << "Nentries:" << entries;
 
    //const int N50 = 14;
 
@@ -122,7 +133,7 @@ void RPC::Loop( int Nevents, int DisplayNumber )
       nb = fChain->GetEntry(jentry);   nbytes += nb;
       if (ientry < 0) break;
       if( ientry%DisplayNumber == 0){
-        cout << "now event number -->> " << ientry << "/" << nLoop << " : " << ((double) ientry)/nLoop * 100. << "%" << endl;
+        LOGI << "now event number -->> " << ientry << "/" << nLoop << " : " << ((double) ientry)/nLoop * 100. << "%";
       }
 
       //==================================================================
@@ -287,12 +298,12 @@ void RPC::DrawHist(TString pdf){
   h_ResidualSegment_eta_BO -> Draw("colz");
   c1 -> Print(pdf, "pdf" );
 
-  cout << "GetNbinsX(BI): " << h_ResidualSegment_eta_rpc_BI->GetNbinsX() << endl;
-  cout << "0(BI): " << h_ResidualSegment_eta_rpc_BI->GetBinContent(0) << endl;
-  cout << "1(BI): " << h_ResidualSegment_eta_rpc_BI->GetBinContent(1) << endl;
-  cout << "GetNbinsX(BI): " << h_ResidualSegment_eta_ftk_BI->GetNbinsX() << endl;
-  cout << "0(BI): " << h_ResidualSegment_eta_ftk_BI->GetBinContent(0) << endl;
-  cout << "1(BI): " << h_ResidualSegment_eta_ftk_BI->GetBinContent(1) << endl;
+  LOGD << "GetNbinsX(BI): " << h_ResidualSegment_eta_rpc_BI->GetNbinsX();
+  LOGD << "0(BI): " << h_ResidualSegment_eta_rpc_BI->GetBinContent(0);
+  LOGD << "1(BI): " << h_ResidualSegment_eta_rpc_BI->GetBinContent(1);
+  LOGD << "GetNbinsX(BI): " << h_ResidualSegment_eta_ftk_BI->GetNbinsX();
+  LOGD << "0(BI): " << h_ResidualSegment_eta_ftk_BI->GetBinContent(0);
+  LOGD << "1(BI): " << h_ResidualSegment_eta_ftk_BI->GetBinContent(1);
   h_ResidualSegment_eta_rpc_BI->SetLineColor(kRed);
   //h_ResidualSegment_eta_rpc_BI->SetBinContent(1, h_ResidualSegment_eta_rpc_BI->GetBinContent(0)+h_ResidualSegment_eta_rpc_BI->GetBinContent(1));
   //h_ResidualSegment_eta_rpc_BI->SetBinContent(h_ResidualSegment_eta_rpc_BI->GetNbinsX(), h_ResidualSegment_eta_rpc_BI->GetBinContent(h_ResidualSegment_eta_rpc_BI->GetNbinsX())+h_ResidualSegment_eta_rpc_BI->GetBinContent(h_ResidualSegment_eta_rpc_BI->GetNbinsX()+1));
@@ -306,10 +317,10 @@ void RPC::DrawHist(TString pdf){
   leg2->AddEntry(h_ResidualSegment_eta_ftk_BI,"FTK road","f");
   leg2->Draw();
   c1 -> Print(pdf, "pdf" );
-  cout << "0(BI): " << h_ResidualSegment_eta_rpc_BI->GetBinContent(0) << endl;
-  cout << "1(BI): " << h_ResidualSegment_eta_rpc_BI->GetBinContent(1) << endl;
-  cout << "0(BI): " << h_ResidualSegment_eta_ftk_BI->GetBinContent(0) << endl;
-  cout << "1(BI): " << h_ResidualSegment_eta_ftk_BI->GetBinContent(1) << endl;
+  LOGD << "0(BI): " << h_ResidualSegment_eta_rpc_BI->GetBinContent(0);
+  LOGD << "1(BI): " << h_ResidualSegment_eta_rpc_BI->GetBinContent(1);
+  LOGD << "0(BI): " << h_ResidualSegment_eta_ftk_BI->GetBinContent(0);
+  LOGD << "1(BI): " << h_ResidualSegment_eta_ftk_BI->GetBinContent(1);
 
   h_ResidualSegment_eta_rpc_BM->SetLineColor(kRed);
   //h_ResidualSegment_eta_rpc_BM->SetBinContent(1, h_ResidualSegment_eta_rpc_BM->GetBinContent(0)+h_ResidualSegment_eta_rpc_BM->GetBinContent(1));
@@ -1052,14 +1063,14 @@ void RPC::Display(int tap_type, int trig_chain, Long64_t begin_entry, Long64_t l
   if (limit_entry == -1) {
     begin_entry = 0;
     limit_entry = fChain -> GetEntries();
-    cout << "-------" << endl;
+    LOGI << "-------";
   }
   // Prepare Loop
   if (fChain == 0) return;
   int nLoop = fChain -> GetEntries();
   //Long64_t nentries = fChain->GetEntriesFast();
   double entries = fChain->GetEntries();
-  cout << "[INFO]: Nentries:" << entries << endl;
+  LOGI << "Nentries:" << entries;
   Long64_t nbytes = 0, nb = 0;
 
   int current_entry = 0;
@@ -1151,9 +1162,9 @@ void RPC::Display(int tap_type, int trig_chain, Long64_t begin_entry, Long64_t l
     double deltaR = 0.3;
     double deltaZ = 0.3;
 
-    cout << "EventNumber = " << EventNumber << endl;;
+    LOGD << "EventNumber = " << EventNumber;
 
-    cout << "NumberOfSP(): " << NumberOfSP(NTrigChain) << endl;
+    LOGD << "NumberOfSP(): " << NumberOfSP(NTrigChain);
 
     TString label_for_sector;
     if (probe_mesSA_sAddress->at(NTrigChain) == 0){
@@ -1169,8 +1180,8 @@ void RPC::Display(int tap_type, int trig_chain, Long64_t begin_entry, Long64_t l
     }
 
 
-    cout << "Sector: " << label_for_sector << endl;
-    cout << probe_mesSA_sAddress->at(NTrigChain) << endl;
+    LOGD << "Sector: " << label_for_sector;
+    LOGD << probe_mesSA_sAddress->at(NTrigChain);
     //cout << "Rmin_BI: " << Rmin_BI << ", Rmin_BM: " << Rmin_BM << ", Rmin_BO: " << Rmin_BO << endl;
     //cout << "Rmax_BI: " << Rmax_BI << ", Rmax_BM: " << Rmax_BM << ", Rmax_BO: " << Rmax_BO << endl;
     //cout << "Zmin_BI: " << Zmin_BI << ", Zmin_BM: " << Zmin_BM << ", Zmin_BO: " << Zmin_BO << endl;
@@ -1263,7 +1274,7 @@ void RPC::Display(int tap_type, int trig_chain, Long64_t begin_entry, Long64_t l
     int nMDT_BO_Outlier=0;
 
     int nMDT = (probe_mesSA_mdtHitChamber -> at(NTrigChain)).size();
-    cout << "nMDT: " << nMDT << endl;
+    LOGD << "nMDT: " << nMDT;
 
     for (int iMDT = 0; iMDT < nMDT; iMDT++){
       // All station
@@ -1314,19 +1325,19 @@ void RPC::Display(int tap_type, int trig_chain, Long64_t begin_entry, Long64_t l
       }
     }
 
-    cout << "DEBUG2: " << nOffSeg << ": " << nRPC << ": " << nMDT << endl;
+    LOGD << "DEBUG2: " << nOffSeg << ": " << nRPC << ": " << nMDT;
 
     // road
-    cout << "road: " << probe_mesSA_roadAlgo -> at(NTrigChain) << ": " << probe_mesSA_roadAlgo->at(NTrigChain) << endl;
-    cout << "road: " << probe_mesSA_roadAw -> at(NTrigChain)[0] << ": " << probe_mesSA_roadBw->at(NTrigChain)[0] << endl;
-    cout << "road: " << probe_mesSA_roadAw -> at(NTrigChain)[1] << ": " << probe_mesSA_roadBw->at(NTrigChain)[1] << endl;
-    cout << "road: " << probe_mesSA_roadAw -> at(NTrigChain)[2] << ": " << probe_mesSA_roadBw->at(NTrigChain)[2] << endl;
-    cout << "roadFtk: " << probe_mesSA_roadFtkAw -> at(NTrigChain)[0] << ": " << probe_mesSA_roadFtkBw->at(NTrigChain)[0] << endl;
-    cout << "roadFtk: " << probe_mesSA_roadFtkAw -> at(NTrigChain)[1] << ": " << probe_mesSA_roadFtkBw->at(NTrigChain)[1] << endl;
-    cout << "roadFtk: " << probe_mesSA_roadFtkAw -> at(NTrigChain)[2] << ": " << probe_mesSA_roadFtkBw->at(NTrigChain)[2] << endl;
-    cout << "roadRpc: " << probe_mesSA_roadRpcAw -> at(NTrigChain)[0] << ": " << probe_mesSA_roadRpcBw->at(NTrigChain)[0] << endl;
-    cout << "roadRpc: " << probe_mesSA_roadRpcAw -> at(NTrigChain)[1] << ": " << probe_mesSA_roadRpcBw->at(NTrigChain)[1] << endl;
-    cout << "roadRpc: " << probe_mesSA_roadRpcAw -> at(NTrigChain)[2] << ": " << probe_mesSA_roadRpcBw->at(NTrigChain)[2] << endl;
+    LOGD << "road: " << probe_mesSA_roadAlgo -> at(NTrigChain) << ": " << probe_mesSA_roadAlgo->at(NTrigChain);
+    LOGD << "road: " << probe_mesSA_roadAw -> at(NTrigChain)[0] << ": " << probe_mesSA_roadBw->at(NTrigChain)[0];
+    LOGD << "road: " << probe_mesSA_roadAw -> at(NTrigChain)[1] << ": " << probe_mesSA_roadBw->at(NTrigChain)[1];
+    LOGD << "road: " << probe_mesSA_roadAw -> at(NTrigChain)[2] << ": " << probe_mesSA_roadBw->at(NTrigChain)[2];
+    LOGD << "roadFtk: " << probe_mesSA_roadFtkAw -> at(NTrigChain)[0] << ": " << probe_mesSA_roadFtkBw->at(NTrigChain)[0];
+    LOGD << "roadFtk: " << probe_mesSA_roadFtkAw -> at(NTrigChain)[1] << ": " << probe_mesSA_roadFtkBw->at(NTrigChain)[1];
+    LOGD << "roadFtk: " << probe_mesSA_roadFtkAw -> at(NTrigChain)[2] << ": " << probe_mesSA_roadFtkBw->at(NTrigChain)[2];
+    LOGD << "roadRpc: " << probe_mesSA_roadRpcAw -> at(NTrigChain)[0] << ": " << probe_mesSA_roadRpcBw->at(NTrigChain)[0];
+    LOGD << "roadRpc: " << probe_mesSA_roadRpcAw -> at(NTrigChain)[1] << ": " << probe_mesSA_roadRpcBw->at(NTrigChain)[1];
+    LOGD << "roadRpc: " << probe_mesSA_roadRpcAw -> at(NTrigChain)[2] << ": " << probe_mesSA_roadRpcBw->at(NTrigChain)[2];
 
     TF1 f_roadRpc_BI = TF1("f_roadRpc_BI", "[0]*x+[1]", -9999, 9999);
     f_roadRpc_BI.SetTitle(";Z [m];R [m]");
@@ -1581,12 +1592,12 @@ void RPC::Display(int tap_type, int trig_chain, Long64_t begin_entry, Long64_t l
     R_BO[2] = (probe_mesSA_rMin -> at(NTrigChain)[2] / 1000.);
     R_BO[3] = (probe_mesSA_rMin -> at(NTrigChain)[2] / 1000.);
 
-    cout << "Z_BI: " << Z_BI[0] << ":, " <<  Z_BI[1] << ":, " << Z_BI[2] << ":, " << Z_BI[3] << endl; 
-    cout << "R_BI: " << R_BI[0] << ":, " <<  R_BI[1] << ":, " << R_BI[2] << ":, " << R_BI[3] << endl; 
-    cout << "Z_BM: " << Z_BM[0] << ":, " <<  Z_BM[1] << ":, " << Z_BM[2] << ":, " << Z_BM[3] << endl; 
-    cout << "R_BM: " << R_BM[0] << ":, " <<  R_BM[1] << ":, " << R_BM[2] << ":, " << R_BM[3] << endl; 
-    cout << "Z_BO: " << Z_BO[0] << ":, " <<  Z_BO[1] << ":, " << Z_BO[2] << ":, " << Z_BO[3] << endl; 
-    cout << "R_BO: " << R_BO[0] << ":, " <<  R_BO[1] << ":, " << R_BO[2] << ":, " << R_BO[3] << endl; 
+    LOGD << "Z_BI: " << Z_BI[0] << ":, " <<  Z_BI[1] << ":, " << Z_BI[2] << ":, " << Z_BI[3]; 
+    LOGD << "R_BI: " << R_BI[0] << ":, " <<  R_BI[1] << ":, " << R_BI[2] << ":, " << R_BI[3]; 
+    LOGD << "Z_BM: " << Z_BM[0] << ":, " <<  Z_BM[1] << ":, " << Z_BM[2] << ":, " << Z_BM[3]; 
+    LOGD << "R_BM: " << R_BM[0] << ":, " <<  R_BM[1] << ":, " << R_BM[2] << ":, " << R_BM[3]; 
+    LOGD << "Z_BO: " << Z_BO[0] << ":, " <<  Z_BO[1] << ":, " << Z_BO[2] << ":, " << Z_BO[3]; 
+    LOGD << "R_BO: " << R_BO[0] << ":, " <<  R_BO[1] << ":, " << R_BO[2] << ":, " << R_BO[3]; 
 
 
     // find min, max of Z and R
@@ -1635,10 +1646,10 @@ void RPC::Display(int tap_type, int trig_chain, Long64_t begin_entry, Long64_t l
     double Rmin_BO = *std::min_element(vecR_BO.begin(), vecR_BO.end());
     double Rmax_BO = *std::max_element(vecR_BO.begin(), vecR_BO.end());
 
-    cout << "Zmin: " << Zmin << ", Zmax: " <<  Zmax << ", Rmin: " << Rmin << ", Rmax: " << Rmax << endl; 
-    cout << "Zmin_BI: " << Zmin_BI << ", Zmax_BI: " <<  Zmax_BI << ", Rmin_BI: " << Rmin_BI << ", Rmax_BI: " << Rmax_BI << endl; 
-    cout << "Zmin_BM: " << Zmin_BM << ", Zmax_BM: " <<  Zmax_BM << ", Rmin_BM: " << Rmin_BM << ", Rmax_BM: " << Rmax_BM << endl; 
-    cout << "Zmin_BO: " << Zmin_BO << ", Zmax_BO: " <<  Zmax_BO << ", Rmin_BO: " << Rmin_BO << ", Rmax_BO: " << Rmax_BO << endl; 
+    LOGD << "Zmin: " << Zmin << ", Zmax: " <<  Zmax << ", Rmin: " << Rmin << ", Rmax: " << Rmax;
+    LOGD << "Zmin_BI: " << Zmin_BI << ", Zmax_BI: " <<  Zmax_BI << ", Rmin_BI: " << Rmin_BI << ", Rmax_BI: " << Rmax_BI;
+    LOGD << "Zmin_BM: " << Zmin_BM << ", Zmax_BM: " <<  Zmax_BM << ", Rmin_BM: " << Rmin_BM << ", Rmax_BM: " << Rmax_BM;
+    LOGD << "Zmin_BO: " << Zmin_BO << ", Zmax_BO: " <<  Zmax_BO << ", Rmin_BO: " << Rmin_BO << ", Rmax_BO: " << Rmax_BO;
 
     Zmin -= (abs(Zmin) >= ZERO_LIMIT) ? abs(Zmax - Zmin) / 2. : deltaZ;
     Zmax += (abs(Zmax) >= ZERO_LIMIT) ? abs(Zmax - Zmin) / 2. : deltaZ;
@@ -1660,10 +1671,10 @@ void RPC::Display(int tap_type, int trig_chain, Long64_t begin_entry, Long64_t l
     Rmin_BO -= (abs(Rmin_BO) >= ZERO_LIMIT) ? abs(Rmax_BO - Rmin_BO) / 2. : deltaR;
     Rmax_BO += (abs(Rmax_BO) >= ZERO_LIMIT) ? abs(Rmax_BO - Rmin_BO) / 2. : deltaR;
 
-    cout << "Zmin: " << Zmin << ", Zmax: " <<  Zmax << ", Rmin: " << Rmin << ", Rmax: " << Rmax << endl; 
-    cout << "Zmin_BI: " << Zmin_BI << ", Zmax_BI: " <<  Zmax_BI << ", Rmin_BI: " << Rmin_BI << ", Rmax_BI: " << Rmax_BI << endl; 
-    cout << "Zmin_BM: " << Zmin_BM << ", Zmax_BM: " <<  Zmax_BM << ", Rmin_BM: " << Rmin_BM << ", Rmax_BM: " << Rmax_BM << endl; 
-    cout << "Zmin_BO: " << Zmin_BO << ", Zmax_BO: " <<  Zmax_BO << ", Rmin_BO: " << Rmin_BO << ", Rmax_BO: " << Rmax_BO << endl; 
+    LOGD << "Zmin: " << Zmin << ", Zmax: " <<  Zmax << ", Rmin: " << Rmin << ", Rmax: " << Rmax;
+    LOGD << "Zmin_BI: " << Zmin_BI << ", Zmax_BI: " <<  Zmax_BI << ", Rmin_BI: " << Rmin_BI << ", Rmax_BI: " << Rmax_BI;
+    LOGD << "Zmin_BM: " << Zmin_BM << ", Zmax_BM: " <<  Zmax_BM << ", Rmin_BM: " << Rmin_BM << ", Rmax_BM: " << Rmax_BM;
+    LOGD << "Zmin_BO: " << Zmin_BO << ", Zmax_BO: " <<  Zmax_BO << ", Rmin_BO: " << Rmin_BO << ", Rmax_BO: " << Rmax_BO;
 
     TGraph MdtRegion_BI = TGraph(4,Z_BI,R_BI);
     TGraph MdtRegion_BM = TGraph(4,Z_BM,R_BM);
@@ -2031,9 +2042,9 @@ void RPC::Display(int tap_type, int trig_chain, Long64_t begin_entry, Long64_t l
     //*/
 
     current_entry += 1;
-    cout << "===" << begin_entry << ": " << current_entry << ": " << limit_entry << endl;
+    LOGI << "===" << begin_entry << ": " << current_entry << ": " << limit_entry;
     if (current_entry > limit_entry) {
-      cout << "END!!" << endl;
+      LOGI << "END!!";
       break;
     }
     c2->Clear();
@@ -2787,7 +2798,20 @@ void RPC::FillProbeHist(){
   //  return;
   //}
 
-
+  // Special For FTK
+  if ( tag_proc == 3){
+    //LOGD << "debug message to stdout with color";
+    //PLOG_VERBOSE << "This is a VERBOSE message";
+    //PLOG_DEBUG << "This is a DEBUG message";
+    //PLOG_INFO << "This is an INFO message";
+    //PLOG_WARNING << "This is a WARNING message";
+    //PLOG_ERROR << "This is an ERROR message";
+    //PLOG_FATAL << "This is a FATAL message";
+    LOGD << "size: " << (probe_mesL2_pass->at(0)).size();
+    for ( auto pass: probe_mesL2_pass->at(0) )
+    //LOGD << "vec size" << pass.size();
+    LOGD << "pass" << pass;
+  }
 
   // mu cut
   //if (AverageInteractionsPerCrossing < 30){return;}
@@ -3085,13 +3109,13 @@ void RPC::FillPtResidualHist(){ // Only eta region cut here
   //cout << probe_mesSA_pass -> at(N4) << ": " << (probe_mesSA_ptFtk->at(N4))/1000. << ":" << probe_pt/1000. << ": " << abs(probe_mesSA_pt->at(N4)) << ": "  << pTresidual << endl;
   //if (abs(probe_mesSA_ptFtk->at(N4))>0.)
   if (probe_mesSA_ptFtk->size()>0.){
-    cout << probe_mesSA_pass -> at(N4) << ": " << (probe_mesSA_ptFtk->at(N4))/1000. << ":" << probe_pt/1000. << ": " << abs(probe_mesSA_pt->at(N4)) << ": "  << pTresidual << endl;
-    cout << "road: " << probe_mesSA_roadAlgo -> at(N4) << ": " << probe_mesSA_roadAlgo->at(N4) << endl;
+    LOGD << probe_mesSA_pass -> at(N4) << ": " << (probe_mesSA_ptFtk->at(N4))/1000. << ":" << probe_pt/1000. << ": " << abs(probe_mesSA_pt->at(N4)) << ": "  << pTresidual;
+    LOGD << "road: " << probe_mesSA_roadAlgo -> at(N4) << ": " << probe_mesSA_roadAlgo->at(N4);
   }
 
   if (probe_mesSA_ptFtk->size()>0. && probe_mesSA_ptFtk->at(N4) && probe_mesSA_roadAlgo->at(N4) == 1){
     pTresidual = calc_pTresidual(probe_pt/1000., abs(probe_mesSA_ptFtk -> at(N4)));
-    cout << "ftk" << endl;
+    //LOGD << "ftk";
   } else {
     pTresidual = calc_pTresidual(probe_pt/1000., abs(probe_mesSA_pt -> at(N4)));
   }

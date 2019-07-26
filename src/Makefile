@@ -12,12 +12,12 @@ CXXFLAGS      = -g -Wall -fPIC $(ROOTINCS)
 SOFLAGS       = -shared
 
 all: $(OBJS)
-	$(CXX) -o $(EXENAME) $(OBJS) $(ROOTLIBS)
+	$(CXX) -I /gpfs/home/yfukuhar/tmp/plog/include -o $(EXENAME) $(OBJS) $(ROOTLIBS)
 
 %.o:%.cxx
-	$(CXX) $(CXXFLAGS) -c $< -o $@
+	$(CXX) $(CXXFLAGS) -I /gpfs/home/yfukuhar/tmp/plog/include -c $< -o $@
 
 %.o:%.C
-	$(CXX) $(CXXFLAGS) -c $< -o $@
+	$(CXX) $(CXXFLAGS) -I /gpfs/home/yfukuhar/tmp/plog/include -c $< -o $@
 
 %.o:%.cc

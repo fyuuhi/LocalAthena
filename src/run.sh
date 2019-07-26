@@ -169,8 +169,11 @@ INPUT_NTUPLE="/home/yfukuhar/gpfs/data/data18_rate/hadd.root"
 #PDF_LABEL="FTK_18"
 #INPUT_NTUPLE="/gpfs/fs7001/yfukuhar/workspace/TestCalcEffTool/CalcEffTool/run/FtkExtrapolate_21_5_bsub_18.root"
 
-PDF_LABEL="FTK_20_ptftk"
-INPUT_NTUPLE="/gpfs/fs7001/yfukuhar/workspace/TestCalcEffTool/CalcEffTool/run/FtkExtrapolate_21_5_bsub_20_ptftk.root"
+#PDF_LABEL="FTK_20_ptftk"
+#INPUT_NTUPLE="/gpfs/fs7001/yfukuhar/workspace/TestCalcEffTool/CalcEffTool/run/FtkExtrapolate_21_5_bsub_20_ptftk.root"
+
+PDF_LABEL="FTK_424100_n5_500eve"
+INPUT_NTUPLE="/gpfs/fs7001/yfukuhar/workspace/TestCalcEffTool/CalcEffTool/run/FTK_424100_n5_500eve.root"
 
 #IS_DRAW="false"
 IS_DRAW="true"
