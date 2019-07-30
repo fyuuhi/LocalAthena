@@ -148,9 +148,16 @@ void RPC::Loop( int Nevents, int DisplayNumber )
     }
 
     FillProbeHist();
-    FillInEffHist(1, 0);
+    FillInEffHist(3, 0);
 
-    /*
+    if ( tag_proc == NTagProc && probe_mesL1_pass->at(N4) > 0){
+      FillMdtHist();
+      FillSPHist();
+      FillPtResidualHist();
+    }
+
+
+    ///*
     tag_proc = NTagProc;
     switch (tag_proc) {
       case 1: //Jpsi until L2
@@ -162,6 +169,7 @@ void RPC::Loop( int Nevents, int DisplayNumber )
       case 2: //Jpsi from L2:
         break;
       case 3: //Z
+        LOGD << "l2sa : pass/pt/eta/phi/sAddress/roadAlgo: " << probe_mesSA_pass->at(N50) << "/" << probe_mesSA_pt->at(N50) << "/" << probe_mesSA_eta->at(N50) << "/" << probe_mesSA_phi->at(N50) << "/" << probe_mesSA_sAddress->at(N50) << "/" << probe_mesSA_roadAlgo->at(N50);
 
         // Check TAP
         if (!(probe_mesEFTAG_pass -> at(N50) > -1 && probe_mesL1_pass -> at(N50) > 0 && ( sumReqdRL1<tp_extdR && 0.2<tp_extdR ) && ( sumReqdREF<tp_dR ))){
@@ -171,33 +179,59 @@ void RPC::Loop( int Nevents, int DisplayNumber )
         for ( int i = 0; i < probe_segment_n; i++){
           double R = TMath::Sqrt(probe_segment_x[i]*probe_segment_x[i] + probe_segment_y[i]*probe_segment_y[i]);
           double Z = probe_segment_z[i];
+          LOGD << "segment R/Z: " << R << "/" << Z;
+
+          //BI
           if (probe_segment_chamberIndex[i] == 0 || probe_segment_chamberIndex[i] == 1) {
+            // normal
+            LOGD << "size: " << (probe_mesSA_roadAw->at(N50)).size() << "/" << (probe_mesSA_roadFtkAw->at(N50)).size() << "/" << (probe_mesSA_roadRpcAw->at(N50)).size();
             h_ResidualSegment_eta_BI -> Fill(probe_eta, calc_residual(probe_mesSA_roadAw -> at(N50)[0], probe_mesSA_roadBw -> at(N50)[0], Z, R));
             h_ResidualSegment_eta_BI_2d -> Fill(calc_residual(probe_mesSA_roadFtkAw -> at(N50)[0], probe_mesSA_roadFtkBw -> at(N50)[0], Z, R), calc_residual(probe_mesSA_roadRpcAw -> at(N50)[0], probe_mesSA_roadRpcBw -> at(N50)[0], Z, R));
 
-            if (abs(probe_mesSA_roadRpcAw->at(N50)[0]) > ZERO_LIMIT && abs(probe_mesSA_roadRpcBw->at(N50)[0] > ZERO_LIMIT)){
+            // RPC
+            if (probe_mesSA_roadAlgo->at(N50) == 2){
+              LOGD << "BI RPC road Aw/Bw: " << probe_mesSA_roadRpcAw->at(N50)[0] << "/" << probe_mesSA_roadRpcBw->at(N50)[0];
+              LOGD << "BI RPC road residual: " << calc_residual(probe_mesSA_roadRpcAw -> at(N50)[0], probe_mesSA_roadRpcBw -> at(N50)[0], Z, R);
               h_ResidualSegment_eta_rpc_BI -> Fill(calc_residual(probe_mesSA_roadRpcAw -> at(N50)[0], probe_mesSA_roadRpcBw -> at(N50)[0], Z, R));
             }
 
-            if (abs(probe_mesSA_roadFtkAw->at(N50)[0]) > ZERO_LIMIT && abs(probe_mesSA_roadFtkBw->at(N50)[0] > ZERO_LIMIT)){
+            // FTK
+            if (probe_mesSA_roadAlgo->at(N50) == 1){
+              LOGD << "BI FTK road Aw/Bw: " << probe_mesSA_roadFtkAw->at(N50)[0] << "/" << probe_mesSA_roadFtkBw->at(N50)[0];
+              LOGD << "BI FTK road residual: " << calc_residual(probe_mesSA_roadFtkAw -> at(N50)[0], probe_mesSA_roadFtkBw -> at(N50)[0], Z, R);
               h_ResidualSegment_eta_ftk_BI -> Fill(calc_residual(probe_mesSA_roadFtkAw -> at(N50)[0], probe_mesSA_roadFtkBw -> at(N50)[0], Z, R));
             }
             //cout << "BI: " << calc_residual(probe_mesSA_roadAw -> at(N50)[0], probe_mesSA_roadBw -> at(N50)[0], Z, R) << endl;
-          } else if(probe_segment_chamberIndex[i] == 2 || probe_segment_chamberIndex[i] == 3) {
+
+          } else if(probe_segment_chamberIndex[i] == 2 || probe_segment_chamberIndex[i] == 3) { //BM
+            // normal
             h_ResidualSegment_eta_BM -> Fill(probe_eta, calc_residual(probe_mesSA_roadAw -> at(N50)[1], probe_mesSA_roadBw -> at(N50)[1], Z, R));
-            if (abs(probe_mesSA_roadRpcAw->at(N50)[1]) > ZERO_LIMIT && abs(probe_mesSA_roadRpcBw->at(N50)[1] > ZERO_LIMIT)){
+
+            // RPC
+            if (probe_mesSA_roadAlgo->at(N50) == 2){
+              LOGD << "BM RPC road Aw/Bw: " << probe_mesSA_roadRpcAw->at(N50)[1] << "/" << probe_mesSA_roadRpcBw->at(N50)[1];
               h_ResidualSegment_eta_rpc_BM -> Fill(calc_residual(probe_mesSA_roadRpcAw -> at(N50)[1], probe_mesSA_roadRpcBw -> at(N50)[1], Z, R));
             }
-            if (abs(probe_mesSA_roadFtkAw->at(N50)[1]) > ZERO_LIMIT && abs(probe_mesSA_roadFtkBw->at(N50)[1] > ZERO_LIMIT)){
+
+            // FTK
+            if (probe_mesSA_roadAlgo->at(N50) == 1){
+              LOGD << "BM FTK road Aw/Bw: " << probe_mesSA_roadFtkAw->at(N50)[1] << "/" << probe_mesSA_roadFtkBw->at(N50)[1];
               h_ResidualSegment_eta_ftk_BM -> Fill(calc_residual(probe_mesSA_roadFtkAw -> at(N50)[1], probe_mesSA_roadFtkBw -> at(N50)[1], Z, R));
             }
             //cout <<"BM: " <<  calc_residual(probe_mesSA_roadAw -> at(N50)[0], probe_mesSA_roadBw -> at(N50)[0], Z, R) << endl;
-          } else if(probe_segment_chamberIndex[i] == 4 || probe_segment_chamberIndex[i] == 5) {
+
+          } else if(probe_segment_chamberIndex[i] == 4 || probe_segment_chamberIndex[i] == 5) { //BO
             h_ResidualSegment_eta_BO -> Fill(probe_eta, calc_residual(probe_mesSA_roadAw -> at(N50)[2], probe_mesSA_roadBw -> at(N50)[2], Z, R));
-            if (abs(probe_mesSA_roadRpcAw->at(N50)[2]) > ZERO_LIMIT && abs(probe_mesSA_roadRpcBw->at(N50)[2] > ZERO_LIMIT)){
+
+            // RPC
+            LOGD << "BO RPC road Aw/Bw: " << probe_mesSA_roadRpcAw->at(N50)[2] << "/" << probe_mesSA_roadRpcBw->at(N50)[2];
+            if (probe_mesSA_roadAlgo->at(N50) == 2){
               h_ResidualSegment_eta_rpc_BO -> Fill(calc_residual(probe_mesSA_roadRpcAw -> at(N50)[2], probe_mesSA_roadRpcBw -> at(N50)[2], Z, R));
             }
-            if (abs(probe_mesSA_roadFtkAw->at(N50)[2]) > ZERO_LIMIT && abs(probe_mesSA_roadFtkBw->at(N50)[2] > ZERO_LIMIT)){
+
+            // FTK
+            LOGD << "BO FTK road Aw/Bw: " << probe_mesSA_roadFtkAw->at(N50)[2] << "/" << probe_mesSA_roadFtkBw->at(N50)[2];
+            if (probe_mesSA_roadAlgo->at(N50) == 1){
               h_ResidualSegment_eta_ftk_BO -> Fill(calc_residual(probe_mesSA_roadFtkAw -> at(N50)[2], probe_mesSA_roadFtkBw -> at(N50)[2], Z, R));
             }
             //cout <<"BO: " <<  calc_residual(probe_mesSA_roadAw -> at(N50)[0], probe_mesSA_roadBw -> at(N50)[0], Z, R) << endl;
@@ -209,10 +243,6 @@ void RPC::Loop( int Nevents, int DisplayNumber )
         //if (probe_mesSA_isRpcFailure -> at(N50) == 1){
         //  continue;
         //}
-
-        FillMdtHist();
-        FillSPHist();
-        //FillPtResidualHist();
 
         //BIS
         //if (probe_mesSA_superPointR_BI->at(N50) != 0 &&
@@ -264,7 +294,7 @@ void RPC::Loop( int Nevents, int DisplayNumber )
         //}
         break;
     }
-    */
+    //*/
 
   } // end of each entry
 
@@ -522,11 +552,18 @@ double Res(double param1, double param2){
 void RPC::FillInEffHist(int tap_type, int NTrigChain ){
   const double ZERO_LIMIT = 1e-5;
 
+  LOGI << "FillInEffHist";
+
+
   // Check TAP
+  LOGI << "tag_proc/tap_type: " << tag_proc << "/" << tap_type;
   if (tag_proc != tap_type){ return;}
+  LOGI << "FillInEffHist0";
   if (!(probe_mesEFTAG_pass -> at(NTrigChain) > -1 && ( sumReqdRL1<tp_extdR && 0.2<tp_extdR ) && ( sumReqdREF<tp_dR ))){
     return;
   }
+
+  LOGI << "FillInEffHist1";
 
   bool isBarrel = (abs(probe_eta) < 1.05);
 
@@ -534,10 +571,12 @@ void RPC::FillInEffHist(int tap_type, int NTrigChain ){
   if (probe_mesL1_pass -> at(NTrigChain) <= -1) {return;}
   //if (probe_mesSA_pass -> at(NTrigChain) > 0) {return;}
 
+  LOGI << "FillInEffHist2";
 
   // pT
   if(isBarrel) {
     if (probe_mesSA_pass -> at(NTrigChain) > 0) { // pass
+      LOGI << "pT pass";
       h_InEff_pt -> Fill(probe_pt/1000., 1.);
     } else { // not pass
       if(abs(probe_mesSA_pt -> at(NTrigChain)) > ZERO_LIMIT){ // pT was calculated
@@ -978,34 +1017,35 @@ void RPC::FillSPHist(){
 
 int RPC::NumberOfSP(){
   int number = 0;
-  if (abs(probe_mesSA_superPointZ_BI -> at(N50)) > 0. && probe_mesSA_superPointZ_BI -> at(N50) > -99990.) {
+  int trig = N50;
+  if (abs(probe_mesSA_superPointZ_BI -> at(trig)) > 0. && probe_mesSA_superPointZ_BI -> at(trig) > -99990.) {
     number += 1;
   }
-  if (abs(probe_mesSA_superPointZ_BM -> at(N50)) > 0. && probe_mesSA_superPointZ_BM -> at(N50) > -99990.) {
+  if (abs(probe_mesSA_superPointZ_BM -> at(trig)) > 0. && probe_mesSA_superPointZ_BM -> at(trig) > -99990.) {
     number += 1;
   }
-  if (abs(probe_mesSA_superPointZ_BO -> at(N50)) > 0. && probe_mesSA_superPointZ_BO -> at(N50) > -99990.) {
+  if (abs(probe_mesSA_superPointZ_BO -> at(trig)) > 0. && probe_mesSA_superPointZ_BO -> at(trig) > -99990.) {
     number += 1;
   }
-  if (abs(probe_mesSA_superPointZ_EI -> at(N50)) > 0. && probe_mesSA_superPointZ_EI -> at(N50) > -99990.) {
+  if (abs(probe_mesSA_superPointZ_EI -> at(trig)) > 0. && probe_mesSA_superPointZ_EI -> at(trig) > -99990.) {
     number += 1;
   }
-  if (abs(probe_mesSA_superPointZ_EM -> at(N50)) > 0. && probe_mesSA_superPointZ_EM -> at(N50) > -99990.) {
+  if (abs(probe_mesSA_superPointZ_EM -> at(trig)) > 0. && probe_mesSA_superPointZ_EM -> at(trig) > -99990.) {
     number += 1;
   }
-  if (abs(probe_mesSA_superPointZ_EO -> at(N50)) > 0. && probe_mesSA_superPointZ_EO -> at(N50) > -99990.) {
+  if (abs(probe_mesSA_superPointZ_EO -> at(trig)) > 0. && probe_mesSA_superPointZ_EO -> at(trig) > -99990.) {
     number += 1;
   }
-  if (abs(probe_mesSA_superPointZ_EE -> at(N50)) > 0. && probe_mesSA_superPointZ_EE -> at(N50) > -99990.) {
+  if (abs(probe_mesSA_superPointZ_EE -> at(trig)) > 0. && probe_mesSA_superPointZ_EE -> at(trig) > -99990.) {
     number += 1;
   }
-  if (abs(probe_mesSA_superPointZ_CSC -> at(N50)) > 0. && probe_mesSA_superPointZ_CSC -> at(N50) > -99990.) {
+  if (abs(probe_mesSA_superPointZ_CSC -> at(trig)) > 0. && probe_mesSA_superPointZ_CSC -> at(trig) > -99990.) {
     number += 1;
   }
-  if (abs(probe_mesSA_superPointZ_BEE -> at(N50)) > 0. && probe_mesSA_superPointZ_BEE -> at(N50) > -99990.) {
+  if (abs(probe_mesSA_superPointZ_BEE -> at(trig)) > 0. && probe_mesSA_superPointZ_BEE -> at(trig) > -99990.) {
     number += 1;
   }
-  if (abs(probe_mesSA_superPointZ_BME -> at(N50)) > 0. && probe_mesSA_superPointZ_BME -> at(N50) > -99990.) {
+  if (abs(probe_mesSA_superPointZ_BME -> at(trig)) > 0. && probe_mesSA_superPointZ_BME -> at(trig) > -99990.) {
     number += 1;
   }
   return number;
@@ -1078,6 +1118,7 @@ void RPC::Display(int tap_type, int trig_chain, Long64_t begin_entry, Long64_t l
   for (Long64_t jentry = begin_entry; jentry<nLoop;jentry++) {
     int  ientry = LoadTree(jentry);
     nb = fChain->GetEntry(jentry);   nbytes += nb;
+    LOGI << "now event number -->> " << ientry << "/" << nLoop << " : " << ((double) ientry)/nLoop * 100. << "%";
     if (ientry < 0) break;
     // Check GRL
     if (RunNumber == 349533){
@@ -1343,7 +1384,7 @@ void RPC::Display(int tap_type, int trig_chain, Long64_t begin_entry, Long64_t l
     f_roadRpc_BI.SetTitle(";Z [m];R [m]");
     f_roadRpc_BI.SetParameter(0,probe_mesSA_roadRpcAw -> at(NTrigChain)[0]);
     f_roadRpc_BI.SetParameter(1,probe_mesSA_roadRpcBw -> at(NTrigChain)[0]/1000.);
-    f_roadRpc_BI.SetLineColor(kCyan+2);
+    f_roadRpc_BI.SetLineColor(kCyan);
     f_roadRpc_BI.SetLineWidth(2);
     f_roadRpc_BI.SetLineStyle(2);
 
@@ -1359,14 +1400,14 @@ void RPC::Display(int tap_type, int trig_chain, Long64_t begin_entry, Long64_t l
     TF1 f_roadRpc_BI_plus = TF1("f_roadRpc_BI_plus", "[0]*x+[1]", -9999, 9999);
     f_roadRpc_BI_plus.SetParameter(0,probe_mesSA_roadRpcAw -> at(NTrigChain)[0]);
     f_roadRpc_BI_plus.SetParameter(1,( (probe_mesSA_roadRpcBw -> at(NTrigChain)[0]/1000.) + rWidthToBw(probe_mesSA_roadRpcAw->at(NTrigChain)[0],0.4)));
-    f_roadRpc_BI_plus.SetLineColor(kCyan+2);
+    f_roadRpc_BI_plus.SetLineColor(kCyan+0);
     f_roadRpc_BI_plus.SetLineWidth(2);
     f_roadRpc_BI_plus.SetLineStyle(1);
 
     TF1 f_roadRpc_BI_minus = TF1("f_roadRpc_BI_minus", "[0]*x+[1]", -9999, 9999);
     f_roadRpc_BI_minus.SetParameter(0,probe_mesSA_roadRpcAw -> at(NTrigChain)[0]);
     f_roadRpc_BI_minus.SetParameter(1,( (probe_mesSA_roadRpcBw -> at(NTrigChain)[0]/1000.) - rWidthToBw(probe_mesSA_roadRpcAw->at(NTrigChain)[0],0.4)));
-    f_roadRpc_BI_minus.SetLineColor(kCyan+2);
+    f_roadRpc_BI_minus.SetLineColor(kCyan+0);
     f_roadRpc_BI_minus.SetLineWidth(2);
     f_roadRpc_BI_minus.SetLineStyle(1);
 
@@ -1374,7 +1415,7 @@ void RPC::Display(int tap_type, int trig_chain, Long64_t begin_entry, Long64_t l
     f_roadFtk_BI.SetTitle(";Z [m];R [m]");
     f_roadFtk_BI.SetParameter(0,probe_mesSA_roadFtkAw -> at(NTrigChain)[0]);
     f_roadFtk_BI.SetParameter(1,probe_mesSA_roadFtkBw -> at(NTrigChain)[0]/1000.);
-    f_roadFtk_BI.SetLineColor(kMagenta+2);
+    f_roadFtk_BI.SetLineColor(kMagenta);
     f_roadFtk_BI.SetLineWidth(2);
     f_roadFtk_BI.SetLineStyle(2);
 
@@ -1390,14 +1431,14 @@ void RPC::Display(int tap_type, int trig_chain, Long64_t begin_entry, Long64_t l
     TF1 f_roadFtk_BI_plus = TF1("f_roadFtk_BI_plus", "[0]*x+[1]", -9999, 9999);
     f_roadFtk_BI_plus.SetParameter(0,probe_mesSA_roadFtkAw -> at(NTrigChain)[0]);
     f_roadFtk_BI_plus.SetParameter(1,( (probe_mesSA_roadFtkBw -> at(NTrigChain)[0]/1000.) + rWidthToBw(probe_mesSA_roadFtkAw->at(NTrigChain)[0],0.4)));
-    f_roadFtk_BI_plus.SetLineColor(kMagenta+2);
+    f_roadFtk_BI_plus.SetLineColor(kMagenta+0);
     f_roadFtk_BI_plus.SetLineWidth(2);
     f_roadFtk_BI_plus.SetLineStyle(1);
 
     TF1 f_roadFtk_BI_minus = TF1("f_roadFtk_BI_minus", "[0]*x+[1]", -9999, 9999);
     f_roadFtk_BI_minus.SetParameter(0,probe_mesSA_roadFtkAw -> at(NTrigChain)[0]);
     f_roadFtk_BI_minus.SetParameter(1,( (probe_mesSA_roadFtkBw -> at(NTrigChain)[0]/1000.) - rWidthToBw(probe_mesSA_roadFtkAw->at(NTrigChain)[0],0.4)));
-    f_roadFtk_BI_minus.SetLineColor(kMagenta+2);
+    f_roadFtk_BI_minus.SetLineColor(kMagenta+0);
     f_roadFtk_BI_minus.SetLineWidth(2);
     f_roadFtk_BI_minus.SetLineStyle(1);
 
@@ -1406,7 +1447,7 @@ void RPC::Display(int tap_type, int trig_chain, Long64_t begin_entry, Long64_t l
     f_roadRpc_BM.SetTitle(";Z [m];R [m]");
     f_roadRpc_BM.SetParameter(0,probe_mesSA_roadRpcAw -> at(NTrigChain)[1]);
     f_roadRpc_BM.SetParameter(1,probe_mesSA_roadRpcBw -> at(NTrigChain)[1]/1000.);
-    f_roadRpc_BM.SetLineColor(kCyan+2);
+    f_roadRpc_BM.SetLineColor(kCyan+1);
     f_roadRpc_BM.SetLineWidth(2);
     f_roadRpc_BM.SetLineStyle(2);
 
@@ -1421,14 +1462,14 @@ void RPC::Display(int tap_type, int trig_chain, Long64_t begin_entry, Long64_t l
     TF1 f_roadRpc_BM_plus = TF1("f_roadRpc_BM_plus", "[0]*x+[1]", -9999, 9999);
     f_roadRpc_BM_plus.SetParameter(0,probe_mesSA_roadRpcAw -> at(NTrigChain)[1]);
     f_roadRpc_BM_plus.SetParameter(1,( (probe_mesSA_roadRpcBw -> at(NTrigChain)[1]/1000.) + rWidthToBw(probe_mesSA_roadRpcAw->at(NTrigChain)[1],0.2)));
-    f_roadRpc_BM_plus.SetLineColor(kCyan+2);
+    f_roadRpc_BM_plus.SetLineColor(kCyan+1);
     f_roadRpc_BM_plus.SetLineWidth(2);
     f_roadRpc_BM_plus.SetLineStyle(1);
 
     TF1 f_roadRpc_BM_minus = TF1("f_roadRpc_BM_minus", "[0]*x+[1]", -9999, 9999);
     f_roadRpc_BM_minus.SetParameter(0,probe_mesSA_roadRpcAw -> at(NTrigChain)[1]);
     f_roadRpc_BM_minus.SetParameter(1,( (probe_mesSA_roadRpcBw -> at(NTrigChain)[1]/1000.) - rWidthToBw(probe_mesSA_roadRpcAw->at(NTrigChain)[1],0.2)));
-    f_roadRpc_BM_minus.SetLineColor(kCyan+2);
+    f_roadRpc_BM_minus.SetLineColor(kCyan+1);
     f_roadRpc_BM_minus.SetLineWidth(2);
     f_roadRpc_BM_minus.SetLineStyle(1);
 
@@ -1436,7 +1477,7 @@ void RPC::Display(int tap_type, int trig_chain, Long64_t begin_entry, Long64_t l
     f_roadFtk_BM.SetTitle(";Z [m];R [m]");
     f_roadFtk_BM.SetParameter(0,probe_mesSA_roadFtkAw -> at(NTrigChain)[1]);
     f_roadFtk_BM.SetParameter(1,probe_mesSA_roadFtkBw -> at(NTrigChain)[1]/1000.);
-    f_roadFtk_BM.SetLineColor(kMagenta+2);
+    f_roadFtk_BM.SetLineColor(kMagenta+1);
     f_roadFtk_BM.SetLineWidth(2);
     f_roadFtk_BM.SetLineStyle(2);
 
@@ -1451,14 +1492,14 @@ void RPC::Display(int tap_type, int trig_chain, Long64_t begin_entry, Long64_t l
     TF1 f_roadFtk_BM_plus = TF1("f_roadFtk_BM_plus", "[0]*x+[1]", -9999, 9999);
     f_roadFtk_BM_plus.SetParameter(0,probe_mesSA_roadFtkAw -> at(NTrigChain)[1]);
     f_roadFtk_BM_plus.SetParameter(1,( (probe_mesSA_roadFtkBw -> at(NTrigChain)[1]/1000.) + rWidthToBw(probe_mesSA_roadFtkAw->at(NTrigChain)[1],0.2)));
-    f_roadFtk_BM_plus.SetLineColor(kMagenta+2);
+    f_roadFtk_BM_plus.SetLineColor(kMagenta+1);
     f_roadFtk_BM_plus.SetLineWidth(2);
     f_roadFtk_BM_plus.SetLineStyle(1);
 
     TF1 f_roadFtk_BM_minus = TF1("f_roadFtk_BM_minus", "[0]*x+[1]", -9999, 9999);
     f_roadFtk_BM_minus.SetParameter(0,probe_mesSA_roadFtkAw -> at(NTrigChain)[1]);
     f_roadFtk_BM_minus.SetParameter(1,( (probe_mesSA_roadFtkBw -> at(NTrigChain)[1]/1000.) - rWidthToBw(probe_mesSA_roadFtkAw->at(NTrigChain)[1],0.2)));
-    f_roadFtk_BM_minus.SetLineColor(kMagenta+2);
+    f_roadFtk_BM_minus.SetLineColor(kMagenta+1);
     f_roadFtk_BM_minus.SetLineWidth(2);
     f_roadFtk_BM_minus.SetLineStyle(1);
 
@@ -1700,7 +1741,7 @@ void RPC::Display(int tap_type, int trig_chain, Long64_t begin_entry, Long64_t l
     leg.AddEntry(&f_roi,"RoI direction","l");
 
     // Set Legend
-    TLegend leg_left = TLegend(-0.027,0.08,0.10,0.8);
+    TLegend leg_left = TLegend(-0.027,0.08,0.10,0.9);
     leg_left.SetTextSize(0.03);
     // Display passe or not
     TLegendEntry* l_pass;
@@ -1731,8 +1772,9 @@ void RPC::Display(int tap_type, int trig_chain, Long64_t begin_entry, Long64_t l
     }
 
 
-    leg_left.AddEntry((TObject*)0,Form("#splitline{Offline probe p_{T}}{ : %4.3f [GeV]}",probe_pt/1000.),"");
-    leg_left.AddEntry((TObject*)0,Form("#splitline{L2MuonSA probe p_{T}}{ : %4.3f [GeV]}",abs(probe_mesSA_pt->at(NTrigChain))),"");
+    leg_left.AddEntry((TObject*)0,Form("#splitline{Offline probe pT}{ : %4.3f [GeV]}",probe_pt/1000.),"");
+    leg_left.AddEntry((TObject*)0,Form("#splitline{L2MuonSA probe pT}{ : %4.3f [GeV]}",abs(probe_mesSA_pt->at(NTrigChain))),"");
+    leg_left.AddEntry((TObject*)0,Form("#splitline{FTK probe pT}{ : %4.3f [GeV]}",abs(probe_mesSA_ptFtk->at(NTrigChain))/1000.),"");
     leg_left.AddEntry((TObject*)0,Form("#splitline{Offline probe #eta}{ : %4.3f}",probe_eta),"");
     leg_left.AddEntry((TObject*)0,Form("#splitline{L2MuonSA probe #eta}{ : %4.3f}",probe_mesSA_eta->at(NTrigChain)),"");
     leg_left.AddEntry((TObject*)0,Form("#splitline{Offline probe #phi}{ : %4.3f}",probe_phi),"");
@@ -1877,6 +1919,7 @@ void RPC::Display(int tap_type, int trig_chain, Long64_t begin_entry, Long64_t l
 
     leg_left_BI.AddEntry((TObject*)0,Form("#splitline{Offline probe p_{T}}{ : %4.3f [GeV]}",probe_pt/1000.),"");
     leg_left_BI.AddEntry((TObject*)0,Form("#splitline{L2MuonSA probe p_{T}}{ : %4.3f [GeV]}",abs(probe_mesSA_pt->at(NTrigChain))),"");
+    leg_left_BI.AddEntry((TObject*)0,Form("#splitline{FTK probe p_{T}}{ : %4.3f [GeV]}",abs(probe_mesSA_ptFtk->at(NTrigChain))/1000.),"");
     leg_left_BI.AddEntry((TObject*)0,Form("#splitline{FTK Road}{%4.3f, %4.3f}", probe_mesSA_roadFtkAw->at(NTrigChain)[0], probe_mesSA_roadFtkBw->at(NTrigChain)[0]/1000.),"");
     leg_left_BI.AddEntry((TObject*)0,Form("#splitline{RPC Road}{%4.3f, %4.3f}", probe_mesSA_roadRpcAw->at(NTrigChain)[0], probe_mesSA_roadRpcBw->at(NTrigChain)[0]/1000.),"");
     leg_left_BI.Draw();
@@ -1951,6 +1994,7 @@ void RPC::Display(int tap_type, int trig_chain, Long64_t begin_entry, Long64_t l
 
     leg_left_BM.AddEntry((TObject*)0,Form("#splitline{Offline probe p_{T}}{ : %4.3f [GeV]}",probe_pt/1000.),"");
     leg_left_BM.AddEntry((TObject*)0,Form("#splitline{L2MuonSA probe p_{T}}{ : %4.3f [GeV]}",abs(probe_mesSA_pt->at(NTrigChain))),"");
+    leg_left_BM.AddEntry((TObject*)0,Form("#splitline{FTK probe p_{T}}{ : %4.3f [GeV]}",abs(probe_mesSA_ptFtk->at(NTrigChain))/1000.),"");
     leg_left_BM.AddEntry((TObject*)0,Form("#splitline{FTK Road}{%4.3f, %4.3f}", probe_mesSA_roadFtkAw->at(NTrigChain)[1], probe_mesSA_roadFtkBw->at(NTrigChain)[1]/1000.),"");
     leg_left_BM.AddEntry((TObject*)0,Form("#splitline{RPC Road}{%4.3f, %4.3f}", probe_mesSA_roadRpcAw->at(NTrigChain)[1], probe_mesSA_roadRpcBw->at(NTrigChain)[1]/1000.),"");
     leg_left_BM.Draw();
@@ -2027,6 +2071,7 @@ void RPC::Display(int tap_type, int trig_chain, Long64_t begin_entry, Long64_t l
 
     leg_left_BO.AddEntry((TObject*)0,Form("#splitline{Offline probe p_{T}}{ : %4.3f [GeV]}",probe_pt/1000.),"");
     leg_left_BO.AddEntry((TObject*)0,Form("#splitline{L2MuonSA probe p_{T}}{ : %4.3f [GeV]}",abs(probe_mesSA_pt->at(NTrigChain))),"");
+    leg_left_BO.AddEntry((TObject*)0,Form("#splitline{FTK probe p_{T}}{ : %4.3f [GeV]}",abs(probe_mesSA_ptFtk->at(NTrigChain))/1000.),"");
     leg_left_BO.AddEntry((TObject*)0,Form("#splitline{FTK Road}{%4.3f, %4.3f}", probe_mesSA_roadFtkAw->at(NTrigChain)[2], probe_mesSA_roadFtkBw->at(NTrigChain)[2]/1000.),"");
     leg_left_BO.AddEntry((TObject*)0,Form("#splitline{RPC Road}{%4.3f, %4.3f}", probe_mesSA_roadRpcAw->at(NTrigChain)[2], probe_mesSA_roadRpcBw->at(NTrigChain)[2]/1000.),"");
     leg_left_BO.Draw();
@@ -2834,6 +2879,7 @@ void RPC::FillProbeHist(){
         int SApass = -1;
         int CBThrepass = -1;
         for ( int i = 0; i < (probe_mesL2_pass->at(N4)).size(); i++ ){
+          //double L2pt = abs(probe_mesL2_ptFtk->at(N4)[i]);
           double L2pt = abs(probe_mesL2_ptSA->at(N4)[i]);
           if ( probe_mesL2_pass->at(N4)[i] > -1 ){
             SApass = 1;
@@ -2860,9 +2906,9 @@ void RPC::FillProbeHist(){
   switch (tag_proc) {
     case 3: //Jpsi until L2
       // Check TAP
-      if (!(probe_mesEFTAG_pass -> at(N4) > -1 && ( sumReqdRL1<tp_extdR && 0.2<tp_extdR ) && ( sumReqdREF<tp_dR ))){
-        return;
-      }
+      //if (!(probe_mesEFTAG_pass -> at(N4) > -1 && ( sumReqdRL1<tp_extdR && 0.2<tp_extdR ) && ( sumReqdREF<tp_dR ))){
+      //  return;
+      //}
 
       // offline distribution
       if(isBarrel) h_probe_pt_mu4_PROBE -> Fill(probe_pt/1000.);
@@ -3192,37 +3238,97 @@ void RPC::FillPtResidualHist(){ // Only eta region cut here
   //if ( ((probe_mesSA_pt -> at(N4)) == 0) && ((probe_mesSA_pt -> at(N4)) > -9999) ){ return;}
   //if ( ((probe_mesSA_pt -> at(N4)) == 0) && ((probe_mesSA_pt -> at(N4)) > -9999) ){ return;}
 
-  double pTresidual;
+  double pTresidual[3];
+  pTresidual[0] = 9999;
+  pTresidual[1] = 9999;
+  pTresidual[2] = 9999;
+  double pTresidualFtk = 9999;
+  double pTresidualLut = 9999;
+  pTresidual[0] = calc_pTresidual(probe_pt/1000., abs(probe_mesSA_pt -> at(N4)));
   //cout << probe_mesSA_pass -> at(N4) << ": " << (probe_mesSA_ptFtk->at(N4))/1000. << ":" << probe_pt/1000. << ": " << abs(probe_mesSA_pt->at(N4)) << ": "  << pTresidual << endl;
   //if (abs(probe_mesSA_ptFtk->at(N4))>0.)
+  if (probe_mesSA_ptFtk->size()>0. && probe_mesSA_ptFtk->at(N4) && probe_mesSA_roadAlgo->at(N4) == 1){
+    pTresidualFtk = calc_pTresidual(probe_pt/1000., abs(probe_mesSA_ptFtk -> at(N4))/1000.);
+    pTresidual[1] = calc_pTresidual(probe_pt/1000., abs(probe_mesSA_pt -> at(N4)));
+    LOGD << "ptFtk is used as L2SA pt: residual = " << pTresidual;
+  } else if (probe_mesSA_ptFtk->size()>0. && probe_mesSA_ptFtk->at(N4) && probe_mesSA_roadAlgo->at(N4) == 2) {
+    pTresidualLut = calc_pTresidual(probe_pt/1000., abs(probe_mesSA_pt -> at(N4)));
+    pTresidual[2] = calc_pTresidual(probe_pt/1000., abs(probe_mesSA_pt -> at(N4)));
+    LOGD << "ptFtk is not available";
+  }
+
+  LOGD << "pTresidual: " << pTresidual[0] << "/" << pTresidual[1] << "/" << pTresidual[2] << endl;
+
   if (probe_mesSA_ptFtk->size()>0.){
-    LOGD << probe_mesSA_pass -> at(N4) << ": " << (probe_mesSA_ptFtk->at(N4))/1000. << ":" << probe_pt/1000. << ": " << abs(probe_mesSA_pt->at(N4)) << ": "  << pTresidual;
-    LOGD << "road: " << probe_mesSA_roadAlgo -> at(N4) << ": " << probe_mesSA_roadAlgo->at(N4);
-  }
-
-  if (probe_mesSA_ptFtk->size()>0. && probe_mesSA_ptFtk->at(N4) && probe_mesSA_roadAlgo->at(N4) == 1){
-    pTresidual = calc_pTresidual(probe_pt/1000., abs(probe_mesSA_ptFtk -> at(N4)));
-    //LOGD << "ftk";
+    LOGD << "probe_mesSA_ptFtk.size() > 0";
+    LOGD << "pass/ptFtk/probe_pt/mesSA_pt/residual: " << probe_mesSA_pass -> at(N4) << "/" << (probe_mesSA_ptFtk->at(N4))/1000. << "/" << probe_pt/1000. << "/" << abs(probe_mesSA_pt->at(N4)) << ":"  << pTresidual[0];
+    LOGD << "roadAlgo: " << probe_mesSA_roadAlgo -> at(N4) << ": " << probe_mesSA_roadAlgo->at(N4);
   } else {
-    pTresidual = calc_pTresidual(probe_pt/1000., abs(probe_mesSA_pt -> at(N4)));
+    LOGD << "probe_mesSA_ptFtk.size() = 0";
   }
 
 
-  //if (abs(probe_eta) < 1.05){
-  h_PtResidual_pt -> Fill(probe_pt/1000., pTresidual);
-  h_pt_vs_pt -> Fill(probe_pt/1000., abs(probe_mesSA_pt->at(N4)));
+  if (abs(probe_eta) < 1.05){
+    h_PtResidual_pt1 -> Fill(probe_pt/1000., pTresidual[0]);
+    h_PtResidual_pt2 -> Fill(probe_pt/1000., pTresidual[1]);
+    h_PtResidual_pt3 -> Fill(probe_pt/1000., pTresidual[2]);
+    h_PtResidual_ptFtk -> Fill(probe_pt/1000., pTresidualFtk);
+    h_PtResidual_ptLut -> Fill(probe_pt/1000., pTresidualLut);
+    h_pt_vs_pt -> Fill(probe_pt/1000., abs(probe_mesSA_pt->at(N4)));
 
-  if (probe_mesSA_ptFtk->size()>0. && probe_mesSA_ptFtk->at(N4) && probe_mesSA_roadAlgo->at(N4) == 1){
-    h_ptl2_vs_ptFtk -> Fill(abs(probe_mesSA_pt->at(N4)), abs(probe_mesSA_ptFtk->at(N4))/1000.);
-    h_pt_vs_ptFtk -> Fill(probe_pt/1000., abs(probe_mesSA_ptFtk->at(N4))/1000.);
+    if (probe_mesSA_ptFtk->size()>0. && probe_mesSA_ptFtk->at(N4) && probe_mesSA_roadAlgo->at(N4) == 1){
+      h_ptl2_vs_ptFtk -> Fill(abs(probe_mesSA_pt->at(N4)), abs(probe_mesSA_ptFtk->at(N4))/1000.);
+      h_pt_vs_ptFtk -> Fill(probe_pt/1000., abs(probe_mesSA_ptFtk->at(N4))/1000.);
+    }
   }
-  //}
 
-  h_PtResidual_eta -> Fill(probe_eta, pTresidual);
+  //h_PtResidual_eta -> Fill(probe_eta, pTresidual);
 }
 
 void RPC::DrawPtResidualHist(TCanvas* c1, TString pdf){
-  h_PtResidual_pt -> Draw("colz");
+  // default
+  h_PtResidual_pt1 -> Draw("colz");
+  c1 -> Print(pdf, "pdf");
+
+  TH1D* tmp_h_pt1 = h_PtResidual_pt1->ProjectionY("pt1", h_PtResidual_pt1->GetXaxis()->FindBin(0.),  h_PtResidual_pt1->GetXaxis()->FindBin(20));
+  tmp_h_pt1->Draw();
+  c1 -> Print(pdf, "pdf");
+
+
+  TH1D* tmp_h_pt2 = h_PtResidual_pt2->ProjectionY("pt2", h_PtResidual_pt2->GetXaxis()->FindBin(0.),  h_PtResidual_pt2->GetXaxis()->FindBin(20));
+  tmp_h_pt2->SetLineColor(kBlue);
+  TH1D* tmp_h_pt3 = h_PtResidual_pt3->ProjectionY("pt3", h_PtResidual_pt3->GetXaxis()->FindBin(0.),  h_PtResidual_pt3->GetXaxis()->FindBin(20));
+  tmp_h_pt3->SetLineColor(kRed);
+  tmp_h_pt3->Draw();
+  tmp_h_pt2->Draw("same");
+  TLegend *leg2 = new TLegend(0.2,0.00,0.4,0.15);
+  leg2->AddEntry(tmp_h_pt2,"FTK road","l");
+  leg2->AddEntry(tmp_h_pt3,"RPC road","l");
+  leg2->Draw();
+  c1 -> Print(pdf, "pdf");
+
+  // ftk
+  h_PtResidual_ptFtk -> Draw("colz");
+  c1 -> Print(pdf, "pdf");
+
+  TH1D* tmp_h_ptFtk = h_PtResidual_ptFtk->ProjectionY("pass1", h_PtResidual_ptFtk->GetXaxis()->FindBin(0.),  h_PtResidual_ptFtk->GetXaxis()->FindBin(20));
+  tmp_h_ptFtk->Draw();
+  c1 -> Print(pdf, "pdf");
+
+  // rpc
+  h_PtResidual_ptLut -> Draw("colz");
+  c1 -> Print(pdf, "pdf");
+
+  TH1D* tmp_h_ptLut = h_PtResidual_ptLut->ProjectionY("pass2", h_PtResidual_ptLut->GetXaxis()->FindBin(0.),  h_PtResidual_ptLut->GetXaxis()->FindBin(20));
+  tmp_h_ptLut->Draw();
+  c1 -> Print(pdf, "pdf");
+
+  tmp_h_ptFtk->SetLineColor(kBlue);
+  tmp_h_ptFtk->SetMarkerColor(kBlue);
+  tmp_h_ptLut->SetLineColor(kRed);
+  tmp_h_ptFtk->Draw("");
+  tmp_h_ptLut->Draw("same");
+  leg2->Draw();
   c1 -> Print(pdf, "pdf");
 
   h_pt_vs_pt -> Draw();

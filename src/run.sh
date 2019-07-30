@@ -103,8 +103,8 @@
 #INPUT_NTUPLE="/gpfs/fs2001/yfukuhar/data/user.yfukuhar.00349335.physics_EnhancedBias.YFTAP.r10795_r10792_p3516_NoTagPathenav2_EXT0/hadd_data18_reprocess_r10795_r10792.root"
 
 #This root file is data18-official.
-PDF_LABEL="data18_rate_ED_test"
-INPUT_NTUPLE="/home/yfukuhar/gpfs/data/data18_rate/hadd.root"
+#PDF_LABEL="data18_rate_ED_test"
+#INPUT_NTUPLE="/home/yfukuhar/gpfs/data/data18_rate/hadd.root"
 
 #PDF_LABEL="tsakai_sample"
 #INPUT_NTUPLE="/gpfs/fs2001/tsakai/sample2.root"
@@ -172,19 +172,22 @@ INPUT_NTUPLE="/home/yfukuhar/gpfs/data/data18_rate/hadd.root"
 #PDF_LABEL="FTK_20_ptftk"
 #INPUT_NTUPLE="/gpfs/fs7001/yfukuhar/workspace/TestCalcEffTool/CalcEffTool/run/FtkExtrapolate_21_5_bsub_20_ptftk.root"
 
+#PDF_LABEL="Jpsi_mu3p5mu3p5"
+#INPUT_NTUPLE="/gpfs/fs7001/yfukuhar/workspace/TestCalcEffTool/CalcEffTool/run/Jpsi_mu3p5mu3p5.root"
+
 PDF_LABEL="FTK_424100_n5_500eve"
 INPUT_NTUPLE="/gpfs/fs7001/yfukuhar/workspace/TestCalcEffTool/CalcEffTool/run/FTK_424100_n5_500eve.root"
 
-PDF_LABEL="Jpsi_mu3p5mu3p5"
-INPUT_NTUPLE="/gpfs/fs7001/yfukuhar/workspace/TestCalcEffTool/CalcEffTool/run/Jpsi_mu3p5mu3p5.root"
+#PDF_LABEL="FTK_424100_def213_n5_500eve"
+#INPUT_NTUPLE="/gpfs/fs7001/yfukuhar/workspace/TestCalcEffTool/CalcEffTool/run/FTK_424100_def213_n5_500eve.root"
 
 #IS_DRAW="false"
 IS_DRAW="true"
 IS_EVENTDISPLAY="false"
 #IS_EVENTDISPLAY="true"
 BEGIN_ENTRY=1
-#LIMIT_ENTRY=-1
-LIMIT_ENTRY=100000
+LIMIT_ENTRY=-1
+#LIMIT_ENTRY=100
 TAP_TYPE=3
 TRIG_CHAIN=0
 #LIMIT_ENTRY=10
