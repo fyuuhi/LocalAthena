@@ -186,7 +186,7 @@ void RPC::Loop( int Nevents, int DisplayNumber )
             // normal
             LOGD << "size: " << (probe_mesSA_roadAw->at(N50)).size() << "/" << (probe_mesSA_roadFtkAw->at(N50)).size() << "/" << (probe_mesSA_roadRpcAw->at(N50)).size();
             h_ResidualSegment_eta_BI -> Fill(probe_eta, calc_residual(probe_mesSA_roadAw -> at(N50)[0], probe_mesSA_roadBw -> at(N50)[0], Z, R));
-            h_ResidualSegment_eta_BI_2d -> Fill(calc_residual(probe_mesSA_roadFtkAw -> at(N50)[0], probe_mesSA_roadFtkBw -> at(N50)[0], Z, R), calc_residual(probe_mesSA_roadRpcAw -> at(N50)[0], probe_mesSA_roadRpcBw -> at(N50)[0], Z, R));
+           if ((probe_mesSA_roadFtkAw->at(N50)).size()>0)  h_ResidualSegment_eta_BI_2d -> Fill(calc_residual(probe_mesSA_roadFtkAw -> at(N50)[0], probe_mesSA_roadFtkBw -> at(N50)[0], Z, R), calc_residual(probe_mesSA_roadRpcAw -> at(N50)[0], probe_mesSA_roadRpcBw -> at(N50)[0], Z, R));
 
             // RPC
             if (probe_mesSA_roadAlgo->at(N50) == 2){
@@ -224,20 +224,19 @@ void RPC::Loop( int Nevents, int DisplayNumber )
             h_ResidualSegment_eta_BO -> Fill(probe_eta, calc_residual(probe_mesSA_roadAw -> at(N50)[2], probe_mesSA_roadBw -> at(N50)[2], Z, R));
 
             // RPC
-            LOGD << "BO RPC road Aw/Bw: " << probe_mesSA_roadRpcAw->at(N50)[2] << "/" << probe_mesSA_roadRpcBw->at(N50)[2];
             if (probe_mesSA_roadAlgo->at(N50) == 2){
+              LOGD << "BO RPC road Aw/Bw: " << probe_mesSA_roadRpcAw->at(N50)[2] << "/" << probe_mesSA_roadRpcBw->at(N50)[2];
               h_ResidualSegment_eta_rpc_BO -> Fill(calc_residual(probe_mesSA_roadRpcAw -> at(N50)[2], probe_mesSA_roadRpcBw -> at(N50)[2], Z, R));
             }
 
             // FTK
-            LOGD << "BO FTK road Aw/Bw: " << probe_mesSA_roadFtkAw->at(N50)[2] << "/" << probe_mesSA_roadFtkBw->at(N50)[2];
             if (probe_mesSA_roadAlgo->at(N50) == 1){
+              LOGD << "BO FTK road Aw/Bw: " << probe_mesSA_roadFtkAw->at(N50)[2] << "/" << probe_mesSA_roadFtkBw->at(N50)[2];
               h_ResidualSegment_eta_ftk_BO -> Fill(calc_residual(probe_mesSA_roadFtkAw -> at(N50)[2], probe_mesSA_roadFtkBw -> at(N50)[2], Z, R));
             }
             //cout <<"BO: " <<  calc_residual(probe_mesSA_roadAw -> at(N50)[0], probe_mesSA_roadBw -> at(N50)[0], Z, R) << endl;
           }
         }
-
 
         //// Check isRpcFailure
         //if (probe_mesSA_isRpcFailure -> at(N50) == 1){
@@ -319,14 +318,27 @@ void RPC::DrawHist(TString pdf){
   h_ResidualSegment_eta_BI -> Draw("colz");
   c1 -> Print(pdf, "pdf" );
 
-  h_ResidualSegment_eta_BI_2d -> Draw("colz");
+  TH1D* tBI = h_ResidualSegment_eta_BI->ProjectionY("eta_BI",h_ResidualSegment_eta_BI->GetXaxis()->FindBin(-2),h_ResidualSegment_eta_BI->GetXaxis()->FindBin(2));
+  tBI->Draw();
   c1 -> Print(pdf, "pdf" );
 
   h_ResidualSegment_eta_BM -> Draw("colz");
   c1 -> Print(pdf, "pdf" );
 
+  TH1D* tBM = h_ResidualSegment_eta_BM->ProjectionY("eta_BM",h_ResidualSegment_eta_BM->GetXaxis()->FindBin(-2),h_ResidualSegment_eta_BM->GetXaxis()->FindBin(2));
+  tBM->Draw();
+  c1 -> Print(pdf, "pdf" );
+
   h_ResidualSegment_eta_BO -> Draw("colz");
   c1 -> Print(pdf, "pdf" );
+
+  TH1D* tBO = h_ResidualSegment_eta_BO->ProjectionY("eta_BI",h_ResidualSegment_eta_BO->GetXaxis()->FindBin(-2),h_ResidualSegment_eta_BO->GetXaxis()->FindBin(2));
+  tBO->Draw();
+  c1 -> Print(pdf, "pdf" );
+
+  h_ResidualSegment_eta_BI_2d -> Draw("colz");
+  c1 -> Print(pdf, "pdf" );
+
 
   LOGD << "GetNbinsX(BI): " << h_ResidualSegment_eta_rpc_BI->GetNbinsX();
   LOGD << "0(BI): " << h_ResidualSegment_eta_rpc_BI->GetBinContent(0);
@@ -2881,6 +2893,7 @@ void RPC::FillProbeHist(){
         for ( int i = 0; i < (probe_mesL2_pass->at(N4)).size(); i++ ){
           //double L2pt = abs(probe_mesL2_ptFtk->at(N4)[i]);
           double L2pt = abs(probe_mesL2_ptSA->at(N4)[i]);
+          LOGD << "L2pt" << L2pt << endl;
           if ( probe_mesL2_pass->at(N4)[i] > -1 ){
             SApass = 1;
           }
