@@ -2889,12 +2889,44 @@ void RPC::FillProbeHist(){
         LOGD << "L1Pass";
         m_probe_pt_mu4[1]->Fill(probe_pt/1000.); // L1
         // SA and CB
-        if ( probe_mesSA_pass->at(N4) > -1){
+        LOGD << "pass: " << probe_mesSA_pass->at(N4);
+        LOGD << "roadAlgo: " << probe_mesSA_roadAlgo->at(N4);
+        LOGD << "ptOff: " << probe_pt/1000.;
+        LOGD << "ptSA/ptFtk: " << abs(probe_mesSA_pt->at(N4)) << "/" << probe_mesSA_ptFtk->at(N4)/1000.;
+        LOGD << "NumberOfSP(): " <<  NumberOfSP();
+        bool isSA_cut = false;
+        //bool isSA_cut = (probe_mesSA_roadAlgo->at(N4)==1 && (NumberOfSP()>0 && (probe_mesSA_ptFtk->at(N4))/1000. > 3.38));
+        //bool isSA_cut = probe_mesSA_pass->at(N4)>-1;
+        //bool isSA_cut = false;
+        //bool isSA_cut = true;
+        //if ( probe_mesSA_roadAlgo->at(N4)==1 && NumberOfSP()>0 && (probe_mesSA_ptFtk->at(N4))/1000. > 3.38 ) 
+
+
+        // mu4 or mu6 => 3.38 or 5.17
+        if ( probe_mesSA_roadAlgo->at(N4)==1 && abs(probe_mesSA_pt->at(N4)) > 3.38 ) {
+          LOGD << "pass SA as FTK";
+          isSA_cut = true;
+         } else if ( probe_mesSA_roadAlgo->at(N4)==2 && abs(probe_mesSA_pt->at(N4)) > 3.38 ) {
+           LOGD << "pass SA as RPC";
+          isSA_cut = true;
+         } else if ( abs(probe_mesSA_pt->at(N4)) > 3.38 ) {
+           LOGD << "pass SA in any way";
+          isSA_cut = true;
+         } else {
+           LOGD << "nopass SA";
+         }
+
+        if (probe_mesL1_pass->at(N4) > -1 && probe_mesSA_pass->at(N4) > 0){
           LOGD << "SAPass";
           m_probe_pt_mu4[2]->Fill(probe_pt/1000.); // SA
-          if ( probe_mesCB_pass->at(N4) > -1){
-            LOGD << "CBPass";
+          if (probe_pt/1000. < 5){
+            LOGD << "mu4cb";
+          }
+          if ( probe_mesCB_pass->at(N4) > -1 ){
+            LOGD << "CBPass, " << "ptCB: " << abs(probe_mesCB_pt->at(N4)/1000.);
             m_probe_pt_mu4[3]->Fill(probe_pt/1000.); // CB
+          } else {
+            LOGD << "noCBPass, " << "ptCB: " << abs(probe_mesCB_pt->at(N4)/1000.);
           }
         }
 
@@ -2903,15 +2935,26 @@ void RPC::FillProbeHist(){
         int CBThrepass = -1;
         for ( int i = 0; i < (probe_mesL2_pass->at(N4)).size(); i++ ){
           //double L2pt = abs(probe_mesL2_ptFtk->at(N4)[i]);
-          double L2pt = abs(probe_mesL2_ptSA->at(N4)[i]);
-          LOGD << "L2pt" << L2pt << endl;
+          double L2pt       = abs(probe_mesL2_ptSA->at(N4)[i]);
+          double L2ptFtk    = abs(probe_mesL2_ptFtk->at(N4)[i])/1000.;
+          double L2roadAlgo = probe_mesL2_roadAlgo->at(N4)[i];
+          LOGD << "";
+          LOGD << "L2pt: " << L2pt;
+          LOGD << "L2ptFtk: " << L2ptFtk;
+          LOGD << "L2roadAlgo: " << L2roadAlgo;
+          LOGD << "l2sa : pass/pt/ptFtk: " << probe_mesL2_pass->at(N4)[i] << "/" << abs(probe_mesL2_ptSA->at(N4)[i]) << "/" << (probe_mesL2_ptFtk->at(N4)[i])/1000.;
           if ( probe_mesL2_pass->at(N4)[i] > -1 ){
+            LOGD << "L2pass";
             SApass = 1;
+          } else {
+            LOGD << "noL2pass";
           }
           if ( L2pt > 3.86 ){ // CB thre of HLT_mu4 in barrel is 3.86 GeV
             CBThrepass = 1;
           }
         }
+        LOGD << "";
+        LOGD << "SApass result: " << SApass;
         if ( SApass == 1 && CBThrepass == 1) {
           m_probe_pt_mu4[4]->Fill(probe_pt/1000.);
         } else {
@@ -3069,6 +3112,28 @@ void RPC::DrawEffHist(TString pdf){
 
   c1 -> Print( pdf + "[", "pdf" );
 
+  m_ftk_size_pt_mu4->Draw("colz");
+  c1 -> Print( pdf, "pdf" );
+
+  TProfile *pf4 = m_ftk_size_pt_mu4->ProfileX();
+  pf4->Draw();
+  pf4->GetYaxis()->SetTitle("Average number of FTKs");
+  c1 -> Print(pdf, "pdf" );
+
+  //m_ftk_size_eta_mu4->Draw("colz");
+  //c1 -> Print( pdf, "pdf" );
+
+  m_ftk_size_pt_mu50->Draw("colz");
+  c1 -> Print( pdf, "pdf" );
+
+  TProfile *pf50 = m_ftk_size_pt_mu50->ProfileX();
+  pf50->Draw();
+  pf50->GetYaxis()->SetTitle("Average number of FTKs");
+  c1 -> Print(pdf, "pdf" );
+
+  //m_ftk_size_eta_mu50->Draw("colz");
+  //c1 -> Print( pdf, "pdf" );
+
   m_eff_pt_mu4_L1->Draw();
   m_eff_pt_mu4_L1->GetYaxis()->SetRangeUser(0,1.1);
   c1 -> Print( pdf, "pdf" );
@@ -3133,6 +3198,10 @@ void RPC::DrawEffHist(TString pdf){
 
   h_eff_pt_mu4_SACB->Draw();
   h_eff_pt_mu4_SACB->GetYaxis()->SetRangeUser(0,1.1);
+  c1 -> Print( pdf, "pdf" );
+
+  h_eff_pt_mu4_CBEF->Draw();
+  h_eff_pt_mu4_CBEF->GetYaxis()->SetRangeUser(0,1.1);
   c1 -> Print( pdf, "pdf" );
 
   h_eff_mu_mu50_L1SA->Draw();

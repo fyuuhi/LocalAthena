@@ -515,6 +515,12 @@ public :
    vector< TH1F* > m_probe_phi_mu4; //!
    vector< TH1F* > m_probe_eta_mu4; //!
 
+   TH2F *m_ftk_size_pt_mu4;       //!
+   TH2F *m_ftk_size_eta_mu4;       //!
+
+   TH2F *m_ftk_size_pt_mu50;       //!
+   TH2F *m_ftk_size_eta_mu50;       //!
+
    TH1F *m_eff_pt_mu4_L1;       //!
    TH1F *m_eff_pt_mu4_L1SA;       //!
    TH1F *m_eff_pt_mu4_SACB;       //!
@@ -1235,6 +1241,12 @@ void RPC::InitEffHist(){
     m_probe_phi_mu4.push_back(new TH1F(Form("probe_phi_mu4_%s", m_chain[i].data()), ";phi;Counts",        50, -3.5, 3.5));
   }
 
+  m_ftk_size_pt_mu4  = new TH2F("m_ftk_size_pt_mu4",  ";Offline p_{T}[GeV];# of FTKs", 50, 0, 50, 20, 0 ,10);
+  m_ftk_size_pt_mu4  = new TH2F("m_ftk_size_pt_mu4",  ";Offline p_{T}[GeV];# of FTKs", 50, 0, 50, 20, 0 ,10);
+
+  m_ftk_size_pt_mu50  = new TH2F("m_ftk_size_pt_mu50",  ";Offline p_{T}[GeV];# of FTKs", 100, 0, 100, 20, 0 ,10);
+  m_ftk_size_pt_mu50  = new TH2F("m_ftk_size_pt_mu50",  ";Offline p_{T}[GeV];# of FTKs", 100, 0, 100, 20, 0 ,10);
+
   m_eff_pt_mu4_L1  = new TH1F("m_eff_pt_mu4_L1",  ";p_{T}[GeV];L1 Efficiency", 50, 0,    20);
   m_eff_mu_mu4_L1  = new TH1F("m_eff_mu_mu4_L1",  ";<#mu>;L1 Efficiency",      50, 0,    60);
   m_eff_eta_mu4_L1 = new TH1F("m_eff_eta_mu4_L1", ";#eta;L1 Efficiency",       50, -3,   3);
@@ -1270,10 +1282,10 @@ void RPC::InitEffHist(){
   h_probe_pt_mu4_SA  = new TH1F("h_probe_pt_mu4_SA",       "probe;Probe p_{T}[GeV];Entries",  50, 0, 20);
   h_probe_pt_mu4_CB  = new TH1F("h_probe_pt_mu4_CB",       "probe;Probe p_{T}[GeV];Entries",  50, 0, 20);
   h_probe_pt_mu4_EF  = new TH1F("h_probe_pt_mu4_EF",       "probe;Probe p_{T}[GeV];Entries",  50, 0, 20);
-  h_eff_pt_mu4_L1    = new TH1F("h_eff_pt_mu4_L1",         "eff;Probe p_{T}[GeV];Efficiency", 50, 0, 20);
-  h_eff_pt_mu4_L1SA  = new TH1F("h_eff_pt_mu4_L1SA",       "eff;Probe p_{T}[GeV];Efficiency", 50, 0, 20);
-  h_eff_pt_mu4_SACB  = new TH1F("h_eff_pt_mu4_SACB",       "eff;Probe p_{T}[GeV];Efficiency", 50, 0, 20);
-  h_eff_pt_mu4_CBEF  = new TH1F("h_eff_pt_mu4_CBEF",       "eff;Probe p_{T}[GeV];Efficiency", 50, 0, 20);
+  h_eff_pt_mu4_L1    = new TH1F("h_eff_pt_mu4_L1",         "eff;Probe p_{T}[GeV];L1 Efficiency", 50, 0, 20);
+  h_eff_pt_mu4_L1SA  = new TH1F("h_eff_pt_mu4_L1SA",       "eff;Probe p_{T}[GeV];SA/L1 Efficiency", 50, 0, 20);
+  h_eff_pt_mu4_SACB  = new TH1F("h_eff_pt_mu4_SACB",       "eff;Probe p_{T}[GeV];CB/SA Efficiency", 50, 0, 20);
+  h_eff_pt_mu4_CBEF  = new TH1F("h_eff_pt_mu4_CBEF",       "eff;Probe p_{T}[GeV];EF/CBEfficiency", 50, 0, 20);
 
   h_probe_phi_mu4_L1  = new TH1F("h_probe_phi_mu4_L1", "probe;Probe #phi;Entries", 50, -3.5, 3.5);
   h_probe_phi_mu4_SA  = new TH1F("h_probe_phi_mu4_SA", "probe;Probe #phi;Entries", 50, -3.5, 3.5);
