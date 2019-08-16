@@ -135,6 +135,7 @@ void RPC::Loop( int Nevents, int DisplayNumber )
     if( ientry%DisplayNumber == 0){
       LOGI << "now event number -->> " << ientry << "/" << nLoop << " : " << ((double) ientry)/nLoop * 100. << "%";
     }
+    LOGD << "EventNumber = " << EventNumber;
 
     //==================================================================
     //Analysis code for a entry
@@ -2850,6 +2851,16 @@ void RPC::FillProbeHist(){
   //bool isBarrel = (abs(probe_eta) < 1.05) && (isQetaCut);
   //bool isBarrel = true;
   bool isBarrel = (abs(probe_eta) < 1.05);
+
+  LOGD << "size: " << (probe_mesL2_pt->at(N4)).size();
+  for ( int i = 0; i < (probe_mesL2_pass->at(N4)).size(); i++ ){
+    if ( probe_mesL2_sAddressSA->at(N4)[i] > -1  && probe_mesL2_pass->at(N4)[i] > -3){
+      m_ftk_size_pt_mu4 -> Fill( probe_pt/1000., (probe_mesL2_pt->at(N4)).size() );
+
+      m_ftk_size_pt_mu50 -> Fill( probe_pt/1000., (probe_mesL2_pt->at(14)).size() );
+
+    }
+  }
 
   //if ( !(qeta > -1.3 && qeta < -0.9)){
   //  return;
