@@ -9,15 +9,15 @@ DATE=$(date '+%Y%m%d%H%M')
 #INPUT_LIST="../shortZmumuRDO_FTK.list"
 #INPUT_LIST="../Jpsi_424130.list"
 #INPUT_LIST="../Jpsi_424103.list"
-INPUT_LIST="../Jpsi_424108.list"
+#INPUT_LIST="../Jpsi_424108.list"
 #INPUT_LIST="../Jpsi_424100.list"
-#INPUT_LIST="../FTK_361107.list"
+INPUT_LIST="../FTK_361107.list"
 #INPUT_RDO_FOR_OUTPUT="user.yfukuhar.mc16_13TeV.Zmumu"
 #OUTPUT_AOD=$INPUT_RDO_FOR_OUTPUT".AOD."$DATE".root"
 TEMP_RUN_SCRIPT="bsub_run_temp.sh"
 #MAXEVENTS='100'
-#LABEL=DIR_RDO_FTK_Zmumu
-LABEL=DIR_RDO_FTK_Jmumu
+LABEL=DIR_RDO_FTK_Zmumu
+#LABEL=DIR_RDO_FTK_Jmumu
 
 echo ""
 echo "INPUT_LIST =   "$INPUT_LIST

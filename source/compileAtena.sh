@@ -12,6 +12,7 @@ fi
 echo "TestArea = "$TestArea
 
 BUILD_DIR=$TestArea/../build
+rm -r $BUILD_DIR
 if [ -d "$BUILD_DIR" ] ; then
   echo "Directory for build is $BUILD_DIR"
 else
