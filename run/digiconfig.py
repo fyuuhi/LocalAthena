@@ -162,11 +162,42 @@ dic={}
 #}
 
 # Zmumu
+#dic = {
+#  'sample': 'Jpsimumu_21.0.53',
+#  #http://bigpanda.cern.ch/task/?jeditaskid=11182595&display_limit=200
+#  'AMItag': 'r9781',
+#  'athenaTag': 'Athena,21.0.53',
+#  'cmtConfig': 'x86_64-slc6-gcc62-opt',
+#  # '#InDS': 'mc16_13TeV.361107.PowhegPythia8EvtGen_AZNLOCTEQ6L1_Zmumu.simul.HITS.e3601_s3126_tid10730601_00',
+#  # 'InDS': 'user.%s.mc16_13TeV.361107.PowhegPythia8EvtGen_AZNLOCTEQ6L1_Zmumu.simul.HITS.e3601_s3126_tid10730601_00_201705141555',
+#  #'InDS': 'mc16_13TeV.361107.PowhegPythia8EvtGen_AZNLOCTEQ6L1_Zmumu.simul.HITS.e3601_s3126',
+#  #mc16_13TeV.361107.PowhegPythia8EvtGen_AZNLOCTEQ6L1_Zmumu.simul.HITS.e3601_s3126_tid10730601_00',
+#  #mc16_13TeV.361107.PowhegPythia8EvtGen_AZNLOCTEQ6L1_Zmumu.simul.HITS.e3601_s3126_tid11363382_00',
+#  #mc16_13TeV.361107.PowhegPythia8EvtGen_AZNLOCTEQ6L1_Zmumu.simul.HITS.e3601_s3126_tid11012007_00',
+#  #mc16_13TeV.361107.PowhegPythia8EvtGen_AZNLOCTEQ6L1_Zmumu.simul.HITS.e3601_s3126_tid13642339_00',
+#  #'#InDS': 'mc16_13TeV.361107.PowhegPythia8EvtGen_AZNLOCTEQ6L1_Zmumu.simul.HITS.e3601_s3126_tid10730601_00',
+#  #'InDS': 'user.yfukuhar.mc16_13TeV.424108.Pythia8B_A14_CTEQ6L1_Jpsimu6.simul.HITS.e5441_e5984_s3126_der1531370800',
+#  #'InDS': 'mc16_13TeV.424108.Pythia8B_A14_CTEQ6L1_Jpsimu6.simul.HITS.e5441_s3126_tid11330326_00',
+#  #'InDS': 'mc16_13TeV.424108.Pythia8B_A14_CTEQ6L1_Jpsimu6.simul.HITS.e5441_s3126_tid10730179_00',
+#  'InDS': 'mc16_13TeV.424108.Pythia8B_A14_CTEQ6L1_Jpsimu6.simul.HITS.e5441_e5984_s3126_tid14253740_00',
+#  #'InDS': 'mc16_13TeV.361107.PowhegPythia8EvtGen_AZNLOCTEQ6L1_Zmumu.simul.HITS.e3601_s3126_tid11363382_00',
+#  #'highMinDS': 'mc16_13TeV.361239.Pythia8EvtGen_A3NNPDF23LO_minbias_inelastic_high.simul.HITS.e4981_s3087_s3111_tid10701335_00',
+#  #'highMinDS': 'mc16_13TeV.361239.Pythia8EvtGen_A3NNPDF23LO_minbias_inelastic_high.simul.HITS.e4981_s3087_s3111',
+#  'highMinDS': 'mc16_13TeV.361239.Pythia8EvtGen_A3NNPDF23LO_minbias_inelastic_high.simul.HITS.e4981_s3087_s3111_tid10701335_00',
+#  'nHighMin': 5,
+#  'lowMinDS': 'mc16_13TeV.361238.Pythia8EvtGen_A3NNPDF23LO_minbias_inelastic_low.simul.HITS.e4981_s3087_s3111_tid10701323_00',
+#  'nLowMin': 5,
+#  'OutDS': 'user.%s.mc16_13TeV.424108.Pythia8B_A14_CTEQ6L1_Jpsimu6.simul.RDO.e5441_e5984_s3126.%s' %(user, time),
+#  #'OutDS': 'user.%s.mc16_13TeV.361107.PowhegPythia8EvtGen_AZNLOCTEQ6L1_Zmumu.recon.RDO.e3601_s3126_r9781.%s' %(user, time),
+#  'nEventsPerFile': 1000,
+#}
+
+# Zmumu
 dic = {
-  'sample': 'Jpsimumu_21.0.53',
+  'sample': 'Jpsimumu_21.3.10',
   #http://bigpanda.cern.ch/task/?jeditaskid=11182595&display_limit=200
-  'AMItag': 'r9781',
-  'athenaTag': 'Athena,21.0.53',
+  'AMItag': 'r11234',
+  'athenaTag': 'Athena,21.3.10',
   'cmtConfig': 'x86_64-slc6-gcc62-opt',
   # '#InDS': 'mc16_13TeV.361107.PowhegPythia8EvtGen_AZNLOCTEQ6L1_Zmumu.simul.HITS.e3601_s3126_tid10730601_00',
   # 'InDS': 'user.%s.mc16_13TeV.361107.PowhegPythia8EvtGen_AZNLOCTEQ6L1_Zmumu.simul.HITS.e3601_s3126_tid10730601_00_201705141555',
@@ -179,7 +210,8 @@ dic = {
   #'InDS': 'user.yfukuhar.mc16_13TeV.424108.Pythia8B_A14_CTEQ6L1_Jpsimu6.simul.HITS.e5441_e5984_s3126_der1531370800',
   #'InDS': 'mc16_13TeV.424108.Pythia8B_A14_CTEQ6L1_Jpsimu6.simul.HITS.e5441_s3126_tid11330326_00',
   #'InDS': 'mc16_13TeV.424108.Pythia8B_A14_CTEQ6L1_Jpsimu6.simul.HITS.e5441_s3126_tid10730179_00',
-  'InDS': 'mc16_13TeV.424108.Pythia8B_A14_CTEQ6L1_Jpsimu6.simul.HITS.e5441_e5984_s3126_tid14253740_00',
+  #'InDS': 'mc16_13TeV.424108.Pythia8B_A14_CTEQ6L1_Jpsimu6.simul.HITS.e5441_e5984_s3126_tid14253740_00',
+  'InDS': 'mc16_13TeV.300901.ParticleGunEvtGen_Jpsi_mu3p5mu3p5_prompt.simul.HITS.e7406_e5984_a875',
   #'InDS': 'mc16_13TeV.361107.PowhegPythia8EvtGen_AZNLOCTEQ6L1_Zmumu.simul.HITS.e3601_s3126_tid11363382_00',
   #'highMinDS': 'mc16_13TeV.361239.Pythia8EvtGen_A3NNPDF23LO_minbias_inelastic_high.simul.HITS.e4981_s3087_s3111_tid10701335_00',
   #'highMinDS': 'mc16_13TeV.361239.Pythia8EvtGen_A3NNPDF23LO_minbias_inelastic_high.simul.HITS.e4981_s3087_s3111',
@@ -187,7 +219,7 @@ dic = {
   'nHighMin': 5,
   'lowMinDS': 'mc16_13TeV.361238.Pythia8EvtGen_A3NNPDF23LO_minbias_inelastic_low.simul.HITS.e4981_s3087_s3111_tid10701323_00',
   'nLowMin': 5,
-  'OutDS': 'user.%s.mc16_13TeV.424108.Pythia8B_A14_CTEQ6L1_Jpsimu6.simul.RDO.e5441_e5984_s3126.%s' %(user, time),
+  'OutDS': 'user.%s.mc16_13TeV.300901.PGE_Jpsi_mu3p5mu3p5_prompt.simul.RDO.e5441_e5984_s3126.%s' %(user, time),
   #'OutDS': 'user.%s.mc16_13TeV.361107.PowhegPythia8EvtGen_AZNLOCTEQ6L1_Zmumu.recon.RDO.e3601_s3126_r9781.%s' %(user, time),
   'nEventsPerFile': 1000,
 }

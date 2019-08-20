@@ -16,7 +16,8 @@ time =  datetime.now().strftime('%Y%m%d%H%M')
 # sample = 'Zmumu_21.0.20'
 #sample = 'Zmumu_21.0.15'
 #sample = 'Zmumu_21.0.32'
-sample = 'Jpsimumu_21.0.53'
+#sample = 'Jpsimumu_21.0.53'
+sample = 'Jpsimumu_21.3.10'
 #sample = 'Jpsimu4mu4_21.0.24'
 maxEvents = 100
 nFilesPerJob = 5
@@ -108,8 +109,8 @@ com_display = com_display.replace('%s' %OutDS, '[Outputs]')
 #com_display = com_display.replace('%s' %ExcludedSite, '[Excludes]')
 
 
-# print '%s\n' %command
-print '%s\n' %com_display
+print '%s\n' %command
+#print '%s\n' %com_display
 
 #os.system('rm -r %s/../SubmitArea' %testarea)
 #os.system('mkdir %s/../SubmitArea' %testarea)
@@ -118,11 +119,11 @@ print '%s\n' %com_display
 #os.system('cp %s/../*.sh ./' %testarea)
 
 #os.system('rm -r SubmitArea_XFAhifhasdfIS')
-os.system('mkdir SubmitArea_XFAhifhasdfIS_%s' %(time))
-os.chdir('SubmitArea_XFAhifhasdfIS_%s' %(time))
-os.system('cp ../*.py ./')
-os.system('cp ../*.sh ./')
-os.system('cp ../pathena ./')
+os.system('mkdir Submit_%s' %(time))
+os.chdir('Submit_%s' %(time))
+os.system('cp ../../*.py ./')
+os.system('cp ../../*.sh ./')
+os.system('cp ../../pathena ./')
 
 os.system(command)
 
