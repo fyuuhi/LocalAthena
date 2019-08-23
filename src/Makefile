@@ -21,3 +21,6 @@ all: $(OBJS)
 	$(CXX) $(CXXFLAGS) -I /gpfs/home/yfukuhar/tmp/plog/include -c $< -o $@
 
 %.o:%.cc
+
+clean:
+	rm -f $(EXENAME) $(OBJS)
