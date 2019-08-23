@@ -196,8 +196,26 @@
 #PDF_LABEL="FTK_424103_def213_n3_500eve_sp1_1_mu6"
 #INPUT_NTUPLE="/gpfs/fs7001/yfukuhar/workspace/TestCalcEffTool/CalcEffTool/run/FTK_424103_def213_n3_500eve_1.root"
 
-PDF_LABEL="FTK_424108_n3_500eve_1_mu4"
-INPUT_NTUPLE="/gpfs/fs7001/yfukuhar/workspace/TestCalcEffTool/CalcEffTool/run/FTK_424108_n3_500eve_1.root"
+#PDF_LABEL="FTK_424108_n3_500eve_1_mu4"
+#INPUT_NTUPLE="/gpfs/fs7001/yfukuhar/workspace/TestCalcEffTool/CalcEffTool/run/FTK_424108_n3_500eve_1.root"
+
+#PDF_LABEL="FTK_424103_def213_n3_500eve_dR_mu4_endcap"
+#INPUT_NTUPLE="/gpfs/fs7001/yfukuhar/workspace/TestCalcEffTool/CalcEffTool/run/FTK_424103_def213_n3_500eve_dR.root"
+
+#PDF_LABEL="FTK_424103_def213_n3_500eve_RoI_mu4_barrel"
+#INPUT_NTUPLE="/gpfs/fs7001/yfukuhar/workspace/TestCalcEffTool/CalcEffTool/run/FTK_424103_def213_n3_500eve_RoI.root"
+
+#PDF_LABEL="FTK_424103_new_mu6_barrel"
+#INPUT_NTUPLE="/gpfs/fs7001/yfukuhar/workspace/TestCalcEffTool/CalcEffTool/run/FTK_424103_new.root"
+
+#PDF_LABEL="FTK_424103_new_mu6_barrel_onlyFTK"
+#INPUT_NTUPLE="/gpfs/fs7001/yfukuhar/workspace/TestCalcEffTool/CalcEffTool/run/FTK_424103_new_1.root"
+
+#PDF_LABEL="FTK_424103_def213_n3_500eve_mu6_barrel"
+#INPUT_NTUPLE="/gpfs/fs7001/yfukuhar/workspace/TestCalcEffTool/CalcEffTool/run/FTK_424103_def213_n3_500eve_1.root"
+
+PDF_LABEL="FTK_424103_def213_n3_500eve_mu6_barrel"
+INPUT_NTUPLE="/gpfs/fs7001/yfukuhar/workspace/TestCalcEffTool/CalcEffTool/run/FTK_424103_def213_n3_500eve_1.root"
 
 #IS_DRAW="false"
 IS_DRAW="true"

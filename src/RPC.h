@@ -43,7 +43,7 @@ public :
 
 // Fixed size dimensions of array or collections stored in the TTree if any.
 
-   const int N4 = 0;
+   const int N4 = 1;
    const int N50 = 0;
    const int NTagProc = 3;
    // Declaration of leaf types
@@ -514,6 +514,8 @@ public :
    vector< TH1F* > m_probe_mu_mu4; //!
    vector< TH1F* > m_probe_phi_mu4; //!
    vector< TH1F* > m_probe_eta_mu4; //!
+   vector< TH2F* > m_probe_qetapt_mu4; //!
+   vector< TH2F* > m_probe_etaphi_mu4; //!
 
    TH2F *m_ftk_size_pt_mu4;       //!
    TH2F *m_ftk_size_eta_mu4;       //!
@@ -545,6 +547,8 @@ public :
    TH1F *m_eff_phi_mu4_L1L2;       //!
    TH1F *m_eff_phi_mu4_L1CB;       //!
 
+   TH2F *m_eff_qetapt_mu4_L1L2;       //!
+   TH2F *m_eff_etaphi_mu4_L1L2;       //!
 
    vector< TH1F* > h_probe_pt_mu6; //!
    vector< TH1F* > h_probe_mu_mu6; //!
@@ -1235,17 +1239,19 @@ void RPC::InitEffHist(){
   m_chain.push_back("L2");
   m_chain.push_back("EF");
   for ( int i = 0; i< m_chain.size(); i++){
-    m_probe_pt_mu4.push_back(new TH1F(Form("probe_pt_mu4_%s",   m_chain[i].data()), ";p_{T}[GeV];Counts", 50, 0,    20));
-    m_probe_mu_mu4.push_back(new TH1F(Form("probe_mu_mu4_%s",   m_chain[i].data()), ";<#mu>;Counts",      50, 0,    60));
-    m_probe_eta_mu4.push_back(new TH1F(Form("probe_eta_mu4_%s", m_chain[i].data()), ";#eta;Counts",       50, -3,   3));
-    m_probe_phi_mu4.push_back(new TH1F(Form("probe_phi_mu4_%s", m_chain[i].data()), ";phi;Counts",        50, -3.5, 3.5));
+    m_probe_pt_mu4.push_back(new TH1F(Form("probe_pt_mu4_%s",     m_chain[i].data()), ";p_{T}[GeV];Counts", 50, 0,    20));
+    m_probe_mu_mu4.push_back(new TH1F(Form("probe_mu_mu4_%s",     m_chain[i].data()), ";<#mu>;Counts",      50, 0,    60));
+    m_probe_eta_mu4.push_back(new TH1F(Form("probe_eta_mu4_%s",   m_chain[i].data()), ";#eta;Counts",       50, -3,   3));
+    m_probe_phi_mu4.push_back(new TH1F(Form("probe_phi_mu4_%s",   m_chain[i].data()), ";phi;Counts",        50, -3.5, 3.5));
+    m_probe_qetapt_mu4.push_back(new TH2F(Form("probe_qetapt_mu4_%s", m_chain[i].data()), ";Q#eta;p_{T}[GeV];Counts", 30, -2.5, 2.5, 30, 0, 20));
+    m_probe_etaphi_mu4.push_back(new TH2F(Form("probe_etaphi_mu4_%s", m_chain[i].data()), ";#eta;#phi;Counts", 30, -2.5, 2.5, 30, -3.2, 3.2));
   }
 
   m_ftk_size_pt_mu4  = new TH2F("m_ftk_size_pt_mu4",  ";Offline p_{T}[GeV];# of FTKs", 50, 0, 50, 20, 0 ,10);
-  m_ftk_size_pt_mu4  = new TH2F("m_ftk_size_pt_mu4",  ";Offline p_{T}[GeV];# of FTKs", 50, 0, 50, 20, 0 ,10);
+  m_ftk_size_eta_mu4  = new TH2F("m_ftk_size_eta_mu4",  ";Offline p_{T}[GeV];# of FTKs", 50, 0, 50, 20, -2.5, 2.5);
 
   m_ftk_size_pt_mu50  = new TH2F("m_ftk_size_pt_mu50",  ";Offline p_{T}[GeV];# of FTKs", 100, 0, 100, 20, 0 ,10);
-  m_ftk_size_pt_mu50  = new TH2F("m_ftk_size_pt_mu50",  ";Offline p_{T}[GeV];# of FTKs", 100, 0, 100, 20, 0 ,10);
+  m_ftk_size_eta_mu50  = new TH2F("m_ftk_size_eta_mu50",  ";Offline p_{T}[GeV];# of FTKs", 100, 0, 100, 20, -2.5, 2.5);
 
   m_eff_pt_mu4_L1  = new TH1F("m_eff_pt_mu4_L1",  ";p_{T}[GeV];L1 Efficiency", 50, 0,    20);
   m_eff_mu_mu4_L1  = new TH1F("m_eff_mu_mu4_L1",  ";<#mu>;L1 Efficiency",      50, 0,    60);
@@ -1266,6 +1272,9 @@ void RPC::InitEffHist(){
   m_eff_mu_mu4_L1L2  = new TH1F("m_eff_mu_mu4_L1L2",  ";<#mu>;L2/L1 Efficiency",      50, 0,    60);
   m_eff_eta_mu4_L1L2 = new TH1F("m_eff_eta_mu4_L1L2", ";#eta;L2/L1 Efficiency",       50, -3,   3);
   m_eff_phi_mu4_L1L2 = new TH1F("m_eff_phi_mu4_L1L2", ";#phi;L2/L1 Efficiency",       50, -3.5, 3.5);
+
+  m_eff_qetapt_mu4_L1L2 = new TH2F("m_eff_qetapt_mu4_L1L2", ";Q#eta;p_{T}[GeV];L2/L1 Efficiency", 30, -2.5, 2.5, 30, 0, 20);
+  m_eff_etaphi_mu4_L1L2 = new TH2F("m_eff_etaphi_mu4_L1L2", ";#eta;#phi;L2/L1 Efficiency",        30, -2.5, 2.5, 30, 0, 20);
 
   m_eff_pt_mu4_L1CB  = new TH1F("m_eff_pt_mu4_L1CB",  ";p_{T}[GeV];CB/L1 Efficiency", 50, 0,    20);
   m_eff_mu_mu4_L1CB  = new TH1F("m_eff_mu_mu4_L1CB",  ";<#mu>;CB/L1 Efficiency",      50, 0,    60);

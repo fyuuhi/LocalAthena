@@ -2867,7 +2867,10 @@ void RPC::FillProbeHist(){
   //}
 
   // Special For FTK
-  if ( tag_proc == 3){
+  if ( tag_proc == 3 ){
+    //if (!(sumReqdRL1<tp_extdR && 0.2<tp_extdR)){
+    //  ;
+    //}
     LOGD << "size: " << (probe_mesL2_pass->at(N4)).size();
     LOGD << "l2sa : pass/pt/eta/phi/sAddress/roi: " << probe_mesSA_pass->at(N4) << "/" << probe_mesSA_pt->at(N4) << "/" << probe_mesSA_eta->at(N4) << "/" << probe_mesSA_phi->at(N4)<< "/" << probe_mesSA_sAddress->at(N4);
     for ( int i = 0; i < (probe_mesL2_pass->at(N4)).size(); i++ ){
@@ -2882,12 +2885,31 @@ void RPC::FillProbeHist(){
     //LOGD << "vec size" << pass.size();
     //LOGD << "pass" << pass;
 
+
+
+    //CB threshold 
+    //'4GeV_v15a'             : [ [0,1.05,1.5,2.0,9.9], [  3.86,  3.77,  3.69,  3.70] ],
+    //'5GeV_v15a'             : [ [0,1.05,1.5,2.0,9.9], [  4.9,  4.8,  4.8,  4.8] ],
+    //'6GeV_v15a'             : [ [0,1.05,1.5,2.0,9.9], [  5.87,  5.79,  5.70,  5.62] ],
+    double CBthre = 0;
+    if ( N4 == 0 ){
+      CBthre = 3.86;
+    } else if ( N4 == 1){
+      CBthre = 5.87;
+    }
+
     if ( abs(probe_eta) < 1.05 ){
       LOGD << "barrel";
       m_probe_pt_mu4[0]->Fill(probe_pt/1000.); // PROBE
       if ( probe_mesL1_pass->at(N4) > -1){
         LOGD << "L1Pass";
         m_probe_pt_mu4[1]->Fill(probe_pt/1000.); // L1
+        m_probe_qetapt_mu4[1]->Fill(probe_charge*probe_eta, probe_pt/1000.); // L1
+        if ( CBthre < probe_pt/1000. ){
+          m_probe_eta_mu4[1]->Fill(probe_eta); // L1
+          m_probe_phi_mu4[1]->Fill(probe_phi); // L1
+          m_probe_etaphi_mu4[1]->Fill(probe_eta, probe_phi); // L1
+        }
         // SA and CB
         LOGD << "pass: " << probe_mesSA_pass->at(N4);
         LOGD << "roadAlgo: " << probe_mesSA_roadAlgo->at(N4);
@@ -2902,7 +2924,7 @@ void RPC::FillProbeHist(){
         //if ( probe_mesSA_roadAlgo->at(N4)==1 && NumberOfSP()>0 && (probe_mesSA_ptFtk->at(N4))/1000. > 3.38 ) 
 
 
-        // mu4 or mu6 => 3.38 or 5.17
+        // L2SA threshold mu4 or mu6 => 3.38 or 5.17
         if ( probe_mesSA_roadAlgo->at(N4)==1 && abs(probe_mesSA_pt->at(N4)) > 3.38 ) {
           LOGD << "pass SA as FTK";
           isSA_cut = true;
@@ -2933,34 +2955,64 @@ void RPC::FillProbeHist(){
         // L2
         int SApass = -1;
         int CBThrepass = -1;
+        int L2pass = -1;
+        LOGD << "chain: " << N4 << "--> thre: " << CBthre;
         for ( int i = 0; i < (probe_mesL2_pass->at(N4)).size(); i++ ){
           //double L2pt = abs(probe_mesL2_ptFtk->at(N4)[i]);
-          double L2pt       = abs(probe_mesL2_ptSA->at(N4)[i]);
+          double SApt       = abs(probe_mesL2_ptSA->at(N4)[i]);
           double L2ptFtk    = abs(probe_mesL2_ptFtk->at(N4)[i])/1000.;
           double L2roadAlgo = probe_mesL2_roadAlgo->at(N4)[i];
           LOGD << "";
-          LOGD << "L2pt: " << L2pt;
-          LOGD << "L2ptFtk: " << L2ptFtk;
+          LOGD << "roiNumber/SApt/SAeta/SAphi: " << probe_mesL2_passSA->at(N4)[i] << "/" << abs(probe_mesL2_ptSA->at(N4)[i]) << "/" << probe_mesL2_etaSA->at(N4)[i] << "/" << probe_mesL2_phiSA->at(N4)[i];
+          LOGD << "L2ptFtk/L2etaFtk/L2phiFtk: " << abs(probe_mesL2_ptFtk->at(N4)[i])/1000. << "/" << probe_mesL2_etaFtk->at(N4)[i] << "/" << probe_mesL2_phiFtk->at(N4)[i];
           LOGD << "L2roadAlgo: " << L2roadAlgo;
-          LOGD << "l2sa : pass/pt/ptFtk: " << probe_mesL2_pass->at(N4)[i] << "/" << abs(probe_mesL2_ptSA->at(N4)[i]) << "/" << (probe_mesL2_ptFtk->at(N4)[i])/1000.;
-          if ( probe_mesL2_pass->at(N4)[i] > -1 ){
-            LOGD << "L2pass";
-            SApass = 1;
-          } else {
-            LOGD << "noL2pass";
+          LOGD << "L2pass: " << probe_mesL2_pass->at(N4)[i];
+          if ( probe_mesL2_roadAlgo->at(N4)[i] == 1 ){ // FTK road
+            LOGD << "FTK L2Muon";
+            if ( abs(probe_mesL2_ptSA->at(N4)[i]) > CBthre ){
+              L2pass = 1;
+              LOGD << "L2pass as FTK L2Muon";
+            } else {
+              LOGD << "not L2pass as FTK L2Muon";
+            }
+          } else if ( probe_mesL2_roadAlgo->at(N4)[i] == 2) { // RPC road
+              LOGD << "RPC L2MuonSA --> l2muComb";
+          } else if ( probe_mesL2_roadAlgo->at(N4)[i] == -2) { // muComb from RPC road
+            LOGD << "L2muComb";
+            if ( probe_mesL2_pass->at(N4)[i] > 0 ){
+              //L2pass = 1;
+              LOGD << "L2pass as L2muComb";
+            } else {
+              LOGD << "not L2pass as L2muComb";
+            }
+          } else if ( probe_mesL2_roadAlgo->at(N4)[i] == 0) { // Endcap
+            LOGD << "Endcap L2MuonSA";
+          } else if ( probe_mesL2_roadAlgo->at(N4)[i] == -3) { // No FTK sample i.e. No dynamic variable of roadAlgo
+            LOGD << "No FTK sample L2MuonSA";
           }
-          if ( L2pt > 3.86 ){ // CB thre of HLT_mu4 in barrel is 3.86 GeV
-            CBThrepass = 1;
-          }
+
+          //if ( L2pt > CBthre || probe_mesCB_pass->at(N4) > -1 ){ // CB thre of HLT_mu4 in barrel is 3.86 GeV
+          //  CBThrepass = 1;
+          //}
         }
+
         LOGD << "";
-        LOGD << "SApass result: " << SApass;
-        if ( SApass == 1 && CBThrepass == 1) {
+        LOGD << "L2pass result: " << L2pass;
+        //if ( SApass == 1 && CBThrepass == 1) 
+        if ( L2pass > -1) {
           m_probe_pt_mu4[4]->Fill(probe_pt/1000.);
+          m_probe_qetapt_mu4[4]->Fill(probe_charge*probe_eta, probe_pt/1000.);
+          if ( CBthre < probe_pt/1000. ){
+            m_probe_eta_mu4[4]->Fill(probe_eta); // L1
+            m_probe_phi_mu4[4]->Fill(probe_phi); // L1
+            m_probe_etaphi_mu4[4]->Fill(probe_eta, probe_phi);
+          }
+          LOGD << "m_probe_pt_mu4[4]->Fill()";
         } else {
+          LOGD << "not m_probe_pt_mu4[4]->Fill()";
         }
         LOGD << "SApass: " << SApass << ", probe_mesSA_pass: " << probe_mesSA_pass->at(N4);
-        LOGD << "CBThrepass: " << CBThrepass;
+        //LOGD << "CBThrepass: " << CBThrepass;
       }
 
       //if(isBarrel) h_probe_pt_mu4_PROBE -> Fill(probe_pt/1000.);
@@ -3075,6 +3127,11 @@ void RPC::CalcEff(){
   CalcHistToHist( m_probe_pt_mu4[4], m_probe_pt_mu4[1], m_eff_pt_mu4_L1L2);
   CalcHistToHist( m_probe_pt_mu4[3], m_probe_pt_mu4[1], m_eff_pt_mu4_L1CB);
 
+  CalcHistToHist( m_probe_eta_mu4[4], m_probe_eta_mu4[1], m_eff_eta_mu4_L1L2);
+  CalcHistToHist( m_probe_phi_mu4[4], m_probe_phi_mu4[1], m_eff_phi_mu4_L1L2);
+  CalcHistToHist( m_probe_qetapt_mu4[4], m_probe_qetapt_mu4[1], m_eff_qetapt_mu4_L1L2);
+  CalcHistToHist( m_probe_etaphi_mu4[4], m_probe_etaphi_mu4[1], m_eff_etaphi_mu4_L1L2);
+
   // mu4
   CalcHistToHist( h_probe_mu_mu4_SA,       h_probe_mu_mu4_L1,       h_eff_mu_mu4_L1SA);
   CalcHistToHist( h_probe_pt_mu4_L1,       h_probe_pt_mu4_PROBE,    h_eff_pt_mu4_L1);
@@ -3169,6 +3226,22 @@ void RPC::DrawEffHist(TString pdf){
   m_eff_pt_mu4_L1CB->Draw("same");
   m_eff_pt_mu4_L1CB->SetMarkerColor(kCyan+2);
   m_eff_pt_mu4_L1CB->SetLineColor(kCyan+2);
+  c1 -> Print( pdf, "pdf" );
+
+  m_eff_eta_mu4_L1L2->Draw();
+  m_eff_eta_mu4_L1L2->GetYaxis()->SetRangeUser(0,1.1);
+  c1 -> Print( pdf, "pdf" );
+
+  m_eff_phi_mu4_L1L2->Draw();
+  m_eff_phi_mu4_L1L2->GetYaxis()->SetRangeUser(0,1.1);
+  c1 -> Print( pdf, "pdf" );
+
+  m_eff_qetapt_mu4_L1L2->Draw("colz");
+  m_eff_qetapt_mu4_L1L2->GetZaxis()->SetRangeUser(0,1.0);
+  c1 -> Print( pdf, "pdf" );
+
+  m_eff_etaphi_mu4_L1L2->Draw("colz");
+  m_eff_etaphi_mu4_L1L2->GetZaxis()->SetRangeUser(0,1.0);
   c1 -> Print( pdf, "pdf" );
 
 
