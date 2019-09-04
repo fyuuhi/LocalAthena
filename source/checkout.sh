@@ -12,6 +12,9 @@ git atlas addpkg TrigL2MuonSA
 git atlas addpkg TrigmuComb
 git atlas addpkg TrigMuonEF
 git atlas addpkg TriggerMenu
+TrigEDMConfig
+TrigMuonHypo
+
 git fetch upstream
 #git checkout TrigL2MuonSA-00-03-63-master-fixRpcPadMsg1
 #git checkout -b $BRANCH_NAME origin/21.5.6_InOutL2Muon --no-track
