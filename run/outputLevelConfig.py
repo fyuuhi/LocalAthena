@@ -246,8 +246,8 @@ if SpecificDebug: muComb.OutputLevel = INFO
 #ToolSvc += AtlasExtrapolator()
 #ToolSvc.AtlasExtrapolator.OutputLevel = VERBOSE
 
-#from TrigFastTrackFinder.TrigFastTrackFinderConf import TrigFastTrackFinder
-#TrigFastTrackFinder.OutputLevel = DEBUG
+from TrigFastTrackFinder.TrigFastTrackFinderConf import TrigFastTrackFinder
+TrigFastTrackFinder.OutputLevel = DEBUG
 
 print "Setup my configuration..."
 

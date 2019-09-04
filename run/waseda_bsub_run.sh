@@ -16,7 +16,8 @@ DATE=$(date '+%Y%m%d%H%M')
 INPUT_LIST="../Jpsi_PGE_d1534.list"
 #INPUT_RDO_FOR_OUTPUT="user.yfukuhar.mc16_13TeV.Zmumu"
 #OUTPUT_AOD=$INPUT_RDO_FOR_OUTPUT".AOD."$DATE".root"
-TEMP_RUN_SCRIPT="bsub_run_temp.sh"
+#TEMP_RUN_SCRIPT="bsub_run_temp.sh"
+TEMP_RUN_SCRIPT="waseda_bsub_run_temp.sh"
 #MAXEVENTS='100'
 #LABEL=DIR_RDO_FTK_Zmumu
 LABEL=DIR_RDO_FTK_Jmumu
@@ -51,7 +52,7 @@ if [ -f "$INPUT_LIST" ] ; then
     cd $DIR
     sed -i -e "10i  \ \ --inputRDO_FTKFile $INPUT_FILE \ \\\\" $TEMP_RUN_SCRIPT
     echo "=========================="
-    bsub -n 2 -q 1d -o log_out ./bsub_run_temp.sh
+    bsub -n 2 -q 1d -o log_out ./waseda_bsub_run_temp.sh
     echo "=========================="
     echo ""
 
