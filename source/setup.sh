@@ -21,7 +21,13 @@ setupATLAS
 #asetup Athena,21.5.6,here
 #asetup r2019-07-09T2150,Athena,21.3,here
 #asetup r2019-10-01T2149,Athena,21.3,here
-asetup Athena,21.3.15,here
+#asetup Athena,master,2019-10-29T2131,here
+#asetup Athena,master,2019-12-08T2112,here
+#asetup Athena,master,2019-12-06T2131,here
+asetup Athena,master,2019-12-10T2131,here
+#asetup Athena,master,latest,here
+#asetup Athena,22.0.8,here
+#asetup Athena,21.3.15,here
 #asetup AtlasOffline,21.0.15,here
 #asetup 21.0,Athena,r26
 #asetup 21.0,Athena,r31
