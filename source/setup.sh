@@ -24,7 +24,10 @@ setupATLAS
 #asetup Athena,master,2019-10-29T2131,here
 #asetup Athena,master,2019-12-08T2112,here
 #asetup Athena,master,2019-12-06T2131,here
-asetup Athena,master,2019-12-10T2131,here
+#asetup Athena,master,2019-12-10T2131,here
+#asetup Athena,master,2019-12-09T2135,here
+#asetup Athena,master,2019-12-09T2135,here
+asetup Athena,master,2019-12-22T2131,here
 #asetup Athena,master,latest,here
 #asetup Athena,22.0.8,here
 #asetup Athena,21.3.15,here
@@ -36,3 +39,5 @@ asetup Athena,master,2019-12-10T2131,here
 lsetup git
 export TestArea=$PWD
 export PATH=.:${TestArea}/../:$PATH
+
+source $TestArea/../build/x86_64-centos7-gcc8-opt/setup.sh

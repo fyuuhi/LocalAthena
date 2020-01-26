@@ -6,11 +6,12 @@ echo $PWD
 cp ../*.sh ./
 cp ../*.py ./
 
-Reco_tf.py --AMI=q221 --imf=True --athenaopts=--threads=1 \
- --maxEvents=20 --outputAODFile=AOD.pool.root --steering=doRDO_TRIG
+Reco_tf.py --AMI=q221 --imf=True --athenaopts=--threads=1 --maxEvents 500 \
+ --outputAODFile=AOD.pool.root --steering=doRDO_TRIG
 
 
 rm -f tmp.ESD
+rm -f tmp.RDO_TRIG
 rm -f core*
 
 
