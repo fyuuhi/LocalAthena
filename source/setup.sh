@@ -27,7 +27,8 @@ setupATLAS
 #asetup Athena,master,2019-12-10T2131,here
 #asetup Athena,master,2019-12-09T2135,here
 #asetup Athena,master,2019-12-09T2135,here
-asetup Athena,master,2019-12-22T2131,here
+#asetup Athena,master,2019-12-22T2131,here
+asetup Athena,master,2020-01-25T2132,here
 #asetup Athena,master,latest,here
 #asetup Athena,22.0.8,here
 #asetup Athena,21.3.15,here
