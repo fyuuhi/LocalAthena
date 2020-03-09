@@ -45,4 +45,4 @@ lsetup git
 export TestArea=$PWD
 export PATH=.:${TestArea}/../:$PATH
 
-source $TestArea/../build/x86_64-centos7-gcc8-opt/setup.sh
+#source $TestArea/../build/x86_64-centos7-gcc8-opt/setup.sh
