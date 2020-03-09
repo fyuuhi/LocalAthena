@@ -1,3 +1,6 @@
+#setupATLAS
+export ATLAS_LOCAL_ROOT_BASE=/cvmfs/atlas.cern.ch/repo/ATLASLocalRootBase
+alias setupATLAS='source ${ATLAS_LOCAL_ROOT_BASE}/user/atlasLocalSetup.sh'
 setupATLAS
 #asetup r2017-04-13T2135,AthenaP1,21.0
 #asetup r2017-04-16T2135,AthenaP1,21.0
